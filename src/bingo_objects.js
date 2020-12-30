@@ -215,7 +215,7 @@ const games_object =
 			"example": 	[]
 		},
 		"Full House": {
-			"desc": "The game is Full House! All the cells on your card.",
+			"desc": "The game is Full House! All the spaces on your card.",
 			"example": 	[
 							[1,1,1,1,1],
 							[1,1,1,1,1],

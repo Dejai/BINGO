@@ -5,6 +5,7 @@
 	<script type="text/javascript" src="./src/common.js"></script>
 	<script type="text/javascript" src="./src/bingo_objects.js"></script>
 	<link rel="stylesheet" type="text/css" href="./src/bingo.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body class="theme_black_bg">
 	<div id="game_settings_section" class="theme_black_bg hidden">
@@ -21,11 +22,12 @@
 				</td>
 				<td>
 					<select id="theme_selector" placeholder="Select theme" onchange="onChangeTheme(event)">
-						<option value="theme_black_bg">Basic</option>
+						<option value="theme_basic">Basic</option>
 						<option value="theme_red_bg">Red Background</option>
-						<option value="theme_black_bg">Black Background</option>
+						<option value="theme_black_bg" selected>Black Background</option>
 					</select>
 				</td>
+				<td>&nbsp;</td>
 			</tr>
 			<tr>
 				<td>
@@ -37,6 +39,7 @@
 						<option value="No">No</option>
 					</select>
 				</td>
+				<td>&nbsp;</td>
 			</tr>
 			<tr>
 				<td>
@@ -44,6 +47,9 @@
 				</td>
 				<td>
 					<select id="voiceSelect"></select>
+				</td>
+				<td>
+					<p style="color:white;cursor:pointer;" class="fa fa-volume-up" onclick="listenerOnSpeakVoiceDemo()"></p>
 				</td>
 			</tr>
 		</table>

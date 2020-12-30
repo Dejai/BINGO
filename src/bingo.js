@@ -12,14 +12,20 @@
 // Once doc is ready
 mydoc.ready(function(){
 
+	// Make sure the page doesn't close once the game starts
+	window.addEventListener("beforeunload", onClosePage);
 
+	// Load the game options and add a listener for them
 	loadGameOptions();
 	listenerOnGameOptionChange();
 
+	// Load the game cells table
 	loadGameCells();
-	// loadGameCellsListener();
 
+	// Load the game voice options
 	loadVoiceOptions();
+
+	// Add listener for "Enter Key"
 	listenerOnKeyUp();	
 
 });
@@ -29,6 +35,12 @@ mydoc.ready(function(){
 /****************************************************************************
 	LISTENERS
 ****************************************************************************/
+// Prevent the page accidentally closing
+function onClosePage(event)
+{
+	event.preventDefault();
+	event.returnValue='';
+}
 
 // Adds a listener for keystrokes (on keyup);
 function listenerOnKeyUp(){
@@ -56,44 +68,23 @@ function listenerOnGameOptionChange()
 	});
 }
 
-function listenerOnSpeakVoiceDemo(event)
+function listenerOnSpeakVoiceDemo()
 {
 
-	ele = event.target; 
-	value = ele.value;
-	option  = ele.querySelector("option[data-name='"+value+"']");
+	let voiceSelect = document.getElementById("voiceSelect");
+	// ele = event.target; 
+	value = voiceSelect.value;
+	option  = voiceSelect.querySelector("option[data-name='"+value+"']");
 	if (option != undefined)
 	{
 		name = option.getAttribute("data-name");
 		// https://dev.to/asaoluelijah/text-to-speech-in-3-lines-of-javascript-b8h
-
 		text = "Hello. My name is " + name + ". And this is how I would call a number:"
 		subtext = "I 20";
 		speakText(text, subtext, 0.9, 0.6, 500);
 	}
 }
 
-/*
-function loadGameCellsListener()
-{
-	bingo_cells = Array.from(document.getElementsByClassName("bingo_cell"));
-
-	bingo_cells.forEach(function(obj){
-		// Add listener to the inner TD
-		obj.addEventListener("click", function(event){
-			ele = event.target;
-			unseen = ele.classList.contains("cell_unseen");
-			if(unseen){
-				ele.classList.add("cell_seen");
-				ele.classList.remove("cell_unseen");
-			} else {
-				ele.classList.add("cell_unseen");
-				ele.classList.remove("cell_seen");
-			}
-		});
-	});
-}
-*/
 
 /****************************************************************************
 	LOAD CONTENT
@@ -123,8 +114,6 @@ function getListOfVoices() {
     	voiceSelect.appendChild(option);
   	} 
   }
-
-  voiceSelect.addEventListener("change", listenerOnSpeakVoiceDemo);
 }
 
 // Calls prev function & loads voices;
@@ -224,8 +213,6 @@ function onLoadGameExample(value, depth=0)
 
 	game_obj = games_object[value];
 
-	getStraightLineExample();
-
 	if (game_obj != undefined)
 	{
 		game_table = game_obj["example"];
@@ -239,7 +226,7 @@ function onLoadGameExample(value, depth=0)
 			onLoadGameExampleTable(value, game_table );
 
 			console.log("DEPTH: " + depth);
-			if (depth < 10)
+			if (depth < 5)
 			{
 				setTimeout(function(){
 					onLoadGameExample("Straight Line", depth+1);			
@@ -282,6 +269,8 @@ function onShowGameExampleAgain()
 {
 	value = document.getElementById("gameOptions").value;
 	onLoadGameExample(value);
+	onDescribeGame(value);
+	ignoreCellsByGame(value);
 }
 
 
@@ -294,14 +283,9 @@ function getStraightLineExample()
 
 	rand_idx_dir = Math.floor(Math.random() * directions.length);
 	which_dir = directions[rand_idx_dir];
-	// which_dir = "DiagRight";
 
 	let rand_row = (which_dir == "Row") ? Math.floor(Math.random() * rows.length) : -1;
 	let rand_col = (which_dir == "Col") ? Math.floor(Math.random() * cols.length) : -1;
-
-	console.log("Which Direction: " + which_dir);
-	console.log("Row: " + rand_row);
-	console.log("Col: " + rand_col);
 
 	game_table = 	[
 						[0,0,0,0,0],
@@ -316,7 +300,6 @@ function getStraightLineExample()
 	{
 		for(let col_idx = 0; col_idx < 5; col_idx++)
 		{
-			// console.log("Row x Col: " + row_idx + " x " + col_idx + " = " + game_table[row_idx][col_idx]);
 			// Check if FREE space is used
 			if (row_idx == 2 && col_idx == 2)
 			{
@@ -327,16 +310,13 @@ function getStraightLineExample()
 					rand_row == 2
 				)
 				{
-					console.log("SET TO 8");
 					game_table[row_idx][col_idx] = 8
 				} else {
-					console.log("SET TO 3");
 					game_table[row_idx][col_idx] = 3
 				}
 			}
 			else if(which_dir == "Row" && row_idx == rand_row)
 			{
-				console.log("Row: " + row_idx);
 				game_table[row_idx][col_idx] = 1
 			}
 			else if(which_dir == "Col" && col_idx == rand_col)
@@ -359,8 +339,6 @@ function getStraightLineExample()
 			}
 		}
 	}
-
-	console.log(game_table);
 
 	return game_table;
 }
@@ -462,6 +440,10 @@ function ignoreCellsByGame(game)
 			ignoreCells("O");
 			break;
 		case "Letter: H":
+		case "Letter: N":
+		case "Letter: M":
+		case "Letter: W":
+		case "Letter: X":
 			ignoreCells("N");
 			break;
 		default:
@@ -474,6 +456,8 @@ function ignoreCells(letter)
 	selector = "[data-letter^='" + letter + "']";
 
 	list = Array.from(document.querySelectorAll(selector));
+	console.log("The List of Spaces");
+	console.log(list);
 
 	if (list != undefined)
 	{
@@ -492,6 +476,10 @@ function resetBoard()
 
 	if(confirm_reset)
 	{
+
+		letterCounts = {"B":0, "I":0, "N":0, "G":0,"O":0 };
+		console.log(letterCounts);
+
 		bingo_cells = Array.from(document.getElementsByClassName("bingo_cell"));
 
 		bingo_cells.forEach(function(obj){
