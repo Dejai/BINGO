@@ -268,9 +268,9 @@ function onLoadGameExampleTable(value, game_table)
 function onShowGameExampleAgain()
 {
 	value = document.getElementById("gameOptions").value;
-	onLoadGameExample(value);
-	onDescribeGame(value);
-	ignoreCellsByGame(value);
+	onLoadGameExample(ele.value);
+	ignoreCellsByGame(ele.value);
+	onDescribeGame(ele.value);
 }
 
 
