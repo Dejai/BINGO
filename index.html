@@ -49,7 +49,7 @@
 					<select id="voiceSelect"></select>
 				</td>
 				<td>
-					<p style="color:white;cursor:pointer;" class="fa fa-volume-up" onclick="listenerOnSpeakVoiceDemo()"></p>
+					<p style="color:white;cursor:pointer;" class="fa fa-volume-up" onclick="listenerOnSpeakVoiceDemo()">&nbsp;Test Voice</p>
 				</td>
 			</tr>
 		</table>
@@ -74,6 +74,8 @@
 		<table class="table">
 			<colgroup>
 				<col style="width:25%;">
+				<col style="width:50%;">
+				<col style="width:25%;">
 			</colgroup>
 			<tr>
 				<td> 
@@ -82,14 +84,17 @@
 					<span style="cursor:pointer" onclick="onShowGameExampleAgain()">Show Example (again)</span>
 				 </td>
 				<td>
-					<button id="pickNumberButton" onclick="pickNumber()">Select Number: 
+					<button id="startGameButton" class="button_mash" onclick="onStartGame()">
+						START GAME 
+					</button>
+					<button id="pickNumberButton" class="hidden" onclick="pickNumber()">Select Number: 
 						<span id="selected_cell" class="theme_black_bg"></span>
 					</button>
-					
-
 				</td>
 				<td>
-					<button id="game_settings_button" onclick="toggleGameSettings()">Game Settings</button>
+					<button id="game_settings_button" class="button_mash" onclick="toggleGameSettings()">
+						Game Settings
+					</button>
 				</td>
 			</tr>
 			<tr>

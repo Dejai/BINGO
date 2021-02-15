@@ -4,6 +4,9 @@
 .centered { text-align: center; }
 .bingo_cell{ cursor: pointer; }
 #game_table { font-size:200%; }
+
+.button_mash { font-size:140%; cursor:pointer;  }
+
 button { cursor: pointer; }
 
 /* Top Section*/

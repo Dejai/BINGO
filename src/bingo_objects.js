@@ -21,6 +21,7 @@ const games_object =
 		},
 		"Inner Box": {
 			"desc": "The game is Inner Box!",
+			"ignore": ["B", "O"],
 			"example": 	[
 							[0,0,0,0,0],
 							[0,1,1,1,0],
@@ -82,6 +83,7 @@ const games_object =
 		},
 		"Letter: H": {
 			"desc": "The game is the Letter H!",
+			"ignore": ["N"],
 			"example": 	[
 							[1,0,0,0,1],
 							[1,0,0,0,1],
@@ -112,6 +114,7 @@ const games_object =
 		},
 		"Letter: M": {
 			"desc": "The game is the Letter M!",
+			"ignore": ["N"],
 			"example": 	[
 							[1,0,0,0,1],
 							[1,1,0,1,1],
@@ -122,6 +125,7 @@ const games_object =
 		},
 		"Letter: N": {
 			"desc": "The game is the Letter N!",
+			"ignore": ["N"],
 			"example": 	[
 							[1,0,0,0,1],
 							[1,1,0,0,1],
@@ -172,6 +176,7 @@ const games_object =
 		},
 		"Letter: W": {
 			"desc": "The game is the Letter W!",
+			"ignore": ["N"],
 			"example": 	[
 							[1,0,0,0,1],
 							[1,0,0,0,1],
@@ -182,6 +187,7 @@ const games_object =
 		},
 		"Letter: X": {
 			"desc": "The game is the Letter X!",
+			"ignore": ["N"],
 			"example": 	[
 							[1,0,0,0,1],
 							[0,1,0,1,0],
