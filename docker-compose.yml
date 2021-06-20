@@ -1,0 +1,11 @@
+version: "3.7"
+
+services:
+    app:
+        build: .
+        container_name: bingo_app
+        ports:
+            - 4000:80
+        working_dir: /usr/local/apache2/htdocs/
+        volumes:
+            - ./:/app
