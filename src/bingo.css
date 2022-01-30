@@ -5,11 +5,34 @@
 .bingo_cell{ cursor: pointer; }
 #game_table { font-size:200%; }
 
+/* Headings */
+.dlf_title { font-size:100px; }
+@media only screen and (min-width:1200px ) {
+	.dlf_title { font-size:50px;}
+}
+
+/* BUTTONS */
+.dlf_button { border-radius:7px; }
+.dlf_button.dlf_button_large { font-size: 50px; }
+@media only screen and (min-width:1200px ) {
+	.dlf_button.dlf_button_large {font-size: 30px; }
+}
+
+/* SELECTS */
+/* .dlf_select { } */
+.dlf_select.dlf_select_large { font-size: 50px; }
+@media only screen and (min-width:1200px) {
+	.dlf_select.dlf_select_large {font-size: 30px; }
+}
+
 .button_mash { font-size:140%; cursor:pointer;  }
 
-.identify_yourself { display:block; text-align:center; padding:2%; width:40%; margin:auto; cursor:pointer;
-	background-color:lightgray; margin-bottom:2%; }
+.identify_yourself { display:block; text-align:center; padding:2%; width:70%; margin:auto; cursor:pointer;
+	background-color:lightgray; margin-bottom:2%; font-size: 50px; margin-bottom:5%; }
 .identify_yourself:hover{background-color:blue; color:yellow; }
+@media screen and (min-width:768px ) {
+	.identify_yourself { font-size:100%; width: 40%;}
+}
 
 button { cursor: pointer; }
 
@@ -55,8 +78,9 @@ button { cursor: pointer; }
 @media screen and (min-width:1024px ) {
 	#bing_card_section { width:60%; }
 }
+#bingo_card_table { margin-top:10%; }
 #bingo_card_table tbody tr td { padding:3% !important;}
-#bingo_card_table * { font-size: 160%; }
+#bingo_card_table * { font-size: 190%; }
 #bingo_card_table td.number_selected { background-color:limegreen; color:white; border:none;}
 .freeSpace { font-size:70% !important; }
 .game_card_input { font-size: 30px; }
