@@ -1,4 +1,4 @@
-const cells_object = 
+const bingo_letters = 
 	{
 		"B": [1,15],
 		"I": [16,30],

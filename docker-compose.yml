@@ -8,4 +8,6 @@ services:
             - 4000:80
         working_dir: /usr/local/apache2/htdocs/
         volumes:
-            - ./:/app
+            - type: bind
+              source: ./
+              target: /usr/local/apache2/htdocs/

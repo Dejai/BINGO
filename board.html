@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>BINGO Board</title>
+	<script type="text/javascript" src="./src/common.js"></script>
+	<script type="text/javascript" src="./src/bingo_objects.js"></script>
+	<link rel="stylesheet" type="text/css" href="./src/bingo.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body class="theme_black_bg">
+	<div id="game_settings_section" class="theme_black_bg hidden">
+		<button id="close_game_settings" onclick="toggleGameSettings()">Close</button>
+		<br/>
+		<h2>Game Settings</h2>
+		<p>
+			<button class="theme_black_bg" id="reset_game_button" onclick="resetBoard()">RESET GAME</button>
+		</p>
+		<table id="game_settings_table">
+			<tr>
+				<td>
+					<h4>Theme</h4>	
+				</td>
+				<td>
+					<select id="theme_selector" placeholder="Select theme" onchange="onChangeTheme(event)">
+						<option value="theme_basic">Basic</option>
+						<option value="theme_red_bg">Red Background</option>
+						<option value="theme_black_bg" selected>Black Background</option>
+					</select>
+				</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td>
+					<h4>Speak Value?</h4>
+				</td>
+				<td>
+					<select id="speak_value" name="Speak Value">
+						<option value="Yes" selected>Yes</option>
+						<option value="No">No</option>
+					</select>
+				</td>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td>
+					<h4>Select Voice</h4>
+				</td>
+				<td>
+					<select id="voiceSelect"></select>
+				</td>
+				<td>
+					<p style="color:white;cursor:pointer;" class="fa fa-volume-up" onclick="listenerOnSpeakVoiceDemo()">&nbsp;Test Voice</p>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div id="game_example_block" class="theme_black_bg hidden">
+		<button id="close_example" onclick="toggleExample()">Close</button>
+		<h2><span id="game_example_name"></span></h2>
+		<table id="game_example_table">
+			<thead>
+				<tr class="theme_black_bg header">
+					<th>B</th>
+					<th>I</th>
+					<th>N</th>
+					<th>G</th>
+					<th>O</th>
+				</tr>
+			</thead>
+			<tbody id="game_example_table_body"></tbody>
+		</table>
+	</div>
+	<div id="menu_section">
+		<table class="table">
+			<colgroup>
+				<col style="width:25%;">
+				<col style="width:50%;">
+				<col style="width:25%;">
+			</colgroup>
+			<tr>
+				<td> 
+					<!-- <label>Current Game</label> -->
+					<select id="gameOptions"></select><br/>
+					<span style="cursor:pointer" onclick="onShowGameExampleAgain()">Show Example (again)</span>
+				 </td>
+				<td>
+					<button id="startGameButton" class="button_mash" onclick="onStartGame()">
+						START GAME
+					</button>
+					<button id="pickNumberButton" class="hidden" onclick="pickNumber()">Select Number: 
+						<span id="selected_cell" class="theme_black_bg"></span>
+					</button>
+				</td>
+				<td>
+					<button id="game_settings_button" class="button_mash" onclick="toggleGameSettings()">
+						Game Settings
+					</button>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<table id="gameOptionExample" class="table centered hidden"></table>
+				</td>
+				<td>
+					&nbsp;
+				</td>
+				<td>
+					&nbsp;
+				</td>
+			</tr>
+		</table>
+		</table>
+	</div>
+	<table id="game_table" class="table">
+		<thead>
+			<tr class="theme_black_bg header">
+				<th>B</th>
+				<th>I</th>
+				<th>N</th>
+				<th>G</th>
+				<th>O</th>
+			</tr>
+		</thead>
+		<tbody id="game_table_body"></tbody>
+	</table>
+
+
+	<br/>
+</body>
+<script type="text/javascript" src="./src/bingo.js"></script>
+</html>
