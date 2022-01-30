@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>BINGO Card</title>
+	<script type="text/javascript" src="./src/common.js"></script>
+	<link rel="stylesheet" type="text/css" href="./src/bingo.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body class="theme_black_bg">
+
+    <div id="bing_card_section">
+        <h1 style="text-align:center;">Bingo Card</h1>
+		<select id="gameOptionsOnCard" onchange="onIndicateNeeded()" class="game_card_input" style="float:left;"></select>
+        <button id="clearCardButton" class="game_card_input" style="float:right;" onclick="onClearCard()">Clear Card</button>
+        <br style="clear:both;"/>
+        <hr style="clear:both; margin-bottom:5%;"/>
+
+        <table id="bingo_card_table" class="table">
+            <colgroup>
+                <col style="width:19%;">
+                <col style="width:19%;">
+                <col style="width:19%;">
+                <col style="width:19%;">
+                <col style="width:19%;">
+            </colgroup>
+            <thead>
+                <tr class="theme_black_bg header">
+                    <th>B</th>
+                    <th>I</th>
+                    <th>N</th>
+                    <th>G</th>
+                    <th>0</th>
+                </tr>
+            </thead>
+            <tbody id="bingo_card_body"></tbody>
+        </table>
+    </div>
+
+</body>
+<script type="text/javascript" src="./src/bingo_objects.js"></script>
+<script type="text/javascript" src="./src/card.js"></script>
+</html>

@@ -148,7 +148,7 @@ function loadGameOptions()
 // Load the table of game cells
 function loadGameCells()
 {
-	data = cells_object;
+	data = bingo_letters;
 
 	cells = "";
 	for (var letter in data)
@@ -156,7 +156,7 @@ function loadGameCells()
 		if (letter != "contains")
 		{
 			cells += "<td><table class=\"table\">";
-			range = cells_object[letter];
+			range = bingo_letters[letter];
 			start = range[0];
 			end   = range[range.length-1];
 			for(var idx = start; idx <= end; idx++ )
