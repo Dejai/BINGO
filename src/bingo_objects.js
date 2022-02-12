@@ -12,6 +12,7 @@ const games_object =
 		"Outer Box":{
 			"group": "Classic Games",
 			"desc": "The game is Outer Box!",
+			"cost": "This game costs 1 dollar",
 			"example": 	[
 							[1,1,1,1,1],
 							[1,0,0,0,1],
@@ -24,6 +25,7 @@ const games_object =
 			"group": "Classic Games",
 			"desc": "The game is Inner Box!",
 			"ignore": ["B", "O"],
+			"cost": "This game costs 1 dollar",
 			"example": 	[
 							[0,0,0,0,0],
 							[0,1,1,1,0],
@@ -35,11 +37,13 @@ const games_object =
 		"Straight Line": {
 			"group": "Classic Games",
 			"desc": "The game is any Straight Line! Any vertical, horizontal, or diagonal line of 5!",
+			"cost": "This game costs 1 dollar",
 			"example": 	[]
 		},
 		"Full House": {
 			"group": "Classic Games",
 			"desc": "The game is Full House! All the spaces on your card.",
+			"cost": "This game costs 2 dollars",
 			"example": 	[
 							[1,1,1,1,1],
 							[1,1,1,1,1],
@@ -52,6 +56,7 @@ const games_object =
 			"group": "Random",
 			"desc": "The game is Popsicle! The shape looks like a popsicle.",
 			"ignore": ["B", "O"],
+			"cost": "This game costs 1 dollar",
 			"example": 	[
 							[0,1,1,1,0],
 							[0,1,1,1,0],
@@ -63,6 +68,7 @@ const games_object =
 		"The Cross": {
 			"group": "Random",
 			"desc": "The game is The Cross! Down the N, and across the middle row.",
+			"cost": "This game costs 1 dollar",
 			"example": 	[
 							[0,0,1,0,0],
 							[0,0,1,0,0],
@@ -74,7 +80,8 @@ const games_object =
 		"Greater Than": {
 			"group": "Random",
 			"desc": "The game is Greater Than! The greater than symbol.",
-			"ignore": ["B", "I"],
+			"ignore": ["N","G","O"],
+			"cost": "This game costs 50 cents",
 			"example": 	[
 							[1,0,0,0,0],
 							[0,1,0,0,0],
@@ -86,7 +93,8 @@ const games_object =
 		"Less Than": {
 			"group": "Random",
 			"desc": "The game is Less Than! The less than symbol.",
-			"ignore": ["B", "I"],
+			"ignore": ["B", "I", "N"],
+			"cost": "This game costs 50 cents",
 			"example": 	[
 							[0,0,0,0,1],
 							[0,0,0,1,0],
@@ -99,6 +107,7 @@ const games_object =
 		"The Ladder": {
 			"group": "Random",
 			"desc": "The game is The Ladder! Across the top row, middle row, and bottom row",
+			"cost": "This game costs 1 dollar",
 			"example": 	[
 							[1,1,1,1,1],
 							[0,0,0,0,0],
@@ -111,6 +120,7 @@ const games_object =
 			"group": "Random",
 			"desc": "The game is Vertical Stripes! Down the B, N, and O",
 			"ignore": ["I", "G"],
+			"cost": "This game costs 1 dollar",
 			"example": 	[
 							[1,0,1,0,1],
 							[1,0,1,0,1],
@@ -121,8 +131,9 @@ const games_object =
 		},
 		"The Grid!": {
 			"group": "Random",
-			"desc": "The game is The Grid!! The 1st, 3rd, and last colmns as well as rows.",
+			"desc": "The game is The Grid!! The 1st, 3rd, and last columns. Also the 1st, 3rd, and last rows.",
 			"ignore": ["I", "G"],
+			"cost": "This game costs 2 dollars",
 			"example": 	[
 							[1,1,1,1,1],
 							[1,0,1,0,1],
@@ -135,6 +146,7 @@ const games_object =
 			"group": "Random",
 			"desc": "The game is Train Tracks! Down the I and G",
 			"ignore": ["B", "N", "O"],
+			"cost": "This game costs 1 dollar",
 			"example": 	[
 							[0,1,0,1,0],
 							[0,1,0,1,0],
@@ -146,6 +158,7 @@ const games_object =
 		"Letter: A":{
 			"group": "Letters",
 			"desc": "The game is the Letter A!",
+			"cost": "This game costs 1 dollar",
 			"example": 	[
 							[1,1,1,1,1],
 							[1,0,0,0,1],
@@ -157,6 +170,7 @@ const games_object =
 		"Letter: B":{
 			"group": "Letters",
 			"desc": "The game is the Letter B!",
+			"cost": "This game costs 2 dollars",
 			"example": 	[
 							[1,1,1,1,1],
 							[1,0,0,0,1],
@@ -168,6 +182,7 @@ const games_object =
 		"Letter: C":{
 			"group": "Letters",
 			"desc": "The game is the Letter C!",
+			"cost": "This game costs 1 dollar",
 			"example": 	[
 							[1,1,1,1,1],
 							[1,0,0,0,0],
@@ -179,6 +194,7 @@ const games_object =
 		"Letter: E": {
 			"group": "Letters",
 			"desc": "The game is the Letter E!",
+			"cost": "This game costs 2 dollars",
 			"example": 	[
 							[1,1,1,1,1],
 							[1,0,0,0,0],
@@ -190,6 +206,7 @@ const games_object =
 		"Letter: F":{
 			"group": "Letters",
 			"desc": "The game is the Letter F! F is for Fy-field!",
+			"cost": "This game costs 1 dollar",
 			"example": 	[
 							[1,1,1,1,1],
 							[1,0,0,0,0],
@@ -203,6 +220,7 @@ const games_object =
 			"group": "Letters",
 			"desc": "The game is the Letter H!",
 			"ignore": ["N"],
+			"cost": "This game costs 1 dollar",
 			"example": 	[
 							[1,0,0,0,1],
 							[1,0,0,0,1],
@@ -214,6 +232,7 @@ const games_object =
 		"Letter: I": {
 			"group": "Letters",
 			"desc": "The game is the Letter I!",
+			"cost": "This game costs 1 dollar",
 			"example": 	[
 							[1,1,1,1,1],
 							[0,0,1,0,0],
@@ -225,6 +244,7 @@ const games_object =
 		"Letter: L": {
 			"group": "Letters",
 			"desc": "The game is the Letter L!",
+			"cost": "This game costs 1 dollar",
 			"example": 	[
 							[1,0,0,0,0],
 							[1,0,0,0,0],
@@ -237,6 +257,7 @@ const games_object =
 			"group": "Letters",
 			"desc": "The game is the Letter M!",
 			"ignore": ["N"],
+			"cost": "This game costs 1 dollar",
 			"example": 	[
 							[1,0,0,0,1],
 							[1,1,0,1,1],
@@ -249,6 +270,7 @@ const games_object =
 			"group": "Letters",
 			"desc": "The game is the Letter N!",
 			"ignore": ["N"],
+			"cost": "This game costs 1 dollar",
 			"example": 	[
 							[1,0,0,0,1],
 							[1,1,0,0,1],
@@ -260,6 +282,7 @@ const games_object =
 		"Letter: P": {
 			"group": "Letters",
 			"desc": "The game is the Letter P!",
+			"cost": "This game costs 1 dollar",
 			"example": 	[
 							[1,1,1,1,1],
 							[1,0,0,0,1],
@@ -271,6 +294,7 @@ const games_object =
 		"Letter: S": {
 			"group": "Letters",
 			"desc": "The game is the Letter S!",
+			"cost": "This game costs 2 dollars",
 			"example": 	[
 							[1,1,1,1,1],
 							[1,0,0,0,0],
@@ -282,6 +306,7 @@ const games_object =
 		"Letter: T": {
 			"group": "Letters",
 			"desc": "The game is the Letter T!",
+			"cost": "This game costs 1 dollar",
 			"example": 	[
 							[1,1,1,1,1],
 							[0,0,1,0,0],
@@ -293,6 +318,7 @@ const games_object =
 		"Letter: U": {
 			"group": "Letters",
 			"desc": "The game is the Letter U!",
+			"cost": "This game costs 1 dollar",
 			"example": 	[
 							[1,0,0,0,1],
 							[1,0,0,0,1],
@@ -305,6 +331,7 @@ const games_object =
 			"group": "Letters",
 			"desc": "The game is the Letter W!",
 			"ignore": ["N"],
+			"cost": "This game costs 1 dollar",
 			"example": 	[
 							[1,0,0,0,1],
 							[1,0,0,0,1],
@@ -317,6 +344,7 @@ const games_object =
 			"group": "Letters",
 			"desc": "The game is the Letter X!",
 			"ignore": ["N"],
+			"cost": "This game costs 1 dollar",
 			"example": 	[
 							[1,0,0,0,1],
 							[0,1,0,1,0],
@@ -328,6 +356,7 @@ const games_object =
 		"Letter: Y": {
 			"group": "Letters",
 			"desc": "The game is the Letter Y!",
+			"cost": "This game costs 1 dollar",
 			"example": 	[
 							[1,0,0,0,1],
 							[0,1,0,1,0],
@@ -339,6 +368,7 @@ const games_object =
 		"Letter: Z": {
 			"group": "Letters",
 			"desc": "The game is the Letter Z!",
+			"cost": "This game costs 1 dollar",
 			"example": 	[
 							[1,1,1,1,1],
 							[0,0,0,1,0],
