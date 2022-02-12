@@ -12,9 +12,6 @@
 		<button id="close_game_settings" onclick="toggleGameSettings()">Close</button>
 		<br/>
 		<h2>Game Settings</h2>
-		<p>
-			<button class="theme_black_bg" id="reset_game_button" onclick="resetBoard()">RESET GAME</button>
-		</p>
 		<table id="game_settings_table">
 			<tr>
 				<td>
@@ -92,8 +89,11 @@
 					</button>
 				</td>
 				<td>
+					<button class="theme_black_bg" id="reset_game_button" onclick="resetBoard()">
+						RESET GAME
+					</button>
 					<button id="game_settings_button" class="button_mash" onclick="toggleGameSettings()">
-						Game Settings
+						Settings
 					</button>
 				</td>
 			</tr>

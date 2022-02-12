@@ -132,16 +132,33 @@ function loadVoiceOptions()
 // Load the game options object
 function loadGameOptions()
 {	
-	data = games_object;
+	game_keys = Object.keys(games_object);
+	optgroups = {};        
+	// Group all the games
+	game_keys.forEach( (key)=> {
 
-	options = "<option value=''>Select Game...</option>";
-	for(var key in data)
-	{
-		if(key !== "contains")
+		game = games_object[key];
+		group = game["group"];
+
+		if(!optgroups.hasOwnProperty(group))
 		{
-			options += "<option class='game_option' value=\"" + key + "\">" + key + "</option>";
+			optgroups[group] = `<optgroup label="${group}">`
 		}
-	}
+		option = "<option class='game_option' value=\"" + key + "\">" + key + "</option>";
+		optgroups[group] += option;
+	});
+
+	// Load the grouped options
+	options = "<option value=''>Select Game...</option>";
+	Object.keys(optgroups).forEach( (key)=>{
+
+		group = optgroups[key];
+		group += "</optgroup>";
+
+		options += group;
+	});
+
+
 	mydoc.loadContent(options, "gameOptions");
 }
 
@@ -177,9 +194,10 @@ function loadGameCells()
 function onDescribeGame(game)
 {
 	desc 	= games_object[game]["desc"];
-	subdesc = games_object[game]["subdesc"];
+	cost = games_object[game]["cost"];
 
-	speakText(text=desc, null, 0.9, 0.9, 500);
+	// Describe the game and cost;
+	speakText(desc, cost, 0.9, 0.9, 700);
 }
 
 // Action to load the selected game example
@@ -339,13 +357,10 @@ function toggleGameSettings()
 
 	if (section.classList.contains('hidden'))
 	{
-		button.classList.remove("hidden");
-		button.innerText = "Close";
 		section.classList.remove("hidden");
 	}
 	else
 	{
-		button.innerText = "Game Settings";
 		section.classList.add("hidden");
 	}
 }
@@ -430,10 +445,6 @@ function pickNumber()
 function incrementLetterCount(letter)
 {
 	current_count = letterCounts[letter]
-	console.log(typeof(current_count));
-
-	console.log(letterCounts);
-
 	if(current_count != undefined)
 	{
 		letterCounts[letter] += 1
@@ -472,8 +483,6 @@ function ignoreCells(letter)
 	selector = "[data-letter^='" + letter + "']";
 
 	list = Array.from(document.querySelectorAll(selector));
-	console.log("The List of Spaces");
-	console.log(list);
 
 	if (list != undefined)
 	{

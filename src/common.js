@@ -25,7 +25,30 @@ const mydoc = {
 	{
 		element = document.getElementById(identifier);
 		element.innerHTML = content;
-	}
+	},
+
+	get_query_map: function(){
+		let query_string = location.search;
+		let query = query_string.replace("?", "")
+		var query_map = {}
+		var combos = query.split("&");
+		combos.forEach(function(obj)
+		{
+			let splits = obj.split("=");
+			query_map[splits[0]] = splits[1];
+		});
+		return query_map;
+	},
+
+	get_query_param: function(key){
+		let map = mydoc.get_query_map();
+		let value = undefined;
+		if(map.hasOwnProperty(key))
+		{
+			value = map[key]
+		}
+		return value;
+	},
 
 };
 const myajax = { 
