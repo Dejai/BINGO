@@ -70,7 +70,7 @@ function listenerOnGameOptionChange()
 		CURR_GAME = ele.value;
 		onLoadGameExample(ele.value);
 		ignoreCellsByGame(ele.value);
-		onDescribeGame(ele.value);
+		onDescribeGame(ele.value, true);
 	});
 }
 
@@ -191,10 +191,10 @@ function loadGameCells()
 /****************** GAME SETTING ACTIONS ****************************/
 
 // Action to describe the selected game
-function onDescribeGame(game)
+function onDescribeGame(game,sayCost=false)
 {
 	desc 	= games_object[game]["desc"];
-	cost = games_object[game]["cost"];
+	cost = (sayCost) ? games_object[game]["cost"] : undefined;
 
 	// Describe the game and cost;
 	speakText(desc, cost, 0.9, 0.9, 700);
