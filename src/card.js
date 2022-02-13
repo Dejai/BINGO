@@ -387,7 +387,6 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
     // Indicate which ones are needed
     function onSelectGame()
     {
-
         // Always clear first when changing games;
         onClearNeededCells();
 
@@ -398,21 +397,45 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
             let cost = games_object[CURR_GAME]["cost"];
             mydoc.loadContent(`Cost: ${cost}`,"game_cost");
 
-            if(CURR_GAME != "Straight Line")
+            if (CURR_GAME == "Straight Line")
+            { 
+                examples = getStraightLinExamples();
+                idx = 0;
+                let straightLineInterval = setInterval( ()=>{
+
+                    hightlightNeededCells(examples[idx]);	
+                    idx+=1 
+                    setTimeout( ()=>{
+                        onClearNeededCells() // clear the needed cells; so folks don't think only one option is acceptable
+                    },300);
+
+                    if(idx == examples.length)
+                    {
+                        clearInterval(straightLineInterval);
+                    }
+                }, 500);
+            }
+            else
             {
                 let expected = games_object[CURR_GAME]["example"];
-                for(var rowIdx = 0; rowIdx < 5; rowIdx ++)
-                {
-                    for(var colIdx = 0; colIdx < 5; colIdx++ )
-                    {
-                        needed = expected[rowIdx][colIdx];
-                        if(needed == 1 || needed == 8)
-                        {
-                            GAME_BOARD_CELLS[rowIdx][colIdx].classList.add("number_cell_needed");
-                        }
-                    }
-                }
+                hightlightNeededCells(expected);
             }            
+        }
+    }
+
+    // Highlight the cells needed
+    function hightlightNeededCells(table)
+    {
+        for(var rowIdx = 0; rowIdx < 5; rowIdx ++)
+        {
+            for(var colIdx = 0; colIdx < 5; colIdx++ )
+            {
+                needed = table[rowIdx][colIdx];
+                if(needed == 1 || needed == 8)
+                {
+                    GAME_BOARD_CELLS[rowIdx][colIdx].classList.add("number_cell_needed");
+                }
+            }
         }
     }
     
@@ -452,6 +475,8 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
             obj.classList.remove("number_cell_needed");
         });
     }
+
+
 
 /*********************** HELPERS *****************************/
 
@@ -636,6 +661,53 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         return `<span class='freeSpace number_cell'><i class="number_cell fa fa-star-o"></i></span>`;
     }
 
+    // Get all the straight line examples
+    function getStraightLinExamples()
+    {
+        all_examples = [];
+
+        diag_left = getBaseGameTable();
+        diag_right = getBaseGameTable();
+
+        for (var idx = 0; idx < 5; idx++)
+        {
+            // Setup the diagonal example
+            left = idx;
+            right = (5-idx)-1;
+            diag_left[idx][left] = (idx == 2) ? 8 : 1;
+            diag_right[idx][right] = (idx == 2) ? 8 : 1;
+
+            // Setup row-based wins
+            let row_based = getBaseGameTable()
+            row_based[idx] = (idx ==2 ) ? [1,1,8,1,1] : [1,1,1,1,1];
+            all_examples.push(row_based);
+
+            // Setup col-based wins
+            let col_based = getBaseGameTable();
+            for(var itr = 0; itr < 5; itr++)
+            {
+                col_based[itr][idx] = ((idx == 2 && itr == 2)) ? 8 : 1;
+            }
+            all_examples.push(col_based);
+        }
+
+        all_examples.push(diag_left);
+        all_examples.push(diag_right);
+        return all_examples;
+    }
+
+    // Get a base game example
+    function getBaseGameTable()
+    {
+        base_game_table = 	[
+            [0,0,0,0,0],
+            [0,0,0,0,0],
+            [0,0,3,0,0],
+            [0,0,0,0,0],
+            [0,0,0,0,0],
+        ]
+        return base_game_table;
+    }
 
     // Check if all params are set
     function hasBingoParams()
