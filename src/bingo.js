@@ -188,7 +188,7 @@ function loadGameOptions()
 	});
 
 	// Load the grouped options
-	options = "<option value=''>Select Game...</option>";
+	options = "<option value=''>SELECT GAME...</option>";
 	Object.keys(optgroups).forEach( (key)=>{
 
 		group = optgroups[key];
@@ -211,7 +211,7 @@ function loadGameCells()
 	{
 		if (letter != "contains")
 		{
-			cells += "<td><table class=\"table\">";
+			cells += "<td class='game_table_cell'><table class=\"table\">";
 			range = bingo_letters[letter];
 			start = range[0];
 			end   = range[range.length-1];
@@ -233,7 +233,7 @@ function loadGameCells()
 function onDescribeGame(game,sayCost=false)
 {
 	desc 	= games_object[game]["desc"];
-	cost = (sayCost) ? games_object[game]["cost"] : undefined;
+	cost = (sayCost) ? `This game costs ${games_object[game]["cost"]}` : undefined;
 
 	// Describe the game and cost;
 	speakText(desc, cost, 0.9, 0.9, 700);
@@ -247,6 +247,10 @@ function onLoadGameExample(value, depth=0)
 
 	if (game_obj != undefined)
 	{
+		// Load the game cost;
+		cost = game_obj["cost"];
+		mydoc.loadContent(`Cost: ${cost}`,"game_cost");
+
 		game_table = game_obj["example"];
 		if(value == "Straight Line")
 		{

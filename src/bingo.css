@@ -19,6 +19,16 @@
 				user-select: none; /* Non-prefixed version, currently
 										supported by Chrome, Edge, Opera and Firefox */
 	}
+	#bingo_version { position:fixed; bottom:1px; right:1px; color:red; font-style:italic;}
+
+	@keyframes bingo_blink {
+		25% { color: red; }
+		50% { color: red;}
+		75% { color: yellow; }
+		100% { color: yellow; }
+	}
+	.bingo_blink { animation: bingo_blink 1s step-start infinite; }
+
 
 /* Identify Yourself*/
 	.identify_yourself { display:block; text-align:center; padding:10%; width:70%; margin:auto; cursor:pointer; margin-top:10%; }
@@ -47,10 +57,11 @@
 	.dlf_paragraph_large { font-size: 150%; }
 	.dlf_paragraph_xlarge { font-size: 190%; }
 	.dlf_paragraph_xxlarge { font-size: 220%; }
+	.dlf_paragraph_xxxlarge { font-size: 250%; }
 
 /* Buttons */
 	/*Button Shape & hover*/
-	button { cursor: pointer; padding: 1%; border:none; }
+	button { cursor: pointer; padding:2% 1%; border:none; }
 	[class*="dlf_button"] { font-weight:bolder; }
 	button:focus { outline: none; box-shadow: none; }
 	.dlf_button_round_corners { border-radius:77px; }
@@ -75,19 +86,117 @@
 	.dlf_button_yellow { background-color:yellow !important; color:black !important;}
 
 /* Select Inputs */
-	.dlf_select { padding:1%; border:none; }
-	.dlf_select:focus { border:none; }
+	.dlf_select { padding:3%; border:none; }
+	.dlf_select:focus { outline:none; }
+	.dlf_select_round_corners { border-radius:77px; }
+
 	
-	.dlf_select_small { font-size: 50% !important; }
-	.dlf_select_large { font-size: 140% !important; }
-	.dlf_select_xlarge { font-size: 190% !important; }
-	.dlf_select_xxlarge { font-size: 200% !important; }
-	.dlf_select_xxxlarge { font-size: 250% !important; }
+	.dlf_select_small { font-size: 50%; }
+	.dlf_select_large { font-size: 140%; }
+	.dlf_select_xlarge { font-size: 190%; }
+	.dlf_select_xxlarge { font-size: 200%; }
+	.dlf_select_xxxlarge { font-size: 250%; }
 
 	.dlf_select_red { background-color:red; color:white; }
 	.dlf_select_blue { background-color:blue; color:white; }
 
+/*******************************************************************************************
+	THEME: Black Background
+********************************************************************************************/
 
+	/*BODY*/
+	body.theme_black_bg { background-color:black; color:white; }
+
+	/* Top Section*/
+	#selected_cell.theme_black_bg { color:red; }
+
+	/* Game Table*/
+	.game_table_header { background-color:white !important; color:black !important; }
+	td.theme_black_bg.cell_unseen { color:gray; }
+	td.theme_black_bg.cell_seen { background-color:limegreen; color:red; }
+
+	/* Game Settings */
+	#game_settings_section.theme_black_bg { background-color:gray; color:black; }
+	#game_settings_section.theme_black_bg #close_game_settings { color:white; background-color:red;}
+	#reset_game_button.theme_black_bg { background-color:red; color:white; }
+
+	/* Game Example */
+	#game_example_block.theme_black_bg { background-color:black; color:white; }
+	#game_example_block.theme_black_bg #close_example { background-color:red; color:white; }
+
+
+/**************************************************** 
+	GAME CARD: Styling specific to the game card
+*****************************************************/
+
+	#game_cost { color:red; font-weight:bolder; }
+	/* Game Card */
+	#bingo_card_section { width:95%;margin:auto; text-align:center; }
+	#bingo_card_table { margin-top:5%; }
+	#bingo_card_table tbody tr td { padding:3% !important;}
+
+	/* Game Card Size*/
+	#bingo_card_table .card_table_header { font-size:510%; }
+	#bingo_card_table td.number_cell { font-size:450%; font-weight: bolder; }
+	#bingo_card_table td.example { font-size:450%; font-weight: bolder; }
+	.freeSpace { font-size:120% !important; }
+
+	#bingo_card_table td.number_selected { background-color:limegreen; color:white; border:none;}
+	.game_card_input { font-size: 30px; }
+	.number_cell_needed { color: red } 
+	#card_created_timestamp { color:red; font-size:inherit; font-style:italic; }
+
+	.card_header_b {font-size:510%; background-color: blue; color:white;}
+	.card_header_i {font-size:510%; background-color: indigo; color:white;}
+	.card_header_n {font-size:510%; background-color: navy; color:white;}
+	.card_header_g {background-color: green; color:white;}
+	.card_header_o {background-color: orange; color:white;}
+
+
+/**************************************************** 
+	GAME BOARD: Styling specific to the game board
+*****************************************************/
+
+/* Menu*/
+	#game_selector{ width:40%; float:left; }
+	/* #gameOptions { font-size:180%; } */
+	.game_options_select { font-size: 180%; }
+	#pickNumberButton {cursor:pointer;}
+	#selected_ball_section { width:40%; float:left; }
+	#selected_cell { margin-bottom:1%; color:red; margin-top:2%; font-size:44px; }
+	#pickNumberButton { margin-bottom:1%; margin-top:2%; font-size:44px; }
+
+/* Game Table*/
+	.table { width:100%; text-align: center; border-spacing: 0; border:1px solid black; }
+	.header th { font-size:120%; }
+	.inelligible { visibility:hidden; }
+
+/* Game Settings */
+	#game_settings_section { position:absolute; border:1px solid red; z-index:1000; 
+							width:50%; margin-left:25%; margin-top:2%; text-align:center; }
+
+	#game_settings_section #close_game_settings { float:right; clear:both; padding-right:1%; }
+	#game_settings_table { width:60%; margin:auto; text-align: left; }
+	#game_settings_table td:nth-child(1) { text-align:right; }
+	#game_settings_table td:nth-child(2) { padding-left:5%; }
+	#game_settings_table select { width:100%; }
+
+
+/**************************************************** 
+	GAME EXAMPLES: The example page
+*****************************************************/
+/* Game Example */
+	.example { padding-top:8%; padding-bottom:8%;}
+	.example_filled { background-color:limegreen; color:red;  }
+	.example_empty { background-color:inherit; color:inerit;  }
+
+	#game_example_block { position:absolute; border:1px solid red; z-index:1000; 
+						width:90%; margin-left:5%; margin-top:5%; text-align:center; }
+
+	#game_example_block table { width:100%; }
+	#game_example_block .header { font-size:120%; }
+	#game_example_block table td { width:20%; padding:3%; font-size:120%; }
+	#game_example_block #close_example { float:right; clear:both; padding-right:1%; }
 
 
 /**************************************************** 
@@ -97,7 +206,7 @@
 @media only screen and (min-device-width:1200px)
 {
 	/* Headings */
-	.dlf_title { font-size:50px;}
+	.dlf_title { font-size:2em;}
 
 	/* Alignment */
 	.dlf_center_block_small { margin:auto; width:30%;}
@@ -124,149 +233,19 @@
 	.dlf_paragraph_large { font-size: initial; }
 	.dlf_paragraph_xlarge { font-size: initial; }
 	.dlf_paragraph_xxlarge { font-size: initial; }
+	.dlf_paragraph_xxxlarge { font-size: initial; }
 
 	/* Identify Yourself*/
 	.identify_yourself { padding:2%; margin-top:7%; }
+
+	/* Game Example*/
+	.example { padding-top:2%; padding-bottom:2%; }	
+
+	/* Game Card*/
+	#bingo_card_section { width:60%; }
+	#bingo_card_table .card_table_header { font-size:initial; }
+	#bingo_card_table td.number_cell { font-size:initial }
+	#bingo_card_table td.example { font-size:initial  }
+	.freeSpace { font-size:initial; }
+
 }
-
-/**************************************************** 
-	GAME CARD: Styling specific to the game card
-*****************************************************/
-	/* Game Card */
-	#bingo_card_section { width:95%;margin:auto; text-align:center; }
-	@media screen and (min-device-width:1200px ) {
-		#bingo_card_section { width:60%; }
-	}
-	#bingo_card_table { margin-top:5%; }
-	#bingo_card_table tbody tr td { padding:3% !important;}
-	#bingo_card_table * { font-size: 170%; }
-	@media screen and (min-device-width:1200px ) {
-		#bingo_card_table * { font-size: 120%; }
-	}
-	#bingo_card_table td.number_selected { background-color:limegreen; color:white; border:none;}
-	.freeSpace { font-size:70% !important; }
-	.game_card_input { font-size: 30px; }
-	.number_cell_needed { color: red } 
-	#card_created_timestamp { color:red; font-size:inherit; font-style:italic; }
-
-
-/**************************************************** 
-	GAME BOARD: Styling specific to the game board
-*****************************************************/
-
-/* Menu*/
-	#game_selector{ width:40%; float:left; }
-	#gameOptions { font-size:180%; }
-	#pickNumberButton {cursor:pointer;}
-	#selected_ball_section { width:40%; float:left; }
-	#selected_cell { margin-bottom:1%; color:red; margin-top:2%; font-size:44px; }
-	#pickNumberButton { margin-bottom:1%; margin-top:2%; font-size:44px; }
-
-/* Game Table*/
-	.table { width:100%; text-align: center; border-spacing: 0; border:1px solid black; }
-	.header th { font-size:120%; }
-	.inelligible { visibility:hidden; }
-
-/* Game Settings */
-	#game_settings_section { position:absolute; border:1px solid red; z-index:1000; 
-							width:50%; margin-left:25%; margin-top:2%; text-align:center; }
-
-	#game_settings_section #close_game_settings { float:right; clear:both; padding-right:1%; }
-	#game_settings_table { width:60%; margin:auto; text-align: left; }
-	#game_settings_table td:nth-child(1) { text-align:right; }
-	#game_settings_table td:nth-child(2) { padding-left:5%; }
-	#game_settings_table select { width:100%; }
-
-/* Game Example */
-	.example { padding-top:8%; padding-bottom:8%;}
-	@media only screen and (min-device-width:1200px) {
-		.example { padding-top:2%; padding-bottom:2%; }	
-	}
-	.example_filled { background-color:limegreen; color:red;  }
-	.example_empty { background-color:inherit; color:inerit;  }
-
-	#game_example_block { position:absolute; border:1px solid red; z-index:1000; 
-						width:90%; margin-left:5%; margin-top:5%; text-align:center; }
-
-	#game_example_block table { width:100%; }
-	#game_example_block .header { font-size:120%; }
-	#game_example_block table td { width:20%; padding:3%; font-size:120%; }
-	#game_example_block #close_example { float:right; clear:both; padding-right:1%; }
-
-
-
-
-
-/*******************************************************************************************
-	THEME: Basic
-********************************************************************************************/
-	/*BODY*/
-	body.theme_basic { background-color:white; }
-
-	/* Top Section*/
-	#selected_cell.theme_basic { color:red; }
-
-	/* Game Table*/
-	tr.theme_basic.header th { background-color:lightgray; color:black; }
-	td.theme_basic.cell_unseen { color:gray; }
-	td.theme_basic.cell_seen { background-color:limegreen; color:white; }
-
-	/* Game Settings */
-	#game_settings_section.theme_basic { background-color:black; color:white; }
-	#game_settings_section.theme_basic #close_game_settings { color:red;}
-	#reset_game_button.theme_basic { background-color:red; color:white; }
-
-	/* Game Example */
-	#game_example_block.theme_basic { background-color:black; color:white; }
-	#game_example_block.theme_basic #close_example { color:red;}
-
-
-
-/*******************************************************************************************
-	THEME: Red Background
-********************************************************************************************/
-
-	/*BODY*/
-	body.theme_red_bg { background-color:red; }
-
-	/* Top Section*/
-	#selected_cell.theme_red_bg { color:white; }
-
-	/* Game Table*/
-	tr.theme_red_bg.header th { background-color:lightgray; color:black; }
-	td.theme_red_bg.cell_unseen { color:gray; }
-	td.theme_red_bg.cell_seen { background-color:limegreen; color:white; }
-
-	/* Game Settings */
-	#game_settings_section.theme_red_bg { background-color:black; color:white; }
-	#game_settings_section.theme_red_bg #close_game_settings { color:red;}
-	#reset_game_button.theme_red_bg { background-color:white; color:red; }
-
-	/* Game Example */
-	#game_example_block.theme_red_bg { background-color:black; color:white; }
-	#game_example_block.theme_red_bg #close_example { color:white; color:red;}
-
-
-/*******************************************************************************************
-	THEME: Black Background
-********************************************************************************************/
-
-	/*BODY*/
-	body.theme_black_bg { background-color:black; color:white; }
-
-	/* Top Section*/
-	#selected_cell.theme_black_bg { color:red; }
-
-	/* Game Table*/
-	tr.theme_black_bg.header th { background-color:lightgray; color:black; }
-	td.theme_black_bg.cell_unseen { color:gray; }
-	td.theme_black_bg.cell_seen { background-color:limegreen; color:red; }
-
-	/* Game Settings */
-	#game_settings_section.theme_black_bg { background-color:gray; color:black; }
-	#game_settings_section.theme_black_bg #close_game_settings { color:white; background-color:red;}
-	#reset_game_button.theme_black_bg { background-color:red; color:white; }
-
-	/* Game Example */
-	#game_example_block.theme_black_bg { background-color:black; color:white; }
-	#game_example_block.theme_black_bg #close_example { background-color:red; color:white; }

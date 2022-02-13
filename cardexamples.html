@@ -8,17 +8,25 @@
 <body class="theme_black_bg">
 
 	<h1 style="text-align:center;" class="dlf_title">BINGO Examples</h1>
-
+	
 	<div class="centered">
-		<p style="color:red;" class="dlf_paragraph_xxlarge">
-            Select a Game to see its example
+		<p style="color:red;" class="dlf_paragraph_xxxlarge">
+            Select a Game to see its example, and its cost.
         </p>
-		<select id="gameOptions" class="dlf_select dlf_select_xxlarge dlf_select_blue"></select>
+		<select id="gameOptions" class="dlf_select dlf_select_round_corners dlf_select_xxxlarge dlf_select_blue"></select>
 	</div>
+	<a href="./index.html" class="dlf_href_notextdec">
+		<button style="float:left;" class="dlf_button_xlarge dlf_button_round_corners dlf_button_red">
+			GO BACK
+		</button>
+	</a> 
+	<p id="game_cost" style="margin-top:3%;" class="dlf_paragraph_xxxlarge dlf_center_block_small centered"></p>
+	<br style="clear:both;"/>
+	
 	
 	<hr style="clear:both; margin-bottom:2%;"/>
 
-	<table id="game_table" class="table">
+	<table id="bingo_card_table" class="table">
 		<colgroup>
 			<col style="width:19%">
 			<col style="width:19%">
@@ -28,12 +36,12 @@
 		</colgroup>
 		<thead>
 			<tr class="theme_black_bg header">
-				<th>B</th>
-				<th>I</th>
-				<th>N</th>
-				<th>G</th>
-				<th>O</th>
-			</tr>
+				<th class="card_table_header game_table_header">B</th>
+				<th class="card_table_header game_table_header">I</th>
+				<th class="card_table_header game_table_header">N</th>
+				<th class="card_table_header game_table_header">G</th>
+				<th class="card_table_header game_table_header">0</th>
+		</tr>
 		</thead>
 		<!-- <tbody id="game_table_body"></tbody> -->
 		<tbody id="game_example_table_body"></tbody>

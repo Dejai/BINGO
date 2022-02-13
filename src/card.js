@@ -3,6 +3,7 @@
 var GAME_BOARD_CELLS = [];
 var CURR_GAME = "";
 var IS_CARD_SET = false;
+var IS_BINGO = false;
 var IS_RANDOM_CARD = false;
 var IS_CUSTOM_CARD = false;
 var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
@@ -28,7 +29,7 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         else if(location.pathname.includes("/card") && hasBingoParams() )
         {
             // Make sure the page doesn't close once the game starts
-            window.addEventListener("beforeunload", onClosePage);
+            // window.addEventListener("beforeunload", onClosePage);
 
             // Load the game options
             loadGameOptions();
@@ -38,53 +39,9 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         }
     });
 
-
-
-    // Check if all params are set
-    function hasBingoParams()
-    {
-        all_set = true;
-        letters = Object.keys(bingo_letters);
-
-        letters.forEach( (letter)=> {
-
-            lower = letter.toLowerCase();
-            param = mydoc.get_query_param(lower);
-            if(!all_set || (param == undefined))
-            {
-                all_set = false;
-            }
-        });
-
-        return all_set;
-    }
-
-    // Set the card to play with
-    function onSetCard()
-    {
-        // The card is set;
-        IS_CARD_SET = true;
-
-        b = mydoc.get_query_param("b").split(",");
-        i = mydoc.get_query_param("i").split(",");
-        n = mydoc.get_query_param("n").split(",");
-        g = mydoc.get_query_param("g").split(",");
-        o = mydoc.get_query_param("o").split(",");
-
-        createCardTable(b,i,n,g,o);
-    }
-
-    // Prevent the page accidentally closing
-    function onClosePage(event)
-    {
-        event.preventDefault();
-        event.returnValue='';
-    }
-
     // Add the listener for the cells
     function addNumberListener()
     {
-        var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         let cells = document.querySelectorAll(".number_cell");
         
         cells.forEach( (obj)=>{
@@ -156,8 +113,13 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         {
             // Set the datetime of the card being created
             let d = new Date()
-            let dt = d.toString().substring(0,24);
-            document.getElementById("card_created_timestamp").innerText = dt;
+            let hour = d.getHours()
+            let minute = d.getMinutes();
+            let state = (hour > 12) ? "PM" : "AM";
+            hour = hour > 12 ? 12 - hour : hour;
+
+            let time = `${hour}:${minute} ${state}`;
+            document.getElementById("card_created_timestamp").innerText = time;
 
             // Add listener after adding content
             addNumberListener();
@@ -182,6 +144,37 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         console.log(GAME_BOARD_CELLS);
     }
 
+/*********************** EVENT LISTENERS *****************************/
+     
+    // Prevent the page accidentally closing
+    function onClosePage(event)
+    {
+        event.preventDefault();
+        event.returnValue='';
+    }
+
+    // Validate and use a card
+    function onEditCard()
+    {
+    letters = Object.keys(bingo_letters);
+
+    card_values = getCardValues();
+    b = card_values["b"].join(",");
+    i = card_values["i"].join(",");
+    n = card_values["n"].join(",");
+    g = card_values["g"].join(",");
+    o = card_values["o"].join(",");
+
+    let newPath = `/cardbuildcustom.html?b=${b}&i=${i}&n=${n}&g=${g}&o=${o}`
+    onNavigate(newPath,"Are you sure you want to edit this Card?");
+    }
+
+    // Creating a new card
+    function onNewCard()
+    {
+        onNavigate("./cardtype.html", "Are you sure you want to leave this Card?");
+    }
+
     // Generate a RANDOM cad
     function onRandomCard()
     {
@@ -194,6 +187,21 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         // Create the card table
         createCardTable(b,i,n,g,o);
 
+    }
+
+    // Set the card to play with
+    function onSetCard()
+    {
+        // The card is set;
+        IS_CARD_SET = true;
+
+        b = mydoc.get_query_param("b").split(",");
+        i = mydoc.get_query_param("i").split(",");
+        n = mydoc.get_query_param("n").split(",");
+        g = mydoc.get_query_param("g").split(",");
+        o = mydoc.get_query_param("o").split(",");
+
+        createCardTable(b,i,n,g,o);
     }
 
     // Validate and use a card
@@ -236,55 +244,14 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
 
     }
 
-     // Validate and use a card
-     function onEditCard()
-     {
-        letters = Object.keys(bingo_letters);
- 
-        card_values = getCardValues();
-        b = card_values["b"].join(",");
-        i = card_values["i"].join(",");
-        n = card_values["n"].join(",");
-        g = card_values["g"].join(",");
-        o = card_values["o"].join(",");
-
-        location.href = `/cardbuildcustom.html?b=${b}&i=${i}&n=${n}&g=${g}&o=${o}`;
-     }
-
-    // Get the values from the cells
-    function getCardValues()
+    // Navigate to a new page; With or without confirmation
+    function onNavigate(url,message=undefined)
     {
-        valuesByLetter = {"b":[],"i":[],"n":[],"g":[],"o":[]};
-
-        letters = Object.keys(bingo_letters);
-
-        letters.forEach( (letter) => {
-
-            lower = letter.toLowerCase();
-            document.querySelectorAll(`.number_cell_${lower}`).forEach( (cell)=> {
-
-                value = "";
-
-                // Set the value based on type of card;
-                if(IS_CUSTOM_CARD)
-                {
-                    value = cell.classList.contains("build_card_free") ? "FS" : cell.querySelector("select").value;
-                }
-                else if (IS_RANDOM_CARD)
-                {   
-                    value = cell.innerText == "" ? "FS" : cell.innerText;
-                }
-
-                // Append value if not already there;
-                if(!valuesByLetter[lower].contains(value))
-                {
-                    valuesByLetter[lower].push(value);
-                }
-
-            });
-        });
-
-        return valuesByLetter;
+        let canProceed = (message != undefined) ? confirm(message) : true;
+        if(canProceed)
+        {
+            location.href = url;
+        }
     }
 
 
@@ -310,7 +277,7 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         });
 
         // Load the grouped options
-        options = "<option value=''>Select Game...</option>";
+        options = "<option value=''>SELECT GAME...</option>";
         Object.keys(optgroups).forEach( (key)=>{
 
             group = optgroups[key];
@@ -418,43 +385,62 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
     }
 
     // Indicate which ones are needed
-    function onIndicateNeeded()
+    function onSelectGame()
     {
 
         // Always clear first when changing games;
         onClearNeededCells();
 
         CURR_GAME = document.getElementById("gameOptionsOnCard").value
-        if(CURR_GAME != "" && CURR_GAME != "Straight Line")
+        if(CURR_GAME != "" )
         {
-            let expected = games_object[CURR_GAME]["example"];
+            // Show cost for every game;
+            let cost = games_object[CURR_GAME]["cost"];
+            mydoc.loadContent(`Cost: ${cost}`,"game_cost");
 
-            for(var rowIdx = 0; rowIdx < 5; rowIdx ++)
+            if(CURR_GAME != "Straight Line")
             {
-                for(var colIdx = 0; colIdx < 5; colIdx++ )
+                let expected = games_object[CURR_GAME]["example"];
+                for(var rowIdx = 0; rowIdx < 5; rowIdx ++)
                 {
-                    needed = expected[rowIdx][colIdx];
-                    if(needed == 1 || needed == 8)
+                    for(var colIdx = 0; colIdx < 5; colIdx++ )
                     {
-                        GAME_BOARD_CELLS[rowIdx][colIdx].classList.add("number_cell_needed");
+                        needed = expected[rowIdx][colIdx];
+                        if(needed == 1 || needed == 8)
+                        {
+                            GAME_BOARD_CELLS[rowIdx][colIdx].classList.add("number_cell_needed");
+                        }
                     }
                 }
-            }
+            }            
         }
     }
     
     // Clear the card
     function onClearCard()
     {
-        let proceed = confirm("Are you sure you want to clear the card?");
+        let proceed = (IS_BINGO) ? true : confirm("Are you sure you want to clear the card?");
         if(proceed)
         {
+
             document.querySelectorAll(".number_cell").forEach( (obj) =>{
                 obj.classList.remove("number_selected");
+                // obj.classList.remove("bingo_blink");
+            });
+
+            document.querySelectorAll("[class*='card_header_']").forEach( (cell)=>{
+                cell.classList.remove("bingo_blink");
+                cell.classList.add("game_table_header");
             });
 
             // Clear needed cells;
             onClearNeededCells();
+
+            // Reset selected game
+            CURR_GAME = "";
+            document.getElementById("gameOptionsOnCard").value = "";
+            mydoc.loadContent("","game_cost");
+
 
         }
     }
@@ -472,25 +458,20 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
     // Check if the current card has achieved BINGO!
     function checkForBingo()
     {
-        let isBingo = false;
         if(CURR_GAME == "Straight Line")
         {
-            isBingo = checkForBingo_StraightLine();
+            IS_BINGO = checkForBingo_StraightLine();
         }
         else
         {
             let expected = games_object[CURR_GAME]["example"];
             let theBoard = getBoardState();
-            isBingo = (expected.toString() == theBoard.toString());
+            IS_BINGO = (expected.toString() == theBoard.toString());
         }
 
         // Alert if we have acheived BINGO
-        if (isBingo){
-            setTimeout( ()=> {
-                alert("BINGO!");
-            }, 500);
-
-        } 
+        let state = (IS_BINGO) ? "show" : "";
+        toggleBingoHeaders(state);
     }
 
     // Check specifically for any straight line
@@ -554,12 +535,24 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         return hasStraightLine;
     }
 
-    // Get the icon to use for the free space
-    function getFreeSpaceIcon()
+    // Toggling the state of the BINGO headers
+    function toggleBingoHeaders(state)
     {
-        return `<span class='freeSpace number_cell'><i class="number_cell fa fa-star-o"></i></span>`;
-    }
+        document.querySelectorAll("[class*='card_header_']").forEach( (cell)=>{
 
+            if (state == "show")
+            {
+                cell.classList.add("bingo_blink");
+                cell.classList.remove("game_table_header");
+            }
+            else
+            {
+                cell.classList.remove("bingo_blink");
+                cell.classList.add("game_table_header");
+            }
+
+        });
+    }
 
     // Gets the state of the board -- represented as a
     function getBoardState()
@@ -601,6 +594,69 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         return state;
     }
 
+    // Get the values from the cells
+    function getCardValues()
+    {
+        valuesByLetter = {"b":[],"i":[],"n":[],"g":[],"o":[]};
+
+        letters = Object.keys(bingo_letters);
+
+        letters.forEach( (letter) => {
+
+            lower = letter.toLowerCase();
+            document.querySelectorAll(`.number_cell_${lower}`).forEach( (cell)=> {
+
+                value = "";
+
+                // Set the value based on type of card;
+                if(IS_CUSTOM_CARD)
+                {
+                    value = cell.classList.contains("build_card_free") ? "FS" : cell.querySelector("select").value;
+                }
+                else if (IS_RANDOM_CARD)
+                {   
+                    value = cell.innerText == "" ? "FS" : cell.innerText;
+                }
+
+                // Append value if not already there;
+                if(!valuesByLetter[lower].contains(value))
+                {
+                    valuesByLetter[lower].push(value);
+                }
+
+            });
+        });
+
+        return valuesByLetter;
+    }
+
+    // Get the icon to use for the free space
+    function getFreeSpaceIcon()
+    {
+        return `<span class='freeSpace number_cell'><i class="number_cell fa fa-star-o"></i></span>`;
+    }
+
+
+    // Check if all params are set
+    function hasBingoParams()
+    {
+        all_set = true;
+        letters = Object.keys(bingo_letters);
+
+        letters.forEach( (letter)=> {
+
+            lower = letter.toLowerCase();
+            param = mydoc.get_query_param(lower);
+            if(!all_set || (param == undefined))
+            {
+                all_set = false;
+            }
+        });
+
+        return all_set;
+    }
+
+
     // Get a random int based on interval
     // https://stackoverflow.com/questions/4959975/generate-random-number-between-two-numbers-in-javascript 
     // min and max included 
@@ -621,10 +677,3 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         }
     }
 
-    // Get the current datetime
-    function getDateTime()
-    {
-        var d = new Date();
-        var form
-        var datetime = `${d.getFullYear()}`
-    }
