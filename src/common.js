@@ -27,6 +27,25 @@ const mydoc = {
 		element.innerHTML = content;
 	},
 
+	// Show content based on query selector
+	showContent: function(selector){
+		this._toggleClass(selector, "remove", "hidden");
+	},
+
+	// Hide based on query selector
+	hideContent: function(selector){
+		this._toggleClass(selector, "add", "hidden");
+	},
+
+	addClass: function(selector, className){
+		this._toggleClass(selector, "add", className);
+	},
+
+	removeClass: function(selector, className){
+		console.log(selector + " " + className);
+		this._toggleClass(selector, "remove", className);
+	},
+
 	get_query_map: function(){
 		let query_string = location.search;
 		let query = query_string.replace("?", "")
@@ -49,6 +68,30 @@ const mydoc = {
 		}
 		return value;
 	},
+	
+	_toggleClass: function(selector, action, className){
+		try
+		{
+			let elements = Array.from(document.querySelectorAll(selector));
+			if(elements != undefined)
+			{
+				elements.forEach(function(obj){
+					if(action == "add")
+					{
+						obj.classList.add(className);
+					}
+					else if(action == "remove")
+					{
+						obj.classList.remove(className);
+					}
+				});
+			}
+		} 
+		catch(error)
+		{
+			Logger.log(error, true);
+		}
+	}
 
 };
 const myajax = { 

@@ -6,26 +6,59 @@ var letterCounts = {"B":0, "I":0, "N":0, "G":0,"O":0 };
 
 var CURR_GAME = "";
 var GAME_STARTED = false;
+var IS_BOARD_PAGE = true;
 /*********************** GETTING STARTED *****************************/
 
 // Once doc is ready
 mydoc.ready(function(){
 
-	// Make sure the page doesn't close once the game starts
-	window.addEventListener("beforeunload", onClosePage);
+	let isExamplePage = location.pathname.includes("/cardexamples")
+	if(isExamplePage) { IS_BOARD_PAGE = false; }
 
-	// Load the game options and add a listener for them
+	// Always Load the game options and add a listener for them
 	loadGameOptions();
 	listenerOnGameOptionChange();
 
-	// Load the game cells table
-	loadGameCells();
+	if(IS_BOARD_PAGE)
+	{
+		// Make sure the page doesn't close once the game starts
+		window.addEventListener("beforeunload", onClosePage);
 
-	// Load the game voice options
-	loadVoiceOptions();
+		// Load the game cells table
+		loadGameCells();
 
-	// Add listener for "Enter Key"
-	listenerOnKeyUp();	
+		// Load the game voice options
+		loadVoiceOptions();
+
+		// Add listener for "Enter Key"
+		listenerOnKeyUp();
+	}
+	else
+	{
+		alert
+		// Load an empty example table
+		table = [
+					[0,0,0,0,0],
+					[0,0,0,0,0],	
+					[0,0,3,0,0],	
+					[0,0,0,0,0],	
+					[0,0,0,0,0]		
+				]
+		onLoadGameExampleTable(table);
+	}
+	
+
+	// if(location.pathname.includes("/cardexamples"))
+	// {
+	// 	console.log("CARD EXAMPLES");
+
+		
+	// }
+	// else
+	// {
+		
+	// }
+		
 
 });
 
@@ -64,13 +97,19 @@ function listenerOnKeyUp(){
 // Adds listener for when new game is selected
 function listenerOnGameOptionChange()
 {
+	console.log(IS_BOARD_PAGE);
 	options = document.getElementById("gameOptions")
 	options.addEventListener("change", function(event){
 		ele = event.target;
 		CURR_GAME = ele.value;
 		onLoadGameExample(ele.value);
 		ignoreCellsByGame(ele.value);
-		onDescribeGame(ele.value);
+
+		if(IS_BOARD_PAGE)
+		{
+			onDescribeGame(ele.value, true);
+		}
+		
 	});
 }
 
@@ -191,10 +230,10 @@ function loadGameCells()
 /****************** GAME SETTING ACTIONS ****************************/
 
 // Action to describe the selected game
-function onDescribeGame(game)
+function onDescribeGame(game,sayCost=false)
 {
 	desc 	= games_object[game]["desc"];
-	cost = games_object[game]["cost"];
+	cost = (sayCost) ? games_object[game]["cost"] : undefined;
 
 	// Describe the game and cost;
 	speakText(desc, cost, 0.9, 0.9, 700);
@@ -209,52 +248,88 @@ function onLoadGameExample(value, depth=0)
 	if (game_obj != undefined)
 	{
 		game_table = game_obj["example"];
-		game_example = "";
-
 		if(value == "Straight Line")
 		{
+			// Show the example body;
+			toggleExampleTableBody("show");
 
 			// Initial set
 			game_table = getStraightLineExample();
-			onLoadGameExampleTable(value, game_table );
+			onLoadGameExampleTable(game_table );
 
 			console.log("DEPTH: " + depth);
 			if (depth < 5)
 			{
 				setTimeout(function(){
 					onLoadGameExample("Straight Line", depth+1);			
-				}, 2000);
+				}, 1200);
 			}
 		}
 		else if (game_table !== undefined)
 		{
-			onLoadGameExampleTable(value, game_table);
+			toggleExampleTableBody("show");
+			onLoadGameExampleTable(game_table);
 		}
 		else 
 		{
-			toggleExample();
+			toggleExampleTableBody("hide");
 		}
 	} 
 }
 
-// Action to load the example table
-function onLoadGameExampleTable(value, game_table)
+// Toggle the game example table body
+function toggleExampleTableBody(state)
 {
-	// Show the example popup
-	let game_example_block = document.getElementById("game_example_block");
-	game_example_block.classList.remove("hidden");
-	document.getElementById("game_example_name").innerText = value; 
+	if(state == "show")
+	{
+		mydoc.hideContent("#game_table_body");
+		mydoc.showContent("#game_example_table_body");
+	}
+	else
+	{
+		mydoc.showContent("#game_table_body");
+		mydoc.hideContent("#game_example_table_body");
+	}
+}
 
-	game_table.forEach(function(row){
-		table_row = "<tr class='example_row'>";
-		row.forEach(function(cell){
+// Action to load the example table
+function onLoadGameExampleTable(game_table)
+{
+	// document.getElementById("game_example_name").innerText = value; 
+	console.log(game_table);
+	game_example = "";
+
+	for(var rowIdx = 0; rowIdx < game_table.length; rowIdx++)
+	{
+		row = game_table[rowIdx];
+		b = ""; i = ""; n = ""; g= ""; o = "";
+		console.log(row);
+
+		tr = "<tr class='example_row'>";
+		for(var idx = 0; idx < row.length; idx++)
+		{
+			cell = row[idx];
+			idx_to_letter = {0:"B", 1:"I", 2:"N", 3:"G", 4:"O"};
 			class_val = (cell == 1 || cell == 8) ? "example_filled" : "example_empty";
 			cell_val = (cell == 8 || cell == 3) ? "FREE" : cell == 1 ? "X" : "_";
-			table_row += "<td class=\"" + class_val + "\">" + cell_val + "</td>";
-		});
-		table_row += "</tr>";
-		game_example += table_row;
-	});
+			letter_val = (cell == 8 || cell == 3) ? "FREE" : idx_to_letter[idx];
+
+			td = `<td class="example ${class_val}" data-letter="${letter_val}">${cell_val}</td>`;
+			tr += td;
+		}
+		tr += "</tr>";
+		game_example += tr;
+
+		// table_row = `<tr class='example_row'>`;
+		
+		// row.forEach(function(cell){
+		// 	class_val = (cell == 1 || cell == 8) ? "example_filled" : "example_empty";
+		// 	cell_val = (cell == 8 || cell == 3) ? "FREE" : cell == 1 ? "X" : "_";
+		// 	table_row += `<td class="example ${class_val}">${cell_val}</td>`;
+		// });
+		// table_row += "</tr>";
+		// game_example += table_row;
+	};
 	mydoc.loadContent(game_example, "game_example_table_body");
 }
 
@@ -383,8 +458,13 @@ function onStartGame()
 		return;
 	}
 
-	document.getElementById("startGameButton").classList.add("hidden");
-	document.getElementById("pickNumberButton").classList.remove("hidden");
+	// Hide/Show things
+	mydoc.hideContent("#startGameButton");
+	toggleExampleTableBody("hide");
+	mydoc.showContent("#pickNumberButton");
+	
+	// document.getElementById("startGameButton").classList.add("hidden");
+	// document.getElementById("pickNumberButton").classList.remove("hidden");
 	speakText("Let the Game Begin");
 	GAME_STARTED = true;
 }
@@ -398,6 +478,9 @@ function pickNumber()
 		alert("Please select a game first!");
 		return;
 	}
+
+	// Make sure the example is hidden
+	toggleExampleTableBody("hide");
 
 	// Disable picker temporarily 
 	let pickNumButton = document.getElementById("pickNumberButton");
@@ -463,7 +546,6 @@ function incrementLetterCount(letter)
 // Ignore cells for certain games;
 function ignoreCellsByGame(game)
 {
-
 	if(games_object[game].hasOwnProperty("ignore"))
 	{
 		let list = games_object[game]["ignore"];
@@ -477,7 +559,7 @@ function ignoreCellsByGame(game)
 	}
 }
 
-// Helper for udpate the cells with a certain letter
+// Helper to udpate the cells with a certain letter
 function ignoreCells(letter)
 {
 	selector = "[data-letter^='" + letter + "']";

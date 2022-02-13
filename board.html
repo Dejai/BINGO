@@ -51,22 +51,6 @@
 			</tr>
 		</table>
 	</div>
-	<div id="game_example_block" class="theme_black_bg hidden">
-		<button id="close_example" onclick="toggleExample()">Close</button>
-		<h2><span id="game_example_name"></span></h2>
-		<table id="game_example_table">
-			<thead>
-				<tr class="theme_black_bg header">
-					<th>B</th>
-					<th>I</th>
-					<th>N</th>
-					<th>G</th>
-					<th>O</th>
-				</tr>
-			</thead>
-			<tbody id="game_example_table_body"></tbody>
-		</table>
-	</div>
 	<div id="menu_section">
 		<table class="table">
 			<colgroup>
@@ -75,10 +59,11 @@
 				<col style="width:25%;">
 			</colgroup>
 			<tr>
-				<td> 
-					<!-- <label>Current Game</label> -->
+				<td style="text-align:left; "> 
 					<select id="gameOptions"></select><br/>
-					<span style="cursor:pointer" onclick="onShowGameExampleAgain()">Show Example (again)</span>
+					<span style="cursor:pointer" onclick="onShowGameExampleAgain()">Show Example</span>
+					&nbsp; | &nbsp;
+					<span style="cursor:pointer" onclick="toggleExampleTableBody('hide')">Hide Example</span>
 				 </td>
 				<td>
 					<button id="startGameButton" class="button_mash" onclick="onStartGame()">
@@ -112,7 +97,13 @@
 		</table>
 	</div>
 	<table id="game_table" class="table">
-
+		<colgroup>
+			<col style="width:19%">
+			<col style="width:19%">
+			<col style="width:19%">
+			<col style="width:19%">
+			<col style="width:19%">
+		</colgroup>
 		<thead>
 			<tr class="theme_black_bg header">
 				<th>B</th>
@@ -123,6 +114,7 @@
 			</tr>
 		</thead>
 		<tbody id="game_table_body"></tbody>
+		<tbody id="game_example_table_body" class="hidden"></tbody>
 	</table>
 
 
