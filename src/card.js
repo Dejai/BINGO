@@ -112,13 +112,7 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         if(IS_CARD_SET)
         {
             // Set the datetime of the card being created
-            let d = new Date()
-            let hour = d.getHours()
-            let minute = d.getMinutes();
-            let state = (hour > 12) ? "PM" : "AM";
-            hour = hour > 12 ? 12 - hour : hour;
-
-            let time = `${hour}:${minute} ${state}`;
+            let time = getTimeOfSubmission();
             document.getElementById("card_created_timestamp").innerText = time;
 
             // Add listener after adding content
@@ -708,6 +702,28 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         ]
         return base_game_table;
     }
+
+    // Get the date/time stamp
+	function getTimeOfSubmission()
+	{
+		let d = new Date()
+
+		let hour = d.getHours();
+		hour = hour > 12 ? hour - 12 : hour;
+		hour = (hour < 10) ? "0"+hour : hour;
+		
+		let minute = d.getMinutes();
+		minute = (minute < 10) ? "0"+minute : minute;
+
+		let seconds = d.getSeconds();
+		seconds = (seconds < 10) ? "0"+seconds : seconds;
+
+		let state = (d.getHours() >= 12) ? "PM" : "AM";
+
+		let time = `${hour}:${minute}:${seconds} ${state}`;
+
+		return time;
+	}
 
     // Check if all params are set
     function hasBingoParams()
