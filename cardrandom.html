@@ -11,6 +11,11 @@
         <h1 style="text-align:center;" class="dlf_title">
             Random Card
         </h1>
+        <div style="width:50%; margin:auto;">
+            <button onclick="onUseCard()" class="dlf_button_xxxlarge dlf_button_round_corners dlf_button_limegreen">
+                USE THIS CARD
+            </button>
+        </div>
 		<div>
             <a href="./cardtype.html" class="dlf_href_notextdec">
                 <button style="float:left;" class="dlf_button_xxxlarge dlf_button_round_corners dlf_button_red">
@@ -21,11 +26,7 @@
                 EDIT CARD
             </button>
         </div>
-        <div style="width:50%; margin:auto;">
-            <button onclick="onUseCard()" class="dlf_button_xxxlarge dlf_button_round_corners dlf_button_limegreen">
-                USE THIS CARD
-            </button>
-        </div>
+        
         <br style="clear:both;"/>
         <hr style="clear:both; margin-bottom:2%;"/>
         <br/>
@@ -45,11 +46,11 @@
             </colgroup>
             <thead id="bingo_card_head" class="hidden">
                 <tr class="theme_black_bg header">
-                    <th>B</th>
-                    <th>I</th>
-                    <th>N</th>
-                    <th>G</th>
-                    <th>0</th>
+                    <th class="card_table_header game_table_header">B</th>
+                    <th class="card_table_header game_table_header">I</th>
+                    <th class="card_table_header game_table_header">N</th>
+                    <th class="card_table_header game_table_header">G</th>
+                    <th class="card_table_header game_table_header">0</th>
                 </tr>
             </thead>
             <tbody id="bingo_card_body"></tbody>

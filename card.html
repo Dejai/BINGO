@@ -9,23 +9,21 @@
 
     <div id="bingo_card_section">
         <h1 style="text-align:center;" class="dlf_title">BINGO Card</h1>
-        <div class="dlf_center_block_medium">
-            <select id="gameOptionsOnCard" class="dlf_select dlf_select_xxlarge dlf_select_blue" onchange="onIndicateNeeded()" >
-            </select>
-        </div>
-        <div>
-            <a href="./cardtype.html" class="dlf_href_notextdec">
-                <button style="float:left;" class="dlf_button_xxlarge dlf_button_round_corners dlf_button_red">
-                    NEW CARD
-                </button>
-            </a>            
-        </div>
-        <button id="clearCardButton" class="dlf_button_xxlarge dlf_button_round_corners dlf_button_limegreen" style="float:right;" onclick="onClearCard()">
-            Clear Card
+        
+        <button style="float:left;" class="dlf_button_xxlarge dlf_button_round_corners dlf_button_red" onclick="onNewCard()">
+            NEW CARD
+        </button>
+        <button style="float:right;" class="dlf_button_xxlarge dlf_button_round_corners dlf_button_limegreen" onclick="onClearCard()">
+            CLEAR CARD
         </button>
         <br style="clear:both;"/>
+        <div class="dlf_center_block_medium">
+            <select id="gameOptionsOnCard" class="dlf_select dlf_select_round_corners dlf_select_xxxlarge dlf_select_blue" onchange="onSelectGame()" >
+            </select>
+        </div>
+        <p id="game_cost" style="text-align:center;" class="dlf_paragraph_xxxlarge"></p>
+        <!-- <br/> -->
         <hr style="clear:both; margin-bottom:2%;"/>
-    
         <table id="bingo_card_table" class="table">
             <colgroup>
                 <col style="width:19%;">
@@ -36,11 +34,11 @@
             </colgroup>
             <thead id="bingo_card_head" class="hidden">
                 <tr class="theme_black_bg header">
-                    <th>B</th>
-                    <th>I</th>
-                    <th>N</th>
-                    <th>G</th>
-                    <th>0</th>
+                    <th class="card_table_header game_table_header card_header_b">B</th>
+                    <th class="card_table_header game_table_header card_header_i">I</th>
+                    <th class="card_table_header game_table_header card_header_n">N</th>
+                    <th class="card_table_header game_table_header card_header_g">G</th>
+                    <th class="card_table_header game_table_header card_header_o">O</th>
                 </tr>
             </thead>
             <tbody id="bingo_card_body"></tbody>

@@ -24,7 +24,10 @@ const mydoc = {
 	loadContent: function(content, identifier)
 	{
 		element = document.getElementById(identifier);
-		element.innerHTML = content;
+		if(element != undefined)
+		{
+			element.innerHTML = content;
+		}
 	},
 
 	// Show content based on query selector

@@ -188,7 +188,7 @@ function loadGameOptions()
 	});
 
 	// Load the grouped options
-	options = "<option value=''>Select Game...</option>";
+	options = "<option value=''>SELECT GAME...</option>";
 	Object.keys(optgroups).forEach( (key)=>{
 
 		group = optgroups[key];
@@ -211,7 +211,7 @@ function loadGameCells()
 	{
 		if (letter != "contains")
 		{
-			cells += "<td><table class=\"table\">";
+			cells += "<td class='game_table_cell'><table class=\"table\">";
 			range = bingo_letters[letter];
 			start = range[0];
 			end   = range[range.length-1];
@@ -233,7 +233,7 @@ function loadGameCells()
 function onDescribeGame(game,sayCost=false)
 {
 	desc 	= games_object[game]["desc"];
-	cost = (sayCost) ? games_object[game]["cost"] : undefined;
+	cost = (sayCost) ? `This game costs ${games_object[game]["cost"]}` : undefined;
 
 	// Describe the game and cost;
 	speakText(desc, cost, 0.9, 0.9, 700);
@@ -247,23 +247,30 @@ function onLoadGameExample(value, depth=0)
 
 	if (game_obj != undefined)
 	{
+		// Load the game cost;
+		cost = game_obj["cost"];
+		mydoc.loadContent(`Cost: ${cost}`,"game_cost");
+
 		game_table = game_obj["example"];
 		if(value == "Straight Line")
 		{
 			// Show the example body;
 			toggleExampleTableBody("show");
 
-			// Initial set
-			game_table = getStraightLineExample();
-			onLoadGameExampleTable(game_table );
+			// Load all the examples;
+			let examples = getStraightLinExamples();
+			onLoadGameExampleTable(examples[0]);	
 
-			console.log("DEPTH: " + depth);
-			if (depth < 5)
-			{
-				setTimeout(function(){
-					onLoadGameExample("Straight Line", depth+1);			
-				}, 1200);
-			}
+			idx = 1;
+			let straightLineInterval = setInterval( ()=>{
+
+				onLoadGameExampleTable(examples[idx]);	
+				idx+=1 
+				if(idx == examples.length)
+				{
+					clearInterval(straightLineInterval);
+				}
+			}, 500);
 		}
 		else if (game_table !== undefined)
 		{
@@ -295,17 +302,13 @@ function toggleExampleTableBody(state)
 // Action to load the example table
 function onLoadGameExampleTable(game_table)
 {
-	// document.getElementById("game_example_name").innerText = value; 
-	console.log(game_table);
 	game_example = "";
-
 	for(var rowIdx = 0; rowIdx < game_table.length; rowIdx++)
 	{
 		row = game_table[rowIdx];
 		b = ""; i = ""; n = ""; g= ""; o = "";
-		console.log(row);
-
 		tr = "<tr class='example_row'>";
+
 		for(var idx = 0; idx < row.length; idx++)
 		{
 			cell = row[idx];
@@ -319,16 +322,6 @@ function onLoadGameExampleTable(game_table)
 		}
 		tr += "</tr>";
 		game_example += tr;
-
-		// table_row = `<tr class='example_row'>`;
-		
-		// row.forEach(function(cell){
-		// 	class_val = (cell == 1 || cell == 8) ? "example_filled" : "example_empty";
-		// 	cell_val = (cell == 8 || cell == 3) ? "FREE" : cell == 1 ? "X" : "_";
-		// 	table_row += `<td class="example ${class_val}">${cell_val}</td>`;
-		// });
-		// table_row += "</tr>";
-		// game_example += table_row;
 	};
 	mydoc.loadContent(game_example, "game_example_table_body");
 }
@@ -341,73 +334,52 @@ function onShowGameExampleAgain()
 	onDescribeGame(ele.value);
 }
 
-// Gets a calculated example of a straight line win
-function getStraightLineExample()
+// Get all the straight line examples
+function getStraightLinExamples()
 {
-	directions = ["Col", "Row", "DiagLeft", "DiagRight"];
-	cols = [0,1,2,3,4];
-	rows = [0,1,2,3,4];
+	all_examples = [];
 
-	rand_idx_dir = Math.floor(Math.random() * directions.length);
-	which_dir = directions[rand_idx_dir];
+	diag_left = getBaseGameTable();
+	diag_right = getBaseGameTable();
 
-	let rand_row = (which_dir == "Row") ? Math.floor(Math.random() * rows.length) : -1;
-	let rand_col = (which_dir == "Col") ? Math.floor(Math.random() * cols.length) : -1;
-
-	game_table = 	[
-						[0,0,0,0,0],
-						[0,0,0,0,0],
-						[0,0,3,0,0],
-						[0,0,0,0,0],
-						[0,0,0,0,0],
-					]
-
-
-	for(let row_idx = 0; row_idx < 5; row_idx++)
+	for (var idx = 0; idx < 5; idx++)
 	{
-		for(let col_idx = 0; col_idx < 5; col_idx++)
+		// Setup the diagonal example
+		left = idx;
+        right = (5-idx)-1;
+		diag_left[idx][left] = (idx == 2) ? 8 : 1;
+		diag_right[idx][right] = (idx == 2) ? 8 : 1;
+
+		// Setup row-based wins
+		let row_based = getBaseGameTable()
+		row_based[idx] = (idx ==2 ) ? [1,1,8,1,1] : [1,1,1,1,1];
+		all_examples.push(row_based);
+
+		// Setup col-based wins
+		let col_based = getBaseGameTable();
+		for(var itr = 0; itr < 5; itr++)
 		{
-			// Check if FREE space is used
-			if (row_idx == 2 && col_idx == 2)
-			{
-				if (
-					which_dir == "DiagLeft" ||
-					which_dir == "DiagRight" || 
-					rand_col == 2 ||
-					rand_row == 2
-				)
-				{
-					game_table[row_idx][col_idx] = 8
-				} else {
-					game_table[row_idx][col_idx] = 3
-				}
-			}
-			else if(which_dir == "Row" && row_idx == rand_row)
-			{
-				game_table[row_idx][col_idx] = 1
-			}
-			else if(which_dir == "Col" && col_idx == rand_col)
-			{
-				game_table[row_idx][col_idx] = 1
-			}
-			else if(which_dir == "DiagLeft")
-			{
-				if( row_idx == col_idx)
-				{
-					game_table[row_idx][col_idx] = 1;
-				}
-			}
-			else if(which_dir == "DiagRight")
-			{
-				if((row_idx + col_idx) == 4)
-				{
-					game_table[row_idx][col_idx] = 1;
-				}
-			}
+			col_based[itr][idx] = ((idx == 2 && itr == 2)) ? 8 : 1;
 		}
+		all_examples.push(col_based);
 	}
 
-	return game_table;
+	all_examples.push(diag_left);
+	all_examples.push(diag_right);
+	return all_examples;
+}
+
+// Get a base game example
+function getBaseGameTable()
+{
+	base_game_table = 	[
+		[0,0,0,0,0],
+		[0,0,0,0,0],
+		[0,0,3,0,0],
+		[0,0,0,0,0],
+		[0,0,0,0,0],
+	]
+	return base_game_table;
 }
 
 // Action to change the game theme
