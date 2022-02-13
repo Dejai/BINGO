@@ -32,6 +32,12 @@
 	.dlf_center_block_large { margin:auto; width:80%;}
 	.dlf_center_block_xlarge { margin:auto; width:90%;}
 	.dlf_center_block_xxlarge { margin:auto; width:99%;}
+
+/* Tables */
+	.dlf_table { border-spacing: 0; }
+	.dlf_table_small { width:25%; }
+	.dlf_table_medium { width:50%; }
+	.dlf_table_large { width:100%; }
 	
 /* Hyperlinks */
 	.dlf_href_notextdec { text-decoration:none !important; }
@@ -45,6 +51,7 @@
 /* Buttons */
 	/*Button Shape & hover*/
 	button { cursor: pointer; padding: 1%; border:none; }
+	[class*="dlf_button"] { font-weight:bolder; }
 	button:focus { outline: none; box-shadow: none; }
 	.dlf_button_round_corners { border-radius:77px; }
 
@@ -164,8 +171,9 @@
 	#game_settings_table select { width:100%; }
 
 /* Game Example */
+	.example { padding-top:2%; padding-bottom:2%;}
 	.example_filled { background-color:limegreen; color:red;  }
-	.example_empty { background-color:lightgray; color:gray;  }
+	.example_empty { background-color:inherit; color:inerit;  }
 
 	#game_example_block { position:absolute; border:1px solid red; z-index:1000; 
 						width:90%; margin-left:5%; margin-top:5%; text-align:center; }

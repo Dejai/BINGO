@@ -54,7 +54,20 @@ const games_object =
 		},
 		
 
+		
 		// The Random Games
+		"Bird": {
+			"group": "Random Games",
+			"desc": "The game is Bird! Down the N, and across the middle row.",
+			"cost": "This game costs 1 dollar",
+			"example": 	[
+							[0,0,1,0,0],
+							[0,0,1,0,0],
+							[1,1,8,1,1],
+							[0,0,1,0,0],
+							[0,0,1,0,0]
+						]
+		},
 		"Greater Than": {
 			"group": "Random Games",
 			"desc": "The game is Greater Than! The greater than symbol.",
@@ -106,18 +119,7 @@ const games_object =
 							[0,0,0,0,1]
 						]
 		},
-		"Plus Sign": {
-			"group": "Random Games",
-			"desc": "The game is Plus Sign! Down the N, and across the middle row.",
-			"cost": "This game costs 1 dollar",
-			"example": 	[
-							[0,0,1,0,0],
-							[0,0,1,0,0],
-							[1,1,8,1,1],
-							[0,0,1,0,0],
-							[0,0,1,0,0]
-						]
-		},
+		
 		"Popsicle": {
 			"group": "Random Games",
 			"desc": "The game is Popsicle! The shape looks like a popsicle.",
@@ -144,7 +146,19 @@ const games_object =
 							[1,0,1,0,1]
 						]
 		},
-		
+		"Toy Car": {
+			"group": "Random Games",
+			"desc": "The game is Greater Than! The greater than symbol.",
+			"ignore": ["B","O"],
+			"cost": "This game costs 50 cents",
+			"example": 	[
+							[0,1,0,1,0],
+							[0,1,1,1,0],
+							[0,0,8,0,0],
+							[0,1,1,1,0],
+							[0,1,0,1,0]
+						]
+		},
 		"Train Tracks": {
 			"group": "Random Games",
 			"desc": "The game is Train Tracks! Down the I and G",

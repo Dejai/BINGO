@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>BINGO Examples</title>
+	<link rel="stylesheet" type="text/css" href="./src/bingo.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body class="theme_black_bg">
+
+	<h1 style="text-align:center;" class="dlf_title">BINGO Examples</h1>
+
+	<div class="centered">
+		<select id="gameOptions" class="dlf_select_xxlarge"></select>
+	</div>
+	
+	<hr style="clear:both; margin-bottom:2%;"/>
+
+	<table id="game_table" class="table">
+		<colgroup>
+			<col style="width:19%">
+			<col style="width:19%">
+			<col style="width:19%">
+			<col style="width:19%">
+			<col style="width:19%">
+		</colgroup>
+		<thead>
+			<tr class="theme_black_bg header">
+				<th>B</th>
+				<th>I</th>
+				<th>N</th>
+				<th>G</th>
+				<th>O</th>
+			</tr>
+		</thead>
+		<!-- <tbody id="game_table_body"></tbody> -->
+		<tbody id="game_example_table_body"></tbody>
+	</table>
+</body>
+<script type="text/javascript" src="./src/common.js"></script>
+<script type="text/javascript" src="./src/bingo_objects.js"></script>
+<script type="text/javascript" src="./src/bingo.js"></script>
+</html>
