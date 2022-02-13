@@ -75,11 +75,18 @@
 	.dlf_button_yellow { background-color:yellow !important; color:black !important;}
 
 /* Select Inputs */
+	.dlf_select { padding:1%; border:none; }
+	.dlf_select:focus { border:none; }
+	
 	.dlf_select_small { font-size: 50% !important; }
 	.dlf_select_large { font-size: 140% !important; }
 	.dlf_select_xlarge { font-size: 190% !important; }
 	.dlf_select_xxlarge { font-size: 200% !important; }
 	.dlf_select_xxxlarge { font-size: 250% !important; }
+
+	.dlf_select_red { background-color:red; color:white; }
+	.dlf_select_blue { background-color:blue; color:white; }
+
 
 
 
@@ -172,6 +179,9 @@
 
 /* Game Example */
 	.example { padding-top:8%; padding-bottom:8%;}
+	@media only screen and (min-device-width:1200px) {
+		.example { padding-top:2%; padding-bottom:2%; }	
+	}
 	.example_filled { background-color:limegreen; color:red;  }
 	.example_empty { background-color:inherit; color:inerit;  }
 
