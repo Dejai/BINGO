@@ -91,11 +91,11 @@
 	.dlf_select_round_corners { border-radius:77px; }
 
 	
-	.dlf_select_small { font-size: 50%; }
-	.dlf_select_large { font-size: 140%; }
-	.dlf_select_xlarge { font-size: 190%; }
-	.dlf_select_xxlarge { font-size: 200%; }
-	.dlf_select_xxxlarge { font-size: 250%; }
+	.dlf_select_small { font-size: 50%; width:50%; }
+	.dlf_select_large { font-size: 140%; width:100%;}
+	.dlf_select_xlarge { font-size: 190%; width:100%;}
+	.dlf_select_xxlarge { font-size: 200%; width:100%;}
+	.dlf_select_xxxlarge { font-size: 250%; width:100%;}
 
 	.dlf_select_red { background-color:red; color:white; }
 	.dlf_select_blue { background-color:blue; color:white; }
@@ -146,11 +146,20 @@
 	.number_cell_needed { color: red } 
 	#card_created_timestamp { color:red; font-size:inherit; font-style:italic; }
 
-	.card_header_b {font-size:510%; background-color: blue; color:white;}
-	.card_header_i {font-size:510%; background-color: indigo; color:white;}
-	.card_header_n {font-size:510%; background-color: navy; color:white;}
-	.card_header_g {background-color: green; color:white;}
-	.card_header_o {background-color: orange; color:white;}
+	/* Build Card*/
+	select.build_card_b { background-color: blue; color:white;}
+	select.build_card_i { background-color: indigo; color:white;}
+	select.build_card_n { background-color: navy; color:white;}
+	select.build_card_g { background-color: green; color:white;}
+	select.build_card_o { background-color: orange; color:white;}
+
+	/* Card Headers */
+	.card_header_b { background-color: blue; color:white;}
+	.card_header_i { background-color: indigo; color:white;}
+	.card_header_n { background-color: navy; color:white;}
+	.card_header_g { background-color: green; color:white;}
+	.card_header_o { background-color: orange; color:white;}
+
 
 
 /**************************************************** 
