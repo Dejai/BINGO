@@ -84,7 +84,6 @@ const games_object =
 		"Grid!": {
 			"group": "Random Games",
 			"desc": "The game is Grid! The 1st, 3rd, and last columns. Also the 1st, 3rd, and last rows.",
-			"ignore": ["I", "G"],
 			"cost": "This game costs 2 dollars",
 			"example": 	[
 							[1,1,1,1,1],
