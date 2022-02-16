@@ -112,7 +112,7 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         if(IS_CARD_SET)
         {
             // Set the datetime of the card being created
-            let time = getTimeOfSubmission();
+            let time = Helper.getDate("H:m:s K");
             document.getElementById("card_created_timestamp").innerText = time;
 
             // Add listener after adding content
@@ -233,9 +233,6 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
 
             location.href = `/card.html?b=${b}&i=${i}&n=${n}&g=${g}&o=${o}`;
         }
-
-
-
     }
 
     // Navigate to a new page; With or without confirmation
@@ -387,6 +384,10 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         CURR_GAME = document.getElementById("gameOptionsOnCard").value
         if(CURR_GAME != "" )
         {
+
+            // Toggle the view of the buttons
+            toggleEditAndClearButtons("clear");
+            
             // Show cost for every game;
             let cost = games_object[CURR_GAME]["cost"];
             mydoc.loadContent(`Cost: ${cost}`,"game_cost");
@@ -458,7 +459,8 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
             document.getElementById("gameOptionsOnCard").value = "";
             mydoc.loadContent("","game_cost");
 
-
+            // Show the edit button
+            toggleEditAndClearButtons("edit");
         }
     }
 
@@ -468,6 +470,24 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         document.querySelectorAll(".number_cell").forEach( (obj) =>{
             obj.classList.remove("number_cell_needed");
         });
+    }
+
+    // Toggle between the Edit and Clear buttons on the actual card
+    function toggleEditAndClearButtons(view)
+    {
+        if(view == "edit")
+        {
+            // Show the Edit button and hide Clear button
+            mydoc.showContent("#edit_card_button");
+            mydoc.hideContent("#clear_card_button");
+        }
+        else
+        {
+            // Show the Clear Button and hide the Edit button
+            mydoc.showContent("#clear_card_button");
+            mydoc.hideContent("#edit_card_button");
+        }
+        
     }
 
 
@@ -632,7 +652,7 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
                 {
                     value = cell.classList.contains("build_card_free") ? "FS" : cell.querySelector("select").value;
                 }
-                else if (IS_RANDOM_CARD)
+                else if (IS_RANDOM_CARD || IS_CARD_SET)
                 {   
                     value = cell.innerText == "" ? "FS" : cell.innerText;
                 }
@@ -702,28 +722,6 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         ]
         return base_game_table;
     }
-
-    // Get the date/time stamp
-	function getTimeOfSubmission()
-	{
-		let d = new Date()
-
-		let hour = d.getHours();
-		hour = hour > 12 ? hour - 12 : hour;
-		hour = (hour < 10) ? "0"+hour : hour;
-		
-		let minute = d.getMinutes();
-		minute = (minute < 10) ? "0"+minute : minute;
-
-		let seconds = d.getSeconds();
-		seconds = (seconds < 10) ? "0"+seconds : seconds;
-
-		let state = (d.getHours() >= 12) ? "PM" : "AM";
-
-		let time = `${hour}:${minute}:${seconds} ${state}`;
-
-		return time;
-	}
 
     // Check if all params are set
     function hasBingoParams()
