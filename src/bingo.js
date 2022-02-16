@@ -439,6 +439,11 @@ function onStartGame()
 	// document.getElementById("pickNumberButton").classList.remove("hidden");
 	speakText("Let the Game Begin");
 	GAME_STARTED = true;
+
+	// Set the time the game was started
+	let time = Helper.getDate("H:m:s K");
+	mydoc.loadContent(time, "game_started_timestamp");
+	// document.getElementById("game_started_imestamp").innerText = time;
 }
 
 // Pick a random number from the board; Only from unseen
@@ -582,6 +587,8 @@ function resetBoard()
 		document.getElementById("startGameButton").classList.remove("hidden");
 		document.getElementById("pickNumberButton").classList.add("hidden");
 
+		// Reset time started value
+		mydoc.loadContent("", "game_started_timestamp");
 	}	
 }
 
