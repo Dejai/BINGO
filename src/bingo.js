@@ -520,11 +520,12 @@ function toggleGameBoardInput(identifier, state)
 				break;
 			// Default to enabling it.
 			default:
+				element.disabled = false;
 				if(element.tagName == "BUTTON")
 				{
-					element.classList.remove("dlf_button_gray")
+					element.classList.remove("dlf_button_gray");
+					element.classList.add("dlf_button_limegreen");
 				}
-				element.disabled = false;
 		}
 	}
 }
@@ -538,6 +539,9 @@ function onStartGame()
 		alert("Please select a game first!");
 		return;
 	}
+
+	// Show the reset button
+	mydoc.showContent("#reset_game_button");
 
 	// Disable the option to change the game:
 	toggleGameBoardInput("gameOptions","disable");
@@ -726,6 +730,9 @@ function resetBoard()
 	if(confirm_reset)
 	{
 
+		// Hide reset button
+		mydoc.hideContent("#reset_game_button");
+
 		// Reset the headers
 		toggleBingoHeaders("remove");
 
@@ -749,6 +756,9 @@ function resetBoard()
 		document.getElementById("gameOptions").value = "";
 		CURR_GAME = "";
 		toggleGameBoardInput("gameOptions","enabled");
+
+		// Reset Start Game
+		toggleGameBoardInput("startGameButton","disable");
 
 		// Reset GAME_STARTED
 		GAME_STARTED = false;
