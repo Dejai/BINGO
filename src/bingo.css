@@ -19,6 +19,31 @@
 				user-select: none; /* Non-prefixed version, currently
 										supported by Chrome, Edge, Opera and Firefox */
 	}
+
+	.bingo_ball_circle {
+		height:100px;
+		width:100px;
+		line-height: 100px; 
+		background-color: gray;
+		border-radius: 50%;
+		display: inline-block;
+
+		/* background-color: black;
+		color:white; */
+	}
+	.bingo_ball_letter_b { background-color:blue; color:white; }
+	.bingo_ball_letter_i { background-color:red; color:white; }
+	.bingo_ball_letter_n { background-color:white; color:black; }
+	.bingo_ball_letter_g { background-color:green; color:white; }
+	.bingo_ball_letter_o { background-color:yellow; color:black; }
+/* 
+	.bingo_ball_letter_b { border:10px solid blue; }
+	.bingo_ball_letter_i { border:10px solid red; }
+	.bingo_ball_letter_n { border:10px solid white; }
+	.bingo_ball_letter_g { border:10px solid green; }
+	.bingo_ball_letter_o { border:10px solid yellow; } */
+	
+
 	#bingo_version { position:fixed; bottom:1px; right:1px; color:red; font-style:italic;}
 
 	@keyframes bingo_blink {
@@ -84,6 +109,7 @@
 	.dlf_button_violet { background-color:violet !important; color:black !important;}
 	.dlf_button_gold { background-color:goldenrod !important; color:black !important;}
 	.dlf_button_yellow { background-color:yellow !important; color:black !important;}
+	.dlf_button_gray { background-color:gray !important; color:lightgray !important;}
 
 /* Select Inputs */
 	.dlf_select { padding:3%; border:none; }
@@ -100,6 +126,12 @@
 	.dlf_select_red { background-color:red; color:white; }
 	.dlf_select_blue { background-color:blue; color:white; }
 
+
+	#check_bingo_card { width:90%; }
+/* Colors */
+	.notify_red { color:red !important; }
+
+
 /*******************************************************************************************
 	THEME: Black Background
 ********************************************************************************************/
@@ -107,13 +139,10 @@
 	/*BODY*/
 	body.theme_black_bg { background-color:black; color:white; }
 
-	/* Top Section*/
-	#selected_cell.theme_black_bg { color:red; }
-
 	/* Game Table*/
 	.game_table_header { background-color:white !important; color:black !important; }
-	td.theme_black_bg.cell_unseen { color:gray; }
-	td.theme_black_bg.cell_seen { background-color:limegreen; color:red; }
+	.cell_unseen { color:gray; }
+	.cell_seen { background-color:limegreen; color:red; }
 
 	/* Game Settings */
 	#game_settings_section.theme_black_bg { background-color:gray; color:black; }
@@ -124,6 +153,7 @@
 	#game_example_block.theme_black_bg { background-color:black; color:white; }
 	#game_example_block.theme_black_bg #close_example { background-color:red; color:white; }
 
+	.build_card_batch_example { font-size: 90%; background-color: lightgray; color:black; margin-left:5%; padding-left:1%;  }
 
 /**************************************************** 
 	GAME CARD: Styling specific to the game card
@@ -172,8 +202,8 @@
 	.game_options_select { font-size: 180%; }
 	#pickNumberButton {cursor:pointer;}
 	#selected_ball_section { width:40%; float:left; }
-	#selected_cell { margin-bottom:1%; color:red; margin-top:2%; font-size:44px; }
-	#pickNumberButton { margin-bottom:1%; margin-top:2%; font-size:44px; }
+	#selected_cell { margin-bottom:1%; margin-top:2%; font-size:44px; }
+	/* #pickNumberButton { margin-bottom:1%; margin-top:2%; font-size:44px; } */
 
 /* Game Table*/
 	.table { width:100%; text-align: center; border-spacing: 0; border:1px solid black; }

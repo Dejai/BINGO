@@ -6,36 +6,79 @@ var IS_CARD_SET = false;
 var IS_BINGO = false;
 var IS_RANDOM_CARD = false;
 var IS_CUSTOM_CARD = false;
+var TYPE_OF_CARD = "";
+
+// List IDs for Trello
+var LIST_IDS = {};
+
+var CARDS = {};
+
 var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
 
 
 /*********************** GETTING STARTED *****************************/
 
     // Once doc is ready
-    mydoc.ready(function(){
+    mydoc.ready(()=>{
 
-        if (location.pathname.includes("/cardrandom"))
+        // Set Trello board name
+    	MyTrello.SetBoardName("bingo");
+
+        if(location.pathname.includes("load"))
+        {
+            TYPE_OF_CARD = "NAMED";
+            getListID(TYPE_OF_CARD);
+
+            // Load the saved cards
+            loadSavedCards("", (card)=>{
+                createCardObject(card);
+            });
+
+        }
+        else if (location.pathname.includes("/random"))
         {
             IS_RANDOM_CARD = true;
+            TYPE_OF_CARD = "RANDOM";
+
             // Generate an initial random card;
             onRandomCard();
+            getListID(TYPE_OF_CARD);
+
         }
-        else if (location.pathname.includes("/cardbuildcustom"))
+        else if (location.pathname.includes("/build"))
         {
             IS_CUSTOM_CARD = true;
+            TYPE_OF_CARD = "CUSTOM";
+
             // Generate the values for creating a custom card
             loadBuildCardTable();
+            getListID(TYPE_OF_CARD);
+
         }
-        else if(location.pathname.includes("/card") && hasBingoParams() )
+        else if (location.pathname.includes("create_batch"))
+        {
+            TYPE_OF_CARD = "NAMED";
+            getListID(TYPE_OF_CARD);
+
+        }
+        else if(location.pathname.includes("/card"))
         {
             // Make sure the page doesn't close once the game starts
             // window.addEventListener("beforeunload", onClosePage);
 
-            // Load the game options
-            loadGameOptions();
+            let cardID = mydoc.get_query_param("cardid")
+            if(cardID != undefined)
+            {
+                // Load the game options
+                loadGameOptions();
 
-            // Set the card
-            onSetCard();
+                // Load the card based on Trello
+                loadTrelloCard(cardID);
+            }
+            else
+            {
+                alert("Invalid Card ID!");
+            }           
         }
     });
 
@@ -138,6 +181,79 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         console.log(GAME_BOARD_CELLS);
     }
 
+/*********************** TRELLO CALLS *****************************/
+
+    // Get the list ID based on type of card
+    function getListID(type)
+    {
+        let typeName = type.toUpperCase();
+        let listName = `${typeName}_CARDS`;
+
+        MyTrello.get_list_by_name(listName, (listData)=>{
+            let list = myajax.GetJSON(listData.responseText);
+            if(list.length == 1)
+            {
+                LIST_IDS[type] = list[0].id
+            }
+        });
+    }
+
+    // Get the trello card and then set the card data
+    function loadTrelloCard(cardID)
+    {
+        // Load the card numbers;
+        MyTrello.get_single_card(cardID, (cardData)=>{
+
+            let card = myajax.GetJSON(cardData.responseText);
+            console.log(card);
+
+            let nameValues = card["name"].split(" - ");
+            let cardCode = nameValues[nameValues.length-1];
+            mydoc.loadContent(cardCode, "cardName");
+
+            let desc = card["desc"].split("\n");
+            let map = {}
+            desc.forEach( (val)=>{
+                let splits = val.split("=");
+                let letter = splits[0];
+                let values = splits[1].split(",")
+                map[letter] = values;
+            });
+            onSetCard(map);
+        });
+
+    }
+
+    // Create a trello card
+    function createTrelloCard(cardName, content, successCallback)
+    {
+        let listID = LIST_IDS[TYPE_OF_CARD];
+        console.log(`Creating card ${cardName} on list ${listID}`);
+        let encodedName = encodeURIComponent(cardName);
+
+        if(listID != undefined)
+        {
+            MyTrello.create_card(listID, encodedName,(newCardData)=>{
+
+                console.log(newCardData);
+                let newCard = myajax.GetJSON(newCardData.responseText);
+                let newCardID = newCard?.id ?? undefined;
+    
+                if(newCardID != undefined)
+                {
+                    MyTrello.update_card_description(newCardID, content, (data)=>{
+                        console.log("CARD UPDATED");
+                        if(successCallback != undefined)
+                        {
+                            successCallback(newCardID);
+                        }
+                    });
+                }
+            });
+        }
+    }
+
+
 /*********************** EVENT LISTENERS *****************************/
      
     // Prevent the page accidentally closing
@@ -147,26 +263,68 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         event.returnValue='';
     }
 
+    // Create a batch of cards
+    function onCreateCardsBatch()
+    {
+        let ele = document.getElementById("card_input_text_area");
+        let value = ele?.value;
+        let cards = value.split("\n");
+
+        // Loop through the cards
+        cards.forEach( (card)=>{
+
+            if(card != "")
+            {
+                let cardInfo = card.split("/");
+
+                let givenCardName = cardInfo[0].trim() ?? "NAME NOT GIVEN";
+                let numbers = cardInfo[1]?.trim().split(" ") ?? [];
+
+                // Ensure it is only 24 (no free space yet)
+                if(numbers.length == 24)
+                {
+                    // Add the FS symbol at 
+                    numbers.splice(12,0,"FS");
+
+                    b = "b=" + numbers.slice(0,5).join(",")
+                    i = "i=" + numbers.slice(5,10).join(",")
+                    n = "n=" + numbers.slice(10,15).join(",")
+                    g = "g=" + numbers.slice(15,20).join(",")
+                    o = "o=" + numbers.slice(20,25).join(",")
+
+                    let content = [b,i,n,g,o].join("\n");
+                    content = encodeURI(content);
+
+                    let gameCode = Helper.getCode();
+                    let cardName = `${givenCardName} - ${gameCode}`
+                    console.log("Creating a card = " + cardName);
+
+                    createTrelloCard(cardName, content);
+                }
+            }
+        });
+    }
+
     // Validate and use a card
     function onEditCard()
     {
-    letters = Object.keys(bingo_letters);
+        letters = Object.keys(bingo_letters);
 
-    card_values = getCardValues();
-    b = card_values["b"].join(",");
-    i = card_values["i"].join(",");
-    n = card_values["n"].join(",");
-    g = card_values["g"].join(",");
-    o = card_values["o"].join(",");
+        card_values = getCardValues();
+        b = card_values["b"].join(",");
+        i = card_values["i"].join(",");
+        n = card_values["n"].join(",");
+        g = card_values["g"].join(",");
+        o = card_values["o"].join(",");
 
-    let newPath = `/cardbuildcustom.html?b=${b}&i=${i}&n=${n}&g=${g}&o=${o}`
-    onNavigate(newPath,"Are you sure you want to edit this Card?");
+        let newPath = `./build.html?b=${b}&i=${i}&n=${n}&g=${g}&o=${o}`
+        onNavigate(newPath,"Are you sure you want to edit this Card?");
     }
 
     // Creating a new card
     function onNewCard()
     {
-        onNavigate("./cardtype.html", "Are you sure you want to leave this Card?");
+        onNavigate("./", "Are you sure you want to leave this Card?");
     }
 
     // Generate a RANDOM cad
@@ -183,17 +341,17 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
 
     }
 
-    // Set the card to play with
-    function onSetCard()
+    // Set the card to play with; Pass in a mapping of letter to array of letters
+    function onSetCard(map)
     {
         // The card is set;
         IS_CARD_SET = true;
 
-        b = mydoc.get_query_param("b").split(",");
-        i = mydoc.get_query_param("i").split(",");
-        n = mydoc.get_query_param("n").split(",");
-        g = mydoc.get_query_param("g").split(",");
-        o = mydoc.get_query_param("o").split(",");
+        b = map["b"];
+        i = map["i"];
+        n = map["n"];
+        g = map["g"];
+        o = map["o"];
 
         createCardTable(b,i,n,g,o);
     }
@@ -217,7 +375,8 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
 
             if(values.length != 5)
             {
-                alert(`Cannot have duplicate values for letter: ${upper}`);
+                let errMessage = `ERROR:<br/>Cannot have duplicate values for letter: ${upper}`;
+                MyNotification.notify("#build_card_instructions",errMessage, "notify_red");
                 valid_card = false;
                 break;
             }
@@ -225,13 +384,23 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
 
         if(valid_card)
         {
-            b = card_values["b"].join(",");
-            i = card_values["i"].join(",");
-            n = card_values["n"].join(",");
-            g = card_values["g"].join(",");
-            o = card_values["o"].join(",");
+            b = "b=" + card_values["b"].join(",");
+            i = "i=" + card_values["i"].join(",");
+            n = "n=" + card_values["n"].join(",");
+            g = "g=" + card_values["g"].join(",");
+            o = "o=" + card_values["o"].join(",");
 
-            location.href = `/card.html?b=${b}&i=${i}&n=${n}&g=${g}&o=${o}`;
+            let content = [b,i,n,g,o].join("\n");
+            content = encodeURI(content);
+
+            let gameCode = Helper.getCode();
+            let cardName = `${TYPE_OF_CARD} - ${gameCode}`
+
+            createTrelloCard(cardName, content, (newCardID)=>{
+                location.href = `./card.html?cardid=${newCardID}`
+            });
+            
+            // location.href = `/card.html?b=${b}&i=${i}&n=${n}&g=${g}&o=${o}`;
         }
     }
 
@@ -314,8 +483,6 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
             g = mydoc.get_query_param("g").split(",");
             o = mydoc.get_query_param("o").split(",");
 
-            console.log(Array.from(document.querySelectorAll(".build_card_n")));
-
             for(var idx = 0; idx < 5; idx ++)
             {
 
@@ -392,30 +559,59 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
             let cost = games_object[CURR_GAME]["cost"];
             mydoc.loadContent(`Cost: ${cost}`,"game_cost");
 
-            if (CURR_GAME == "Straight Line")
-            { 
-                examples = getStraightLinExamples();
-                idx = 0;
-                let straightLineInterval = setInterval( ()=>{
+            onShowNeededCells(CURR_GAME);
+            // if (CURR_GAME == "Straight Line")
+            // { 
+            //     examples = getStraightLinExamples();
+            //     idx = 0;
+            //     let straightLineInterval = setInterval( ()=>{
 
-                    hightlightNeededCells(examples[idx]);	
-                    idx+=1 
-                    setTimeout( ()=>{
-                        onClearNeededCells() // clear the needed cells; so folks don't think only one option is acceptable
-                    },300);
+            //         hightlightNeededCells(examples[idx]);	
+            //         idx+=1 
+            //         setTimeout( ()=>{
+            //             onClearNeededCells() // clear the needed cells; so folks don't think only one option is acceptable
+            //         },300);
 
-                    if(idx == examples.length)
-                    {
-                        clearInterval(straightLineInterval);
-                    }
-                }, 500);
-            }
-            else
-            {
-                let expected = games_object[CURR_GAME]["example"];
-                hightlightNeededCells(expected);
-            }            
+            //         if(idx == examples.length)
+            //         {
+            //             clearInterval(straightLineInterval);
+            //         }
+            //     }, 500);
+            // }
+            // else
+            // {
+            //     let expected = games_object[CURR_GAME]["example"];
+            //     hightlightNeededCells(expected);
+            // }            
         }
+    }
+
+    // Helper for showing what is needed
+    function onShowNeededCells(currentGame)
+    {
+        if (currentGame == "Straight Line")
+        { 
+            examples = getStraightLinExamples();
+            idx = 0;
+            let straightLineInterval = setInterval( ()=>{
+
+                hightlightNeededCells(examples[idx]);	
+                idx+=1 
+                setTimeout( ()=>{
+                    onClearNeededCells() // clear the needed cells; so folks don't think only one option is acceptable
+                },300);
+
+                if(idx == examples.length)
+                {
+                    clearInterval(straightLineInterval);
+                }
+            }, 500);
+        }
+        else
+        {
+            let expected = games_object[CURR_GAME]["example"];
+            hightlightNeededCells(expected);
+        } 
     }
 
     // Highlight the cells needed
@@ -446,10 +642,7 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
                 // obj.classList.remove("bingo_blink");
             });
 
-            document.querySelectorAll("[class*='card_header_']").forEach( (cell)=>{
-                cell.classList.remove("bingo_blink");
-                cell.classList.add("game_table_header");
-            });
+            toggleBingoHeaders("remove");
 
             // Clear needed cells;
             onClearNeededCells();
@@ -463,6 +656,9 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
             toggleEditAndClearButtons("edit");
         }
     }
+
+    // Toggle the blinking headers
+
 
     // Clear the "needed" cells
     function onClearNeededCells()
@@ -643,6 +839,7 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         letters.forEach( (letter) => {
 
             lower = letter.toLowerCase();
+
             document.querySelectorAll(`.number_cell_${lower}`).forEach( (cell)=> {
 
                 value = "";
@@ -658,7 +855,7 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
                 }
 
                 // Append value if not already there;
-                if(!valuesByLetter[lower].contains(value))
+                if(!valuesByLetter[lower].includes(value))
                 {
                     valuesByLetter[lower].push(value);
                 }
