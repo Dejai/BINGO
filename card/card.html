@@ -4,30 +4,34 @@
 	<title>BINGO Card</title>
 	<link rel="stylesheet" type="text/css" href="../src/bingo.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body class="theme_black_bg">
 
     <div id="bingo_card_section">
-        <h1 style="text-align:center;" class="dlf_title">BINGO Card</h1>
+        <h1 style="text-align:center;">BINGO Card</h1>
         <h2 id="cardName" style="color:orange;"></h2>
         
-        <button style="float:left;" class="dlf_button_xxlarge dlf_button_round_corners dlf_button_red" onclick="onNewCard()">
+        <button style="float:left;" class="dlf_button_medium dlf_button_round_corners dlf_button_red" onclick="onNewCard()">
             NEW CARD
         </button>
-        <button id="clear_card_button" style="float:right;" class="dlf_button_xxlarge dlf_button_round_corners dlf_button_limegreen hidden" onclick="onClearCard()">
+        <button id="clear_card_button" style="float:right;" class="dlf_button_medium dlf_button_round_corners dlf_button_limegreen hidden" onclick="onClearCard()">
             CLEAR CARD
         </button>
-        <button id="edit_card_button" style="float:right;" class="dlf_button_xxxlarge dlf_button_round_corners dlf_button_blue" onclick="onEditCard()" >
+        <button id="edit_card_button" style="float:right;" class="dlf_button_medium dlf_button_round_corners dlf_button_blue" onclick="onEditCard()" >
             EDIT CARD
         </button>
         <br style="clear:both;"/>
         <div class="dlf_center_block_medium">
-            <select id="gameOptionsOnCard" class="dlf_select dlf_select_round_corners dlf_select_xxxlarge dlf_select_blue" onchange="onSelectGame()" >
+            <select id="gameOptionsOnCard" class="dlf_select dlf_select_round_corners dlf_select_medium dlf_select_blue" onchange="onSelectGame()" >
             </select>
         </div>
-        <p id="game_cost" style="text-align:center;" class="dlf_paragraph_xxxlarge"></p>
+        <p id="game_cost" style="text-align:center;" class="dlf_paragraph_medium"></p>
         <!-- <br/> -->
         <hr style="clear:both; margin-bottom:2%;"/>
+        <p style="margin-top:1%;" class="dlf_paragraph_medium hidden">
+            If you like this card, and want to use it again, <a href="#">click here to give this card a name</a> 
+        </p>
         <table id="bingo_card_table" class="table">
             <colgroup>
                 <col style="width:19%;">
@@ -47,7 +51,7 @@
             </thead>
             <tbody id="bingo_card_body"></tbody>
         </table>
-        <p style="margin-top:5%;" class="dlf_paragraph_xlarge">
+        <p style="margin-top:5%;" class="dlf_paragraph_medium">
             <span id="card_created_timestamp"></span>
         </p>
     </div>

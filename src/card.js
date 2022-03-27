@@ -270,6 +270,11 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         let value = ele?.value;
         let cards = value.split("\n");
 
+        // Track the status of each created
+        let batchStatus = document.getElementById("create_batch_status");
+        mydoc.showContent("#trackStatusSection");
+        mydoc.hideContent("#enterCardSection");
+
         // Loop through the cards
         cards.forEach( (card)=>{
 
@@ -279,6 +284,18 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
 
                 let givenCardName = cardInfo[0].trim() ?? "NAME NOT GIVEN";
                 let numbers = cardInfo[1]?.trim().split(" ") ?? [];
+
+                // Add an element to the tracking
+                let elementTrack = `
+                    <hr/>
+                    <span id="${givenCardName}">
+	                     <img src="https://dejai.github.io/scripts/assets/img/loading1.gif" style="width:5%;height:5%;">
+                    </span> &nbsp; >>>
+                    <span>
+                        ${card}
+                    </span><br/>
+                `;
+                batchStatus.innerHTML += elementTrack;
 
                 // Ensure it is only 24 (no free space yet)
                 if(numbers.length == 24)
@@ -299,7 +316,16 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
                     let cardName = `${givenCardName} - ${gameCode}`
                     console.log("Creating a card = " + cardName);
 
-                    createTrelloCard(cardName, content);
+                    createTrelloCard(cardName, content, (cardID)=>{
+                        if(cardID != null)
+                        {
+                            mydoc.loadContent("SUCCESS",givenCardName);
+                        }
+                    });
+                }
+                else
+                {
+                    mydoc.loadContent("FAIL!",givenCardName);
                 }
             }
         });
