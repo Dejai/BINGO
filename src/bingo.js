@@ -161,9 +161,6 @@ function onCheckCardForBingo()
 		GAME_BOARD_CELLS = []; // clear it to make sure no other card is in there;
 		mapNumberCells();
 
-		// TEMPORARY
-		NUMBERS_CALLED = ["27", "42", "50", "22", "21", "41", "51", "53", "50", "66", "69"]
-
 		// Show the needed cells for this game;
 		onShowNeededCells(CURR_GAME);
 
@@ -626,7 +623,6 @@ function onPickNumber()
 	runAfterSpeaking(()=>{
 		toggleGameBoardInput("pickNumberButton", "enable");
 	});
-
 	
 }
 

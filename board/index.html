@@ -67,11 +67,13 @@
 					<div id="bingoBallSection" class="hidden">
 						<span id="selected_cell" class="theme_black_bg"></span>
 					</div>
-					<div id="checkForBingoSection" class="hidden">
+					<div id="checkForBingoSection" style="width:50%;margin:auto;" class="hidden2">
 						<hr/>
-						<label for="check_bingo_card">Card Name/Code:</label><br/>
-						<input id="check_bingo_card" type="text" list="card_names_data_list" placeholder="Type to search card name">
-						<datalist id="card_names_data_list"></datalist>
+						<div style="width:70%;margin:auto;">
+							<label for="check_bingo_card">Card Name/Code:</label><br/>
+							<input id="check_bingo_card" type="text" list="card_names_data_list" placeholder="Type to search card name">
+							<datalist id="card_names_data_list"></datalist>
+						</div>
 						<br/>
 						<button onclick="onCheckCardForBingo()">Check Card</button>
 					</div>
