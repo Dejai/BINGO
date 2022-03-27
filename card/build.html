@@ -25,7 +25,10 @@
         </div>
         <br style="clear:both;"/>
         <hr style="clear:both; margin-bottom:2%;"/>
-        <p id="build_card_instructions" style="color:white;" class="dlf_paragraph_medium">
+        <label for="name_of_custom_card">Name This Card:</label><br/>
+        <input id="name_of_custom_card" type="text" name="name_of_custom_card" placeholder="Enter name for the card" style="width:30%;"/>
+        <br/><br/>
+        <p id="build_card_instructions" style="color:white; margin-bottom:0px !important;" class="dlf_paragraph_medium">
             Select the numbers you want to use on your card
         </p>
         <table id="bingo_card_table" class="table">
@@ -92,5 +95,6 @@
 <script src="https://dejai.github.io/scripts/js/trellowrapper.js"></script>
 
 <script type="text/javascript" src="../src/bingo_objects.js"></script>
+<script type="text/javascript" src="../src/bingo_shared.js"></script>
 <script type="text/javascript" src="../src/card.js"></script>
 </html>

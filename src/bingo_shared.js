@@ -13,7 +13,7 @@ function loadSavedCards(boardName="", successCallback)
 	CARDS = {};
 
     // Get specific list or all of them;
-	let lists = (boardName != "") ? [boardName] : ["NAMED_CARDS", "RANDOM_CARDS", "CUSTOM_CARDS"];
+	let lists = (boardName != "") ? [boardName] : ["NAMED_CARDS", "RANDOM_CARDS"];
 
 	// Get the cards from each list
 	lists.forEach( (listName)=>{
