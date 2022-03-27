@@ -4,16 +4,17 @@
 	<title>BINGO - Card (Load)</title>
 	<link rel="stylesheet" type="text/css" href="../src/bingo.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body class="theme_black_bg">
 	<div class="theme_black_bg">
 		<div class="centered">
-			<h1 style="text-align:center;" class="dlf_title">
+			<h1 style="text-align:center;">
 				Load Existing Card
 			</h1>
             <div>
                 <a href="../" class="dlf_href_notextdec">
-                    <button style="float:left;" class="dlf_button_xxxlarge dlf_button_round_corners dlf_button_red">
+                    <button style="float:left;" class="dlf_button_medium dlf_button_round_corners dlf_button_red">
                         GO BACK
                     </button>
                 </a>            
@@ -21,16 +22,16 @@
             <br style="clear:both;"/>
 			<hr/>
 		</div>
-		<div class="centered" style="width:50%; margin:auto;">
+		<div class="centered">
 			<h2>
 				<label for="check_bingo_card">Card Name/Code:</label>
 			</h2>
-			<div style="width:50%; margin:auto;">
+			<div style="width:80%; margin:auto;">
 				<input id="check_bingo_card" type="text" list="card_names_data_list" placeholder="Type to search card name">
 				<datalist id="card_names_data_list"></datalist>
 			</div>
 			<br/>
-			<button class="dlf_button_xxlarge dlf_button_round_corners dlf_button_blue" onclick="onLoadExistingCard()">
+			<button class="dlf_button_medium dlf_button_round_corners dlf_button_blue" onclick="onLoadExistingCard()">
 				LOAD CARD
 			</button>
 		</div>

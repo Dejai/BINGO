@@ -4,25 +4,27 @@
 	<title>BINGO - Random Card</title>
 	<link rel="stylesheet" type="text/css" href="../src/bingo.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
 </head>
 <body class="theme_black_bg">
 
     <div id="bingo_card_section">
-        <h1 style="text-align:center;" class="dlf_title">
+        <h1 style="text-align:center;">
             Random Card
         </h1>
         <div style="width:50%; margin:auto;">
-            <button onclick="onUseCard()" class="dlf_button_xxxlarge dlf_button_round_corners dlf_button_limegreen">
+            <button onclick="onUseCard()" class="dlf_button_medium dlf_button_round_corners dlf_button_limegreen">
                 USE THIS CARD
             </button>
         </div>
 		<div>
             <a href="./" class="dlf_href_notextdec">
-                <button style="float:left;" class="dlf_button_xxxlarge dlf_button_round_corners dlf_button_red">
+                <button style="float:left;" class="dlf_button_medium dlf_button_round_corners dlf_button_red">
                     GO BACK
                 </button>
             </a> 
-            <button onclick="onEditCard()" style="float:right;" class="dlf_button_xxxlarge dlf_button_round_corners dlf_button_blue">
+            <button onclick="onEditCard()" style="float:right;" class="dlf_button_medium dlf_button_round_corners dlf_button_blue">
                 EDIT CARD
             </button>
         </div>
@@ -31,7 +33,7 @@
         <hr style="clear:both; margin-bottom:2%;"/>
         <br/>
         <div style="width:60%; margin:auto;">
-            <button onclick="onRandomCard()"class="dlf_button_xxxlarge dlf_button_round_corners dlf_button_orange">
+            <button onclick="onRandomCard()"class="dlf_button_medium dlf_button_round_corners dlf_button_orange">
                 GENERATE NEW CARD
             </button>
         </div>

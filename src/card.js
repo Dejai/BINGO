@@ -33,7 +33,6 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
             loadSavedCards("", (card)=>{
                 createCardObject(card);
             });
-
         }
         else if (location.pathname.includes("/random"))
         {
@@ -48,12 +47,15 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         else if (location.pathname.includes("/build"))
         {
             IS_CUSTOM_CARD = true;
-            TYPE_OF_CARD = "CUSTOM";
+            TYPE_OF_CARD = "NAMED";
 
             // Generate the values for creating a custom card
             loadBuildCardTable();
             getListID(TYPE_OF_CARD);
 
+            loadSavedCards("NAMED_CARDS", (card)=>{
+                createCardObject(card);
+            });
         }
         else if (location.pathname.includes("create_batch"))
         {
@@ -270,6 +272,11 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         let value = ele?.value;
         let cards = value.split("\n");
 
+        // Track the status of each created
+        let batchStatus = document.getElementById("create_batch_status");
+        mydoc.showContent("#trackStatusSection");
+        mydoc.hideContent("#enterCardSection");
+
         // Loop through the cards
         cards.forEach( (card)=>{
 
@@ -279,6 +286,18 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
 
                 let givenCardName = cardInfo[0].trim() ?? "NAME NOT GIVEN";
                 let numbers = cardInfo[1]?.trim().split(" ") ?? [];
+
+                // Add an element to the tracking
+                let elementTrack = `
+                    <hr/>
+                    <span id="${givenCardName}">
+	                     <img src="https://dejai.github.io/scripts/assets/img/loading1.gif" style="width:5%;height:5%;">
+                    </span> &nbsp; >>>
+                    <span>
+                        ${card}
+                    </span><br/>
+                `;
+                batchStatus.innerHTML += elementTrack;
 
                 // Ensure it is only 24 (no free space yet)
                 if(numbers.length == 24)
@@ -299,7 +318,16 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
                     let cardName = `${givenCardName} - ${gameCode}`
                     console.log("Creating a card = " + cardName);
 
-                    createTrelloCard(cardName, content);
+                    createTrelloCard(cardName, content, (cardID)=>{
+                        if(cardID != null)
+                        {
+                            mydoc.loadContent("SUCCESS",givenCardName);
+                        }
+                    });
+                }
+                else
+                {
+                    mydoc.loadContent("FAIL!",givenCardName);
                 }
             }
         });
@@ -359,14 +387,16 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
     // Validate and use a card
     function onUseCard()
     {
-        letters = Object.keys(bingo_letters);
-
+        // By default, we assume this card is all set.
         valid_card = true;
 
+        // Default the cardName to the type of card value
+        let cardName = `${TYPE_OF_CARD}`;
+
+        // Validate the numbers on the card
+        letters = Object.keys(bingo_letters);
         card_values = getCardValues();
-
         keys = Object.keys(card_values);
-
         for(var idx = 0; idx < keys.length; idx++)
         {
             letter = keys[idx];
@@ -382,6 +412,36 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
             }
         }
 
+        // Validate that a Built card has a valid name
+        let cardNameField = document.getElementById("name_of_custom_card");
+        if(cardNameField != undefined)
+        {
+            let nameVal = cardNameField.value;
+
+            // Check against existing names
+            let existingNames = []
+            Object.keys(CARDS).forEach( (key)=>{
+                let splits = key.split("-");
+                let name = splits[0]?.trim() ?? ""
+                existingNames.push(name.toUpperCase());
+            });
+            let nameAlreadyUsed = existingNames.includes(nameVal.toUpperCase());
+
+            if(nameVal != "" && !nameAlreadyUsed)
+            {
+                cardName = nameVal;
+            }
+            else
+            {
+                let uniqueNameErr = "ERROR:<br/>This name is already used. Please use another name."
+                let noNameErr = "ERROR:<br/>Please enter a name for this card."
+                let errMessage = (nameAlreadyUsed) ? uniqueNameErr : noNameErr; 
+                MyNotification.notify("#build_card_instructions",errMessage, "notify_red");
+                valid_card = false;
+            }
+        }
+
+
         if(valid_card)
         {
             b = "b=" + card_values["b"].join(",");
@@ -394,13 +454,12 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
             content = encodeURI(content);
 
             let gameCode = Helper.getCode();
-            let cardName = `${TYPE_OF_CARD} - ${gameCode}`
+            let fullCardName = `${cardName} - ${gameCode}`
+            console.log(fullCardName);
 
-            createTrelloCard(cardName, content, (newCardID)=>{
+            createTrelloCard(fullCardName, content, (newCardID)=>{
                 location.href = `./card.html?cardid=${newCardID}`
             });
-            
-            // location.href = `/card.html?b=${b}&i=${i}&n=${n}&g=${g}&o=${o}`;
         }
     }
 

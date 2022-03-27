@@ -20,7 +20,7 @@ mydoc.ready(function(){
 
 	MyTrello.SetBoardName("bingo");
 
-	let isExamplePage = location.pathname.includes("/cardexamples")
+	let isExamplePage = location.pathname.includes("/examples")
 	if(isExamplePage) { IS_BOARD_PAGE = false; }
 
 	// Always Load the game options and add a listener for them

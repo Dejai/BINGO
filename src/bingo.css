@@ -78,7 +78,7 @@
 	.dlf_href_notextdec { text-decoration:none !important; }
 
 /* Paragraphs */
-	.dlf_paragraph_medium { font-size: 190%; }
+	.dlf_paragraph_medium { font-size:80%; }
 	.dlf_paragraph_large { font-size: 150%; }
 	.dlf_paragraph_xlarge { font-size: 190%; }
 	.dlf_paragraph_xxlarge { font-size: 220%; }
@@ -166,10 +166,10 @@
 	#bingo_card_table tbody tr td { padding:3% !important;}
 
 	/* Game Card Size*/
-	#bingo_card_table .card_table_header { font-size:510%; }
-	#bingo_card_table td.number_cell { font-size:450%; font-weight: bolder; }
-	#bingo_card_table td.example { font-size:450%; font-weight: bolder; }
-	.freeSpace { font-size:120% !important; }
+	#bingo_card_table .card_table_header { font-size:150%; }
+	#bingo_card_table td.number_cell { font-size:150%; font-weight: bolder; }
+	#bingo_card_table td.example { font-size:150%; font-weight: bolder; }
+	.freeSpace { font-size:150% !important; }
 
 	#bingo_card_table td.number_selected { background-color:limegreen; color:white; border:none;}
 	.game_card_input { font-size: 30px; }
