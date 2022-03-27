@@ -1,4 +1,4 @@
-const bingo_version = "2.3";
+const bingo_version = "2.4";
 (function add_bing_version(){ 
 	document.getElementsByTagName("body")[0].innerHTML += `<p id="bingo_version" class="dlf_paragraph_medium">v${bingo_version}</p>`
 }());

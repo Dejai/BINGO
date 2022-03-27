@@ -7,10 +7,18 @@ var letterCounts = {"B":0, "I":0, "N":0, "G":0,"O":0 };
 var CURR_GAME = "";
 var GAME_STARTED = false;
 var IS_BOARD_PAGE = true;
+
+var NUMBERS_CALLED = [];
+var CARDS = {};
+
+var IS_SPEAKING = false;
+
 /*********************** GETTING STARTED *****************************/
 
 // Once doc is ready
 mydoc.ready(function(){
+
+	MyTrello.SetBoardName("bingo");
 
 	let isExamplePage = location.pathname.includes("/cardexamples")
 	if(isExamplePage) { IS_BOARD_PAGE = false; }
@@ -32,6 +40,11 @@ mydoc.ready(function(){
 
 		// Add listener for "Enter Key"
 		listenerOnKeyUp();
+
+		// Load the saved cards
+		loadSavedCards("", (card)=>{
+			createCardObject(card);
+		});
 	}
 	else
 	{
@@ -46,23 +59,7 @@ mydoc.ready(function(){
 				]
 		onLoadGameExampleTable(table);
 	}
-	
-
-	// if(location.pathname.includes("/cardexamples"))
-	// {
-	// 	console.log("CARD EXAMPLES");
-
-		
-	// }
-	// else
-	// {
-		
-	// }
-		
-
 });
-
-
 
 /********************* LISTENERS *************************************/
 
@@ -85,7 +82,7 @@ function listenerOnKeyUp(){
 				}
 				else
 				{
-					pickNumber();
+					onPickNumber();
 				}
 				break;
 			default:
@@ -97,22 +94,33 @@ function listenerOnKeyUp(){
 // Adds listener for when new game is selected
 function listenerOnGameOptionChange()
 {
-	console.log(IS_BOARD_PAGE);
-	options = document.getElementById("gameOptions")
-	options.addEventListener("change", function(event){
-		ele = event.target;
-		CURR_GAME = ele.value;
-		onLoadGameExample(ele.value);
-		ignoreCellsByGame(ele.value);
+	options = document.getElementById("gameOptions");
+	if(options != undefined)
+	{
+		options.addEventListener("change", (event)=>{
 
-		if(IS_BOARD_PAGE)
-		{
-			onDescribeGame(ele.value, true);
-		}
-		
-	});
+			ele = event.target;
+			CURR_GAME = ele.value;
+
+			toggleGameBoardInput("startGameButton","disable");
+			runAfterSpeaking(()=>{
+				toggleGameBoardInput("startGameButton","enable");
+			});
+
+			onLoadGameExample(ele.value);
+			ignoreCellsByGame(ele.value);
+	
+			if(IS_BOARD_PAGE)
+			{
+				onDescribeGame(ele.value, true);
+			}
+			
+		});
+	}
 }
 
+
+// Add listener for the speaker's voice demo
 function listenerOnSpeakVoiceDemo()
 {
 
@@ -129,7 +137,45 @@ function listenerOnSpeakVoiceDemo()
 		speakText(text, subtext, 0.9, 0.6, 500);
 	}
 }
+	
+// Checking a selected card for bingo
+function onCheckCardForBingo()
+{
+	let cardName = document.getElementById("check_bingo_card")?.value;
 
+	console.log(cardName);
+
+	if(cardName != undefined & Object.keys(CARDS).includes(cardName))
+	{
+		toggleGameBoardTableBody("card");
+
+		// Create the card using teh stored values;
+		b = CARDS[cardName]["b"];
+		i= CARDS[cardName]["i"];
+		n = CARDS[cardName]["n"];
+		g = CARDS[cardName]["g"];
+		o = CARDS[cardName]["o"];
+		createCardTable(b,i,n,g,o);
+
+		// Map the cells for reference
+		GAME_BOARD_CELLS = []; // clear it to make sure no other card is in there;
+		mapNumberCells();
+
+		// Show the needed cells for this game;
+		onShowNeededCells(CURR_GAME);
+
+		// Highlight the numbers already called
+		showNumbersCalledOnCard();
+
+		// Check if BINGO is WON
+		checkForBingo();
+	}
+	else
+	{
+		alert("Enter a valid card name");
+	}
+
+}
 
 /********************** LOAD CONTENT *******************************/
 
@@ -226,6 +272,25 @@ function loadGameCells()
 	mydoc.loadContent(cells, "game_table_body");
 }
 
+// Show numbers already called on a card
+function showNumbersCalledOnCard()
+{
+	let cells = document.querySelectorAll("#bingo_card_body .number_cell");
+
+	cells.forEach( (cell)=>{
+
+		let val = cell.innerText;
+		let needed = cell.classList.contains("number_cell_needed");
+		isFreeSpace = (cell.querySelectorAll(".freeSpace")?.length >= 1)
+		if (needed && (NUMBERS_CALLED.includes(val) || isFreeSpace) )
+		{
+			cell.classList.remove("cell_unseen");
+			cell.classList.add("cell_seen");
+			cell.classList.add("number_selected");
+		}
+	});
+
+}
 
 /****************** GAME SETTING ACTIONS ****************************/
 
@@ -255,7 +320,8 @@ function onLoadGameExample(value, depth=0)
 		if(value == "Straight Line")
 		{
 			// Show the example body;
-			toggleExampleTableBody("show");
+			toggleGameBoardTableBody("example");
+			// toggleExampleTableBody("show");
 
 			// Load all the examples;
 			let examples = getStraightLinExamples();
@@ -274,29 +340,16 @@ function onLoadGameExample(value, depth=0)
 		}
 		else if (game_table !== undefined)
 		{
-			toggleExampleTableBody("show");
+			// toggleExampleTableBody("show");
+			toggleGameBoardTableBody("example");
 			onLoadGameExampleTable(game_table);
 		}
 		else 
 		{
-			toggleExampleTableBody("hide");
+			toggleGameBoardTableBody("board");
+			// toggleExampleTableBody("hide");
 		}
 	} 
-}
-
-// Toggle the game example table body
-function toggleExampleTableBody(state)
-{
-	if(state == "show")
-	{
-		mydoc.hideContent("#game_table_body");
-		mydoc.showContent("#game_example_table_body");
-	}
-	else
-	{
-		mydoc.showContent("#game_table_body");
-		mydoc.hideContent("#game_example_table_body");
-	}
 }
 
 // Action to load the example table
@@ -332,6 +385,12 @@ function onShowGameExampleAgain()
 	onLoadGameExample(ele.value);
 	ignoreCellsByGame(ele.value);
 	onDescribeGame(ele.value);
+}
+
+// Hide the example again
+function onHideGameExampleAgain()
+{
+	toggleGameBoardTableBody("board");
 }
 
 // Get all the straight line examples
@@ -397,6 +456,13 @@ function onChangeTheme(event)
 	});
 }
 
+// Check if someone has BINGOd
+function checkIfSomeoneHasBingo()
+{
+	mydoc.hideContent("#bingoBallSection");
+	mydoc.showContent("#checkForBingoSection");
+}
+
 function toggleGameSettings()
 {
 	button = document.getElementById("game_settings_button");
@@ -412,13 +478,57 @@ function toggleGameSettings()
 	}
 }
 
-function toggleExample()
+// Toggle the table bodies on the game board
+function toggleGameBoardTableBody(state)
 {
-	let example = document.getElementById("game_example_block");
+	switch(state)
+	{
+		case "example":
+			mydoc.hideContent("#game_table_body");
+			mydoc.showContent("#game_example_table_body");
+			mydoc.hideContent("#bingo_card_body");
+			break;
+		case "card":
+			mydoc.hideContent("#game_table_body");
+			mydoc.hideContent("#game_example_table_body");
+			mydoc.showContent("#bingo_card_body");
+			break;
+		// Default to the board view
+		default:
+			mydoc.showContent("#game_table_body");
+			mydoc.hideContent("#game_example_table_body");
+			mydoc.hideContent("#bingo_card_body");
 
-	example.classList.add("hidden");
+	}
 }
 
+// Toggle game board element state
+// Used for the following: Game Options select field; Start Game button; Pick Number button;
+function toggleGameBoardInput(identifier, state)
+{
+	let element = document.getElementById(identifier)
+	if(element != undefined)
+	{
+		switch(state)
+		{
+			case "disable":
+				element.disabled = true;
+				if(element.tagName == "BUTTON")
+				{
+					element.classList.add("dlf_button_gray")
+				}
+				break;
+			// Default to enabling it.
+			default:
+				element.disabled = false;
+				if(element.tagName == "BUTTON")
+				{
+					element.classList.remove("dlf_button_gray");
+					element.classList.add("dlf_button_limegreen");
+				}
+		}
+	}
+}
 
 /************************ GAME BOARD ACTIONS *******************************/
 
@@ -430,24 +540,29 @@ function onStartGame()
 		return;
 	}
 
+	// Show the reset button
+	mydoc.showContent("#reset_game_button");
+
+	// Disable the option to change the game:
+	toggleGameBoardInput("gameOptions","disable");
+
 	// Hide/Show things
 	mydoc.hideContent("#startGameButton");
-	toggleExampleTableBody("hide");
+	toggleGameBoardTableBody("board");
 	mydoc.showContent("#pickNumberButton");
 	
-	// document.getElementById("startGameButton").classList.add("hidden");
-	// document.getElementById("pickNumberButton").classList.remove("hidden");
 	speakText("Let the Game Begin");
 	GAME_STARTED = true;
 
+	mydoc.showContent("#checkForBingo")
+
 	// Set the time the game was started
 	let time = Helper.getDate("H:m:s K");
-	mydoc.loadContent(time, "game_started_timestamp");
-	// document.getElementById("game_started_imestamp").innerText = time;
+	mydoc.loadContent(`Game started @ ${time}`, "game_started_timestamp");
 }
 
 // Pick a random number from the board; Only from unseen
-function pickNumber()
+function onPickNumber()
 {
 
 	if(!GAME_STARTED)
@@ -456,49 +571,63 @@ function pickNumber()
 		return;
 	}
 
-	// Make sure the example is hidden
-	toggleExampleTableBody("hide");
-
-	// Disable picker temporarily 
+	// If already disabled, do nothing
 	let pickNumButton = document.getElementById("pickNumberButton");
-
 	if (pickNumButton.disabled)
 	{
 		return;
 	}
 
-	// Disable the button on click
-	pickNumButton.disabled = true;
+	//
 
+	// Make sure the board is showing
+	toggleGameBoardTableBody("board");
+	toggleBingoHeaders("remove"); // Make sure any BINGO already shown is cleared
+
+	// Show the ball section
+	mydoc.showContent("#bingoBallSection");
+	// Hide the Check Bingo Sections
+	mydoc.hideContent("#checkForBingoSection");
+
+	// Disable picker temporarily 
+	toggleGameBoardInput("pickNumberButton", "disable");
+
+	// Get the amount of unseen cells
 	unseen_cells = document.getElementsByClassName("cell_unseen");
 	amount = unseen_cells.length;
 
+	// Get a random number and pick that cell
 	selected_num = Math.floor(Math.random() * amount);
 	selected_cell = unseen_cells[selected_num];
 
+	// Get the letter and number of the selected cell
 	letter = selected_cell.getAttribute("data-letter");
 	number = selected_cell.innerText;
 
+	// Mark that cell as seen
 	selected_cell.classList.remove("cell_unseen");
 	selected_cell.classList.add("cell_seen");
 
+	// Show the selected number and add to see
 	selected_ball = letter + " " + number;
+	NUMBERS_CALLED.push(number);
 
 	// Set the selected cell;
-	setSelectedCell(selected_ball);
+	setBingoBall(selected_ball);
 
 	// Speak the number if setting says "Yes";
 	speak = document.getElementById("speak_value").value;
-	if (speak == "Yes" )
+	if ( speak == "Yes" )
 	{
 		speakText(selected_ball, selected_ball, 0.9, 0.6, 1000);
 	}
 
-	setTimeout(function(){
-		pickNumButton.disabled = false;
-	}, 5000);
-
 	incrementLetterCount(letter);
+
+	runAfterSpeaking(()=>{
+		toggleGameBoardInput("pickNumberButton", "enable");
+	});
+	
 }
 
 // Increment how many numbers have been called for a letter
@@ -512,11 +641,10 @@ function incrementLetterCount(letter)
 
 	if (letterCounts[letter] == 15)
 	{
-		setTimeout(function(){
+		runAfterSpeaking(()=>{
 			msg = "All numbers under the letter " + letter + " have been called.";
 			speakText(msg, msg, 0.9, 0.6, 500);
-		}, 5000);
-		
+		});
 	}
 }
 
@@ -554,10 +682,45 @@ function ignoreCells(letter)
 }
 
 // Set the selected cell
-function setSelectedCell(value)
+function setBingoBall(value)
 {
-	document.getElementById("selected_cell").innerText = value;
+	let identifier = "selected_cell";
+	let ballEle = document.getElementById("selected_cell");
+
+	// Set the ball text
+	ballEle.innerText = value;
+
+	// Check if to set ball color
+	if(value != "")
+	{
+		mydoc.addClass(`#${identifier}`, "bingo_ball_circle");
+		setBingoBallColor(identifier,value);
+	}
+	else
+	{
+		mydoc.removeClass(`#${identifier}`, "bingo_ball_circle");
+		setBingoBallColor(identifier,"");
+	}
 }
+
+function setBingoBallColor(identifier, value)
+{
+
+	// Default: Always remove all of the colors
+	mydoc.removeClass(`#${identifier}`, "bingo_ball_letter_b");
+	mydoc.removeClass(`#${identifier}`, "bingo_ball_letter_i");
+	mydoc.removeClass(`#${identifier}`, "bingo_ball_letter_n");
+	mydoc.removeClass(`#${identifier}`, "bingo_ball_letter_g");
+	mydoc.removeClass(`#${identifier}`, "bingo_ball_letter_o");
+
+	// Then add the one for the current color (if applicable)
+	let letter = value.split(" ")[0]?.toLowerCase() ?? "";
+	if(letter != "")
+	{
+		mydoc.addClass(`#${identifier}`, `bingo_ball_letter_${letter}`);
+	}
+}
+
 
 // Reset the entire board (including reseting unseen cells)
 function resetBoard()
@@ -566,11 +729,24 @@ function resetBoard()
 
 	if(confirm_reset)
 	{
+
+		// Hide reset button
+		mydoc.hideContent("#reset_game_button");
+
+		// Reset the headers
+		toggleBingoHeaders("remove");
+
+		// Reset the board table view
+		toggleGameBoardTableBody("board");
+		mydoc.hideContent("#checkForBingo");
+		mydoc.hideContent("#checkForBingoSection");
+
+
 		// Reset the letter counts;
 		letterCounts = {"B":0, "I":0, "N":0, "G":0,"O":0 };
 
 		// Reset selected cell;
-		setSelectedCell("");
+		setBingoBall("");
 
 		// Reset cells;
 		resetCellsUnseen();
@@ -579,16 +755,21 @@ function resetBoard()
 		// Reset the selected game
 		document.getElementById("gameOptions").value = "";
 		CURR_GAME = "";
+		toggleGameBoardInput("gameOptions","enabled");
+
+		// Reset Start Game
+		toggleGameBoardInput("startGameButton","disable");
 
 		// Reset GAME_STARTED
 		GAME_STARTED = false;
 
 		// Reset buttons
-		document.getElementById("startGameButton").classList.remove("hidden");
-		document.getElementById("pickNumberButton").classList.add("hidden");
+		mydoc.showContent("#startGameButton");
+		mydoc.hideContent("#pickNumberButton");
 
 		// Reset time started value
 		mydoc.loadContent("", "game_started_timestamp");
+
 	}	
 }
 
@@ -620,6 +801,9 @@ function resetCellsInelligible()
 //  Generic value for speaking text value
 function speakText(text, subtext=undefined, rate=0.9, subrate=0.6, pause=2000)
 {
+
+	IS_SPEAKING = true; 
+
 	let synth = window.speechSynthesis;
 	
 	// https://dev.to/asaoluelijah/text-to-speech-in-3-lines-of-javascript-b8h	
@@ -638,17 +822,39 @@ function speakText(text, subtext=undefined, rate=0.9, subrate=0.6, pause=2000)
 		stillSpeaking = setInterval(function(){
 			if(!synth.speaking)
 			{
-				console.log("Done Speaking");
 				clearInterval(stillSpeaking);
 				//  Do the sub description 
 				setTimeout(function(){
-					msg.text = subtext;
-					msg.rate = subrate;
-					synth.speak(msg);
+					// msg.text = subtext;
+					// msg.rate = subrate;
+					speakText(subtext,undefined,subrate)
+					// synth.speak(msg);
 				}, pause);
 			}
 		}, 500);
 	}
+	else
+	{
+		let waitTilFinishSpeaking = setInterval(()=>{
+			if(!synth.speaking)
+			{
+				IS_SPEAKING = false;
+				clearInterval(waitTilFinishSpeaking);
+			}
+		},500);
+	}
+}
+
+// Run a function once a statement is done speaking
+function runAfterSpeaking(callBackFunction)
+{
+	let checkSpeaking = setInterval(() => {
+		if(!IS_SPEAKING)
+		{
+			callBackFunction();
+			clearInterval(checkSpeaking);
+		}
+	}, 500);
 }
 
 // Get the value of the selected option

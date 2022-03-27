@@ -2,7 +2,7 @@
 <html>
 <head>
 	<title>BINGO - Build Card</title>
-	<link rel="stylesheet" type="text/css" href="./src/bingo.css">
+	<link rel="stylesheet" type="text/css" href="../src/bingo.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body class="theme_black_bg">
@@ -11,7 +11,7 @@
         <h1 style="text-align:center;" class="dlf_title">Build Card
         </h1>
         <div>
-            <a href="./cardtype.html" class="dlf_href_notextdec">
+            <a href="./" class="dlf_href_notextdec">
                 <button style="float:left;" class="dlf_button_xxlarge dlf_button_round_corners dlf_button_red">
                     GO BACK
                 </button>
@@ -25,7 +25,7 @@
         <br style="clear:both;"/>
         <hr style="clear:both; margin-bottom:2%;"/>
         <br/>
-        <p style="color:red;" class="dlf_paragraph_xxxlarge">
+        <p id="build_card_instructions" style="color:white;" class="dlf_paragraph_xxxlarge">
             Select the numbers you want to use on your card
         </p>
         <table id="bingo_card_table" class="table">
@@ -86,7 +86,11 @@
     </div>
 
 </body>
-<script type="text/javascript" src="./src/common.js"></script>
-<script type="text/javascript" src="./src/bingo_objects.js"></script>
-<script type="text/javascript" src="./src/card.js"></script>
+<!-- Common Code -->
+<script src="https://dejai.github.io/scripts/js/common.js"></script>
+<!-- My Trello code -->
+<script src="https://dejai.github.io/scripts/js/trellowrapper.js"></script>
+
+<script type="text/javascript" src="../src/bingo_objects.js"></script>
+<script type="text/javascript" src="../src/card.js"></script>
 </html>
