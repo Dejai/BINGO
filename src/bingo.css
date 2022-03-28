@@ -199,7 +199,7 @@
 /* Menu*/
 	#game_selector{ width:40%; float:left; }
 	/* #gameOptions { font-size:180%; } */
-	.game_options_select { font-size: 180%; }
+	.game_options_select { font-size: 150%; width:100%; }
 	#pickNumberButton {cursor:pointer;}
 	#selected_ball_section { width:40%; float:left; }
 	#selected_cell { margin-bottom:1%; margin-top:2%; font-size:44px; }

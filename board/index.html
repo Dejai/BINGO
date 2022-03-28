@@ -37,8 +37,7 @@
 		</table>
 	</div>
 	<div id="menu_section">
-
-		<table class="table">
+		<table class="table" style="margin-bottom:1%;">
 			<colgroup>
 				<col style="width:25%;">
 				<col style="width:50%;">
@@ -47,10 +46,16 @@
 			<tr>
 				<td style="text-align:left; ">
 					<p id="game_started_timestamp" style="color:red; text-align:left; margin-bottom:0px;"></p>
-					<select id="gameOptions" class="game_options_select"></select><br/>
-					<span style="cursor:pointer" onclick="onShowGameExampleAgain()">Show Example</span>
-					&nbsp; | &nbsp;
-					<span style="cursor:pointer" onclick="onHideGameExampleAgain()">Hide Example</span>
+					<select id="gameOptions" class="game_options_select"></select>
+					<button id="announceGameSection" style="margin-left:5%;float:right;" class="pointer hidden dlf_button_xxlarge dlf_button_round_corners dlf_button_blue" onclick="onAnnounceGame()" >
+						ANNOUNCE GAME
+					</button>
+					<br style="clear:both;"/>
+					<div id="exampleLinks" class="hidden">
+						<span class="pointer" onclick="onAnnounceGame()">Show Example</span>
+						&nbsp; | &nbsp;
+						<span class="pointer" onclick="onHideGameExample()">Hide Example</span>
+					</div>
 				 </td>
 				<td>
 					
@@ -60,8 +65,8 @@
 					<button id="pickNumberButton" class="hidden dlf_button_xxlarge dlf_button_round_corners dlf_button_limegreen" onclick="onPickNumber()">
 						Select a Number
 					</button>
-					<button id="checkForBingo" class="hidden dlf_button_xxlarge dlf_button_round_corners dlf_button_gold" onclick="checkIfSomeoneHasBingo()">
-						Check for Bingo
+					<button id="checkForBingoButton" class="hidden dlf_button_xxlarge dlf_button_round_corners dlf_button_gold" onclick="onShowCheckBingoSection()">
+						Check for BINGO
 					</button>
 					<br/>
 					<div id="bingoBallSection" class="hidden">
@@ -80,7 +85,7 @@
 				 	
 				</td>
 				<td>
-					<button id="reset_game_button" class="theme_black_bg dlf_button_xxlarge dlf_button_round_corners dlf_button_red hidden"  onclick="resetBoard()">
+					<button id="reset_game_button" class="theme_black_bg dlf_button_xxlarge dlf_button_round_corners dlf_button_red hidden"  onclick="onResetGame()">
 						RESET GAME
 					</button>
 
@@ -91,18 +96,6 @@
 					</button>
 				</td>
 			</tr>
-			<tr>
-				<td>
-					<table id="gameOptionExample" class="table centered hidden"></table>
-				</td>
-				<td>
-					&nbsp;
-				</td>
-				<td>
-					&nbsp;
-				</td>
-			</tr>
-		</table>
 		</table>
 	</div>
 	<table id="game_table" class="table">

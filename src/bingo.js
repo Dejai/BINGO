@@ -4,7 +4,7 @@ var synth = window.speechSynthesis;
 var voicesMap = {};
 var letterCounts = {"B":0, "I":0, "N":0, "G":0,"O":0 };
 
-var CURR_GAME = "";
+var CURR_GAME = undefined;
 var GAME_STARTED = false;
 var IS_BOARD_PAGE = true;
 
@@ -12,6 +12,9 @@ var NUMBERS_CALLED = [];
 var CARDS = {};
 
 var IS_SPEAKING = false;
+
+// To determine the trigger for the ENTER button
+var CHECKING_FOR_BINGO = false;
 
 /*********************** GETTING STARTED *****************************/
 
@@ -76,13 +79,17 @@ function listenerOnKeyUp(){
 		switch(event.code)
 		{
 			case "Enter":
-				if(!GAME_STARTED)
+				if(!GAME_STARTED && !CHECKING_FOR_BINGO)
 				{
 					onStartGame();
 				}
-				else
+				else if (GAME_STARTED && !CHECKING_FOR_BINGO)
 				{
 					onPickNumber();
+				}
+				else if (CHECKING_FOR_BINGO)
+				{
+					onCheckCardForBingo();
 				}
 				break;
 			default:
@@ -99,22 +106,15 @@ function listenerOnGameOptionChange()
 	{
 		options.addEventListener("change", (event)=>{
 
-			ele = event.target;
-			CURR_GAME = ele.value;
+			let ele = event.target;
+			CURR_GAME = ele.value ?? "";
 
-			toggleGameBoardInput("startGameButton","disable");
-			runAfterSpeaking(()=>{
-				toggleGameBoardInput("startGameButton","enable");
-			});
-
-			onLoadGameExample(ele.value);
-			ignoreCellsByGame(ele.value);
-	
-			if(IS_BOARD_PAGE)
+			if(CURR_GAME != "")
 			{
-				onDescribeGame(ele.value, true);
+				mydoc.showContent("#announceGameSection");
+				// Load the game example
+				onLoadGameExample(ele.value);
 			}
-			
 		});
 	}
 }
@@ -130,9 +130,9 @@ function listenerOnSpeakVoiceDemo()
 	option  = voiceSelect.querySelector("option[data-name='"+value+"']");
 	if (option != undefined)
 	{
-		name = option.getAttribute("data-name");
+		let speakerName = option.getAttribute("data-name");
 		// https://dev.to/asaoluelijah/text-to-speech-in-3-lines-of-javascript-b8h
-		text = "Hello. My name is " + name + ". And this is how I would call a number:"
+		text = "Hello. My name is " + speakerName + ". And this is how I would call a number:"
 		subtext = "I 20";
 		speakText(text, subtext, 0.9, 0.6, 500);
 	}
@@ -141,10 +141,8 @@ function listenerOnSpeakVoiceDemo()
 // Checking a selected card for bingo
 function onCheckCardForBingo()
 {
+
 	let cardName = document.getElementById("check_bingo_card")?.value;
-
-	console.log(cardName);
-
 	if(cardName != undefined & Object.keys(CARDS).includes(cardName))
 	{
 		toggleGameBoardTableBody("card");
@@ -161,8 +159,11 @@ function onCheckCardForBingo()
 		GAME_BOARD_CELLS = []; // clear it to make sure no other card is in there;
 		mapNumberCells();
 
-		// Show the needed cells for this game;
-		onShowNeededCells(CURR_GAME);
+		// Show the needed cells for this game (if not straight line);
+		if(CURR_GAME != "Straight Line")
+		{
+			onShowNeededCells(CURR_GAME);
+		}
 
 		// Highlight the numbers already called
 		showNumbersCalledOnCard();
@@ -280,7 +281,7 @@ function showNumbersCalledOnCard()
 	cells.forEach( (cell)=>{
 
 		let val = cell.innerText;
-		let needed = cell.classList.contains("number_cell_needed");
+		let needed = cell.classList.contains("number_cell_needed") || (CURR_GAME = "Straight Line");
 		isFreeSpace = (cell.querySelectorAll(".freeSpace")?.length >= 1)
 		if (needed && (NUMBERS_CALLED.includes(val) || isFreeSpace) )
 		{
@@ -379,16 +380,39 @@ function onLoadGameExampleTable(game_table)
 	mydoc.loadContent(game_example, "game_example_table_body");
 }
 
-function onShowGameExampleAgain()
+function onAnnounceGame()
 {
-	value = document.getElementById("gameOptions").value;
-	onLoadGameExample(ele.value);
-	ignoreCellsByGame(ele.value);
-	onDescribeGame(ele.value);
+	let selectField = document.getElementById("gameOptions")
+	let value = selectField?.value;
+	if(value != undefined)
+	{
+		// Toggle the start game button to be temporarily disabled;
+		toggleGameBoardInput("startGameButton","disable");
+
+		// Load the game example
+		onLoadGameExample(value);
+		ignoreCellsByGame(value);
+
+		// Only describe a game if not already speaking;
+		if(IS_BOARD_PAGE && !IS_SPEAKING)
+		{
+			runAfterSpeaking(()=>{
+				onDescribeGame(value, true);
+			});
+		}
+		
+		runAfterSpeaking(()=>{
+			toggleGameBoardInput("startGameButton","enable");
+		});
+
+		
+
+		
+	}
 }
 
 // Hide the example again
-function onHideGameExampleAgain()
+function onHideGameExample()
 {
 	toggleGameBoardTableBody("board");
 }
@@ -457,8 +481,24 @@ function onChangeTheme(event)
 }
 
 // Check if someone has BINGOd
-function checkIfSomeoneHasBingo()
+function onShowCheckBingoSection()
 {
+	// Checking for BINGO is now true;
+	CHECKING_FOR_BINGO = true;
+
+	// Load the saved cards (again) to make sure nobody got missed
+	loadSavedCards("", (card)=>{
+		createCardObject(card);
+	});
+
+	// Clear the field
+	let cardNameField = document.getElementById("check_bingo_card");
+	if(cardNameField != undefined)
+	{
+		cardNameField.value = "";
+	}
+
+	// Show the sections
 	mydoc.hideContent("#bingoBallSection");
 	mydoc.showContent("#checkForBingoSection");
 }
@@ -543,18 +583,24 @@ function onStartGame()
 	// Show the reset button
 	mydoc.showContent("#reset_game_button");
 
+	// Show the example links and hide the announce game
+	mydoc.showContent("#exampleLinks");
+	mydoc.hideContent("#announceGameSection");
+
+
 	// Disable the option to change the game:
 	toggleGameBoardInput("gameOptions","disable");
 
 	// Hide/Show things
 	mydoc.hideContent("#startGameButton");
 	toggleGameBoardTableBody("board");
+	mydoc.showContent("#checkForBingoButton")
+
 	mydoc.showContent("#pickNumberButton");
 	
 	speakText("Let the Game Begin");
 	GAME_STARTED = true;
 
-	mydoc.showContent("#checkForBingo")
 
 	// Set the time the game was started
 	let time = Helper.getDate("H:m:s K");
@@ -578,7 +624,9 @@ function onPickNumber()
 		return;
 	}
 
-	//
+	// Not checking for BINGO if this is being called
+	CHECKING_FOR_BINGO = false;
+
 
 	// Make sure the board is showing
 	toggleGameBoardTableBody("board");
@@ -723,22 +771,28 @@ function setBingoBallColor(identifier, value)
 
 
 // Reset the entire board (including reseting unseen cells)
-function resetBoard()
+function onResetGame()
 {
 	confirm_reset = confirm("Are you sure you want to reset the board?")
 
 	if(confirm_reset)
 	{
 
-		// Hide reset button
+		// Reset GAME_STARTED and CHECKING_FOR_BINGO
+		GAME_STARTED = false;
+		CHECKING_FOR_BINGO = false;
+
+		// Hide reset button & example links
 		mydoc.hideContent("#reset_game_button");
+		mydoc.hideContent("#exampleLinks");
+
 
 		// Reset the headers
 		toggleBingoHeaders("remove");
 
 		// Reset the board table view
 		toggleGameBoardTableBody("board");
-		mydoc.hideContent("#checkForBingo");
+		mydoc.hideContent("#checkForBingoButton");
 		mydoc.hideContent("#checkForBingoSection");
 
 
@@ -759,9 +813,6 @@ function resetBoard()
 
 		// Reset Start Game
 		toggleGameBoardInput("startGameButton","disable");
-
-		// Reset GAME_STARTED
-		GAME_STARTED = false;
 
 		// Reset buttons
 		mydoc.showContent("#startGameButton");
