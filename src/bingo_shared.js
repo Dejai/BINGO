@@ -6,9 +6,6 @@
 // Load the saved cards and run a callback (required)
 function loadSavedCards(boardName="", successCallback)
 {
-
-    console.log("LOADING THE NEW WAY");
-
 	// Always reset the cards;
 	CARDS = {};
 

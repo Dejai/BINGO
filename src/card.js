@@ -771,6 +771,7 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
     // Check specifically for any straight line
     function checkForBingo_StraightLine()
     {
+        console.log("Checking for straightline!");
         let expectedStraight = "11111";
         let hasStraightLine = false;
 
