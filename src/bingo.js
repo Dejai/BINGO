@@ -141,10 +141,8 @@ function listenerOnSpeakVoiceDemo()
 // Checking a selected card for bingo
 function onCheckCardForBingo()
 {
+
 	let cardName = document.getElementById("check_bingo_card")?.value;
-
-	console.log(cardName);
-
 	if(cardName != undefined & Object.keys(CARDS).includes(cardName))
 	{
 		toggleGameBoardTableBody("card");
@@ -483,10 +481,15 @@ function onChangeTheme(event)
 }
 
 // Check if someone has BINGOd
-function checkIfSomeoneHasBingo()
+function onShowCheckBingoSection()
 {
 	// Checking for BINGO is now true;
 	CHECKING_FOR_BINGO = true;
+
+	// Load the saved cards (again) to make sure nobody got missed
+	loadSavedCards("", (card)=>{
+		createCardObject(card);
+	});
 
 	// Clear the field
 	let cardNameField = document.getElementById("check_bingo_card");
