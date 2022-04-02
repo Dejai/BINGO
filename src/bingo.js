@@ -727,7 +727,9 @@ function incrementLetterCount(letter)
 		letterCounts[letter] += 1
 	}
 
-	if (letterCounts[letter] == 15)
+	let speak = document.getElementById("speak_value").value;
+	
+	if (letterCounts[letter] == 15 && speak == "Yes")
 	{
 		runAfterSpeaking(()=>{
 			msg = "All numbers under the letter " + letter + " have been called.";
