@@ -43,15 +43,9 @@ mydoc.ready(function(){
 
 		// Add listener for "Enter Key"
 		listenerOnKeyUp();
-
-		// Load the saved cards
-		loadSavedCards("", (card)=>{
-			createCardObject(card);
-		});
 	}
 	else
 	{
-		alert
 		// Load an empty example table
 		table = [
 					[0,0,0,0,0],
@@ -106,12 +100,16 @@ function listenerOnGameOptionChange()
 	{
 		options.addEventListener("change", (event)=>{
 
+			// Disable the start button whenever changing game;
+			toggleGameBoardInput("startGameButton","disable");
+
 			let ele = event.target;
 			CURR_GAME = ele.value ?? "";
 
 			if(CURR_GAME != "")
 			{
-				mydoc.showContent("#announceGameSection");
+				mydoc.showContent("#playThisGameButton");
+
 				// Load the game example
 				onLoadGameExample(ele.value);
 			}
@@ -142,6 +140,8 @@ function listenerOnSpeakVoiceDemo()
 function onCheckCardForBingo()
 {
 
+	console.log("Checking for BINGO on board");
+
 	let cardName = document.getElementById("check_bingo_card")?.value;
 	if(cardName != undefined & Object.keys(CARDS).includes(cardName))
 	{
@@ -162,6 +162,7 @@ function onCheckCardForBingo()
 		// Show the needed cells for this game (if not straight line);
 		if(CURR_GAME != "Straight Line")
 		{
+			console.log("Showing needed cells");
 			onShowNeededCells(CURR_GAME);
 		}
 
@@ -281,7 +282,7 @@ function showNumbersCalledOnCard()
 	cells.forEach( (cell)=>{
 
 		let val = cell.innerText;
-		let needed = cell.classList.contains("number_cell_needed") || (CURR_GAME = "Straight Line");
+		let needed = cell.classList.contains("number_cell_needed") || (CURR_GAME == "Straight Line");
 		isFreeSpace = (cell.querySelectorAll(".freeSpace")?.length >= 1)
 		if (needed && (NUMBERS_CALLED.includes(val) || isFreeSpace) )
 		{
@@ -384,9 +385,15 @@ function onAnnounceGame()
 {
 	let selectField = document.getElementById("gameOptions")
 	let value = selectField?.value;
+
 	if(value != undefined)
 	{
+
+		// Hide the play button
+		mydoc.hideContent("#playThisGameButton")
+
 		// Toggle the start game button to be temporarily disabled;
+		mydoc.showContent("#startGameButton");
 		toggleGameBoardInput("startGameButton","disable");
 
 		// Load the game example
@@ -491,16 +498,26 @@ function onShowCheckBingoSection()
 		createCardObject(card);
 	});
 
-	// Clear the field
-	let cardNameField = document.getElementById("check_bingo_card");
-	if(cardNameField != undefined)
-	{
-		cardNameField.value = "";
-	}
-
-	// Show the sections
+	// Hide the ball and show the loading
 	mydoc.hideContent("#bingoBallSection");
-	mydoc.showContent("#checkForBingoSection");
+	mydoc.showContent("#checkForBingoSectionLoading");
+
+	setTimeout(()=>{
+		// Clear the field
+		let cardNameField = document.getElementById("check_bingo_card");
+		if(cardNameField != undefined)
+		{
+			cardNameField.value = "";
+		}
+
+		// Hide the loading
+		mydoc.hideContent("#checkForBingoSectionLoading");
+
+		// Show the sections
+		mydoc.showContent("#checkForBingoSection");
+	}, 2000)
+
+	
 }
 
 function toggleGameSettings()
@@ -544,18 +561,20 @@ function toggleGameBoardTableBody(state)
 
 // Toggle game board element state
 // Used for the following: Game Options select field; Start Game button; Pick Number button;
-function toggleGameBoardInput(identifier, state)
+function toggleGameBoardInput(identifier, state, className)
 {
 	let element = document.getElementById(identifier)
 	if(element != undefined)
 	{
+		let disabledClass = (className != undefined) ? className : "dlf_button_gray";
+		let enabledClass = (className != undefined) ? className : "dlf_button_limegreen";
 		switch(state)
 		{
 			case "disable":
 				element.disabled = true;
 				if(element.tagName == "BUTTON")
 				{
-					element.classList.add("dlf_button_gray")
+					element.classList.add(disabledClass);
 				}
 				break;
 			// Default to enabling it.
@@ -563,8 +582,8 @@ function toggleGameBoardInput(identifier, state)
 				element.disabled = false;
 				if(element.tagName == "BUTTON")
 				{
-					element.classList.remove("dlf_button_gray");
-					element.classList.add("dlf_button_limegreen");
+					element.classList.remove(disabledClass);
+					element.classList.add(enabledClass);
 				}
 		}
 	}
@@ -585,7 +604,7 @@ function onStartGame()
 
 	// Show the example links and hide the announce game
 	mydoc.showContent("#exampleLinks");
-	mydoc.hideContent("#announceGameSection");
+	mydoc.hideContent("#playThisGameButton");
 
 
 	// Disable the option to change the game:
@@ -627,7 +646,6 @@ function onPickNumber()
 	// Not checking for BINGO if this is being called
 	CHECKING_FOR_BINGO = false;
 
-
 	// Make sure the board is showing
 	toggleGameBoardTableBody("board");
 	toggleBingoHeaders("remove"); // Make sure any BINGO already shown is cleared
@@ -636,6 +654,8 @@ function onPickNumber()
 	mydoc.showContent("#bingoBallSection");
 	// Hide the Check Bingo Sections
 	mydoc.hideContent("#checkForBingoSection");
+	mydoc.hideContent("#checkForBingoSectionLoading");
+
 
 	// Disable picker temporarily 
 	toggleGameBoardInput("pickNumberButton", "disable");
@@ -786,7 +806,6 @@ function onResetGame()
 		mydoc.hideContent("#reset_game_button");
 		mydoc.hideContent("#exampleLinks");
 
-
 		// Reset the headers
 		toggleBingoHeaders("remove");
 
@@ -815,7 +834,7 @@ function onResetGame()
 		toggleGameBoardInput("startGameButton","disable");
 
 		// Reset buttons
-		mydoc.showContent("#startGameButton");
+		mydoc.hideContent("#startGameButton");
 		mydoc.hideContent("#pickNumberButton");
 
 		// Reset time started value
