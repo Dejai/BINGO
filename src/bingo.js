@@ -390,11 +390,23 @@ function onAnnounceGame()
 	{
 
 		// Hide the play button
-		mydoc.hideContent("#playThisGameButton")
+		mydoc.hideContent("#playThisGameButton");
+
+		// Hide the example link
+		mydoc.hideContent("#showExampleLink");
 
 		// Toggle the start game button to be temporarily disabled;
-		mydoc.showContent("#startGameButton");
-		toggleGameBoardInput("startGameButton","disable");
+		if(!GAME_STARTED)
+		{
+			mydoc.showContent("#startGameButton");
+			toggleGameBoardInput("startGameButton","disable");
+		}
+		// Toggle the example link
+		else 
+		{
+			mydoc.showContent("#hideExampleLink")
+		}
+		
 
 		// Load the game example
 		onLoadGameExample(value);
@@ -408,13 +420,12 @@ function onAnnounceGame()
 			});
 		}
 		
-		runAfterSpeaking(()=>{
-			toggleGameBoardInput("startGameButton","enable");
-		});
-
-		
-
-		
+		if(!GAME_STARTED)
+		{
+			runAfterSpeaking(()=>{
+				toggleGameBoardInput("startGameButton","enable");
+			});
+		}
 	}
 }
 
@@ -422,6 +433,8 @@ function onAnnounceGame()
 function onHideGameExample()
 {
 	toggleGameBoardTableBody("board");
+	mydoc.showContent("#showExampleLink");
+	mydoc.hideContent("#hideExampleLink");
 }
 
 // Get all the straight line examples
@@ -601,9 +614,11 @@ function onStartGame()
 
 	// Show the reset button
 	mydoc.showContent("#reset_game_button");
+	
 
 	// Show the example links and hide the announce game
 	mydoc.showContent("#exampleLinks");
+	mydoc.showContent("#showExampleLink");
 	mydoc.hideContent("#playThisGameButton");
 
 
@@ -652,9 +667,14 @@ function onPickNumber()
 
 	// Show the ball section
 	mydoc.showContent("#bingoBallSection");
+
 	// Hide the Check Bingo Sections
 	mydoc.hideContent("#checkForBingoSection");
 	mydoc.hideContent("#checkForBingoSectionLoading");
+
+	// Toggle the example links
+	mydoc.hideContent("#hideExampleLink");
+	mydoc.showContent("#showExampleLink");
 
 
 	// Disable picker temporarily 

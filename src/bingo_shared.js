@@ -9,6 +9,13 @@ function loadSavedCards(boardName="", successCallback)
 	// Always reset the cards;
 	CARDS = {};
 
+	// Reset the datalist options
+	var list = document.getElementById("card_names_data_list");
+	if(list!=undefined){ 
+		list.innerHTML = "";
+	}
+
+
     // Get specific list or all of them;
 	let lists = (boardName != "") ? [boardName] : ["NAMED_CARDS", "RANDOM_CARDS"];
 
