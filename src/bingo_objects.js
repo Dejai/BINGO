@@ -90,7 +90,7 @@ const games_object =
 		},
 		"Grid!": {
 			"group": "Random Games",
-			"desc": "The game is Grid! The 1st, 3rd, and last columns. Also the 1st, 3rd, and last rows.",
+			"desc": "The game is Grid! Down the B, down the N, and down the O,,,,,Also, across the top row, across the middle row, and across the bottom row.",
 			"cost": "$2",
 			"example": 	[
 							[1,1,1,1,1],

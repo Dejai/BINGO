@@ -33,17 +33,10 @@
 	}
 	.bingo_ball_letter_b { background-color:blue; color:white; }
 	.bingo_ball_letter_i { background-color:red; color:white; }
-	.bingo_ball_letter_n { background-color:white; color:black; }
+	.bingo_ball_letter_n { background-color:purple; color:white; }
 	.bingo_ball_letter_g { background-color:green; color:white; }
 	.bingo_ball_letter_o { background-color:yellow; color:black; }
-/* 
-	.bingo_ball_letter_b { border:10px solid blue; }
-	.bingo_ball_letter_i { border:10px solid red; }
-	.bingo_ball_letter_n { border:10px solid white; }
-	.bingo_ball_letter_g { border:10px solid green; }
-	.bingo_ball_letter_o { border:10px solid yellow; } */
 	
-
 	#bingo_version { position:fixed; bottom:1px; right:1px; color:red; font-style:italic;}
 
 	@keyframes bingo_blink {

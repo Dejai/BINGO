@@ -47,19 +47,19 @@
 				<td style="text-align:left; ">
 					<p id="game_started_timestamp" style="color:red; text-align:left; margin-bottom:0px;"></p>
 					<select id="gameOptions" class="game_options_select"></select>
-					<button id="announceGameSection" style="margin-left:5%;float:right;" class="pointer hidden dlf_button_xxlarge dlf_button_round_corners dlf_button_blue" onclick="onAnnounceGame()" >
-						ANNOUNCE GAME
-					</button>
+					
 					<br style="clear:both;"/>
-					<div id="exampleLinks" class="hidden">
-						<span class="pointer" onclick="onAnnounceGame()">Show Example</span>
-						&nbsp; | &nbsp;
-						<span class="pointer" onclick="onHideGameExample()">Hide Example</span>
+					<div id="exampleLinks" style="text-align:right;padding-right:1%;" class="hidden">
+						<span id="showExampleLink" class="pointer" onclick="onAnnounceGame()">Show Example Again</span>
+						<!-- &nbsp; | &nbsp; -->
+						<span id="hideExampleLink" class="pointer hidden" onclick="onHideGameExample()">Hide Example</span>
 					</div>
 				 </td>
 				<td>
-					
-					<button id="startGameButton" class="dlf_button_xxlarge dlf_button_round_corners dlf_button_gray" onclick="onStartGame()" disabled>
+					<button id="playThisGameButton" class="pointer hidden dlf_button_xxlarge dlf_button_round_corners dlf_button_blue" onclick="onAnnounceGame()">
+						PLAY THIS GAME
+					</button>
+					<button id="startGameButton" class="pointer hidden dlf_button_xxlarge dlf_button_round_corners dlf_button_gray" onclick="onStartGame()" disabled>
 						START GAME
 					</button>
 					<button id="pickNumberButton" class="hidden dlf_button_xxlarge dlf_button_round_corners dlf_button_limegreen" onclick="onPickNumber()">
@@ -71,6 +71,9 @@
 					<br/>
 					<div id="bingoBallSection" class="hidden">
 						<span id="selected_cell" class="theme_black_bg"></span>
+					</div>
+					<div id="checkForBingoSectionLoading" class="hidden">
+						<img src="https://dejai.github.io/scripts/assets/img/loading1.gif" style="width:5%;height:5%;">
 					</div>
 					<div id="checkForBingoSection" style="width:50%;margin:auto;" class="hidden">
 						<hr/>
