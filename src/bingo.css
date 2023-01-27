@@ -1,5 +1,13 @@
 /*********GENERAL (applies to all themes)**********************/
 
+
+/********** CARD  ****************/ 
+
+.cardLoadBlock { float:left; width: 40%; border:2px solid gray; padding:1%; height:150px; margin:3%; } 
+.cardLoadBlock.selected { background-color: limegreen; color:black;}
+.cardLoadBlock .gameCode { color:orange; }
+.cardLoadBlock.selected .gameCode { color:blue !important; }
+
 /**************************************************** 
 	GENERAL: Applies to all pages;
 *****************************************************/
@@ -12,9 +20,7 @@
 .searchBar.searchPlaceholder { color:gray; }
 .searchBar.searchText { color: black; }
 
-.cardLoadBlock { float:left; width: 25%; border:2px solid gray; padding:1%; height:100px; margin:3%; } 
-/* float: left; width: 30%; border:1px dashed white;  margin-bottom:5%; margin-right:2%; height:100px;  } */
-.cardLoadBlock.selected { background-color: limegreen; color:black;}
+
 
 .matchingCard { margin-left:0px; margin-right:0px; cursor:pointer; }
 .selectedMatchingCard { color:limegreen; font-weight:bolder; }
@@ -272,6 +278,10 @@
 {
 
 	#searchBarSection { width:40%;}
+
+
+	.cardLoadBlock { width: 25%; } 
+
 
 	/* Headings */
 	.dlf_title { font-size:2em;}

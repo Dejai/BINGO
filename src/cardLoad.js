@@ -2,6 +2,7 @@
 /************************ GLOBAL VARIABLES ****************************************/
 var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
 
+var TEST = undefined; 
 /*********************** GETTING STARTED *****************************/
 
     // Once doc is ready
@@ -23,8 +24,8 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         var cardLoadHTML = "";
         var listOfCards = await CardPromises.getCardsByList("NAMED_CARDS");
 
-        // Sort the cords;
-        listOfCards.sort( (a, b)=>{ return a["pos"] - b["pos"]; });
+        TEST = listOfCards;
+
         console.log(listOfCards);
 
         // Get the template for each card
@@ -151,15 +152,27 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
 
         // Get the amount selected
         let amountSelected = document.querySelectorAll(".cardLoadBlock.selected")?.length ?? 0;
-        if(amountSelected > 0)
-        {
-            let s = (amountSelected > 1) ? 'S' : '' ;
-            mydoc.setContent("#useCardButton", {"innerHTML": `USE ${amountSelected} CARD${s}`});
-            mydoc.showContent("#useCardSection");
+        let s = (amountSelected == 0 || amountSelected > 1) ? 'S' : '' ;
 
-            var _action = (amountSelected == 3) ?  mydoc.hideContent(".selectCardButton.unselected") :
-                            mydoc.showContent(".selectCardButton.unselected")
-        }
+        // Set the wording in the use card button
+        mydoc.setContent("#useCardButton", {"innerHTML": `USE ${amountSelected} SELECTED CARD${s}`});
+
+        // If all 3 seleced, hide the other button
+        var _action = (amountSelected == 3) ?  mydoc.hideContent(".selectCardButton.unselected") :
+                        mydoc.showContent(".selectCardButton.unselected");
+
+        // Set the color for the use card button
+        var _buttonColor1 = (amountSelected > 0) ? mydoc.addClass("#useCardButton", "dlf_button_limegreen") : 
+                            mydoc.removeClass("#useCardButton", "dlf_button_limegreen");
+        var _buttonColor2 = (amountSelected > 0) ? mydoc.removeClass("#useCardButton", "dlf_button_gray") : 
+                            mydoc.addClass("#useCardButton", "dlf_button_gray");
+
+        // Finally show the list of selected buttons
+        let selectedCardsList = "";
+        document.querySelectorAll(".cardLoadBlock.selected h3")?.forEach( (card) => {
+            selectedCardsList += `<p>${card.innerText}</p>`;
+        });
+        mydoc.setContent("#selectedCardsList", {"innerHTML":selectedCardsList});    
     }
 
     // Use the selected cards
@@ -167,8 +180,19 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
     {
 
         let cardIDs = [];
-        document.querySelectorAll(".cardLoadBlock.selected")?.forEach( (block) =>{
+        let selectedCards = document.querySelectorAll(".cardLoadBlock.selected");
 
+        if( (selectedCards?.length ?? 0) == 0)
+        {
+            mydoc.showContent("#useCardWarning");
+            return;
+        }
+
+        // Don't show warning if we can proceed
+        mydoc.hideContent("#useCardWarning");
+
+        // Loop through cards & build list of IDs to pass along.
+        selectedCards.forEach( (block) =>{
             let id = block.getAttribute("data-card-id");
             cardIDs.push(id);
         });

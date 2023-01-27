@@ -16,6 +16,12 @@ const CardPromises = {
             MyTrello.get_cards_by_list_name(listName, (data)=>{
                 
                 let response = JSON.parse(data.responseText);
+
+                // Sort the cards by name
+                response = response.sort( (a,b) =>{
+                    return a["name"].localeCompare(b["name"]);
+                });
+
                 resolve(response);
             }, Logger.errorMessage)
         });
