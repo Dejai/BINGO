@@ -36,7 +36,7 @@ mydoc.ready(function(){
 	if(IS_BOARD_PAGE)
 	{
 		// Make sure the page doesn't close once the game starts
-		window.addEventListener("beforeunload", onClosePage);
+		// window.addEventListener("beforeunload", onClosePage);
 
 		// Load the game cells table
 		loadGameCells();
@@ -146,8 +146,39 @@ function lookupMatchingCards()
 	onSearchCard();
 
 }
+
+
+// 
+function onCheckCardForBingo(cardCode)
+{
+	let cardObject = CARDS[cardCode];
+
+	toggleGameBoardTableBody("card");
+
+	CardManager.loadCard("example", "#bingo_card_body", cardObject);
+
+	// Map the cells for reference
+	// GAME_BOARD_CELLS = []; // clear it to make sure no other card is in there;
+	// mapNumberCells();
+
+	// Show the needed cells for this game (if not straight line);
+	if(CURR_GAME != "Straight Line")
+	{
+		console.log("Showing needed cells");
+		CardManager.setNeededCellsByGame(CURR_GAME);
+		// onShowNeededCells(CURR_GAME);
+	}
+
+	// Highlight the numbers already called
+	showNumbersCalledOnCard();
+
+	// Check if BINGO is WON
+	CardManager.checkForBingo(CURR_GAME, document.querySelectorAll("table.bingo_card_table") )
+	// checkForBingo();
+}
+
 // Checking a selected card for bingo
-function onCheckCardForBingo(event)
+function onCheckCardForBingo2(event)
 {
 
 	console.log("Checking for BINGO on board");
@@ -157,11 +188,7 @@ function onCheckCardForBingo(event)
 	mydoc.removeClass(".selectedMatchingCard", "selectedMatchingCard");
 	target.classList.add("selectedMatchingCard");
 
-	// let cardName = document.getElementById("check_bingo_card")?.value;
-	console.log(Object.keys(CARDS));
-	console.log(cardName);
-
-	if(cardName != undefined & Object.keys(CARDS).includes(cardName))
+	if(Object.keys(CARDS).includes(cardName))
 	{
 		toggleGameBoardTableBody("card");
 
@@ -527,11 +554,33 @@ async function onShowCheckBingoSection()
 	// Show the loading
 	mydoc.showContent("#checkForBingoSectionLoading");
 
+	// Get all the cards
+	let namedCards = await CardPromises.getCardsByList("NAMED_CARDS");
+	let randomCards = await CardPromises.getCardsByList("RANDOM_CARDS");
+	SAVED_CARDS = SAVED_CARDS.concat(namedCards);
+	SAVED_CARDS = SAVED_CARDS.concat(randomCards);
+
+	console.log(namedCards);
+	console.log(randomCards);
+	console.log(SAVED_CARDS);
+
+	// Save all cards in a format for easy loading
+	for(var idx in SAVED_CARDS)
+	{
+		let card = SAVED_CARDS[idx];
+		let cardObject = CardManager.getCardObject(card);
+		CARDS[cardObject["Code"]] = cardObject;
+
+		// Get the option template & load immediately
+		let template = await CardPromises.getTemplate("/templates/checkBingoOption.html", cardObject);
+		mydoc.setContent("#matchingCards", {innerHTML: template}, true);
+	}
+
 	// Get the saved cards
-	SAVED_CARDS = await BingoShared.getSavedCards();
+	// SAVED_CARDS = await BingoShared.getSavedCards();
 
 	// Get the card mapping
-	CARDS = BingoShared.getCardMap(SAVED_CARDS);
+	// CARDS = BingoShared.getCardMap(SAVED_CARDS);
 
 	console.log(CARDS);
 
@@ -545,22 +594,6 @@ async function onShowCheckBingoSection()
 	mydoc.hideContent("#checkForBingoSectionLoading");	
 }
 
-// Get the saved cards - async
-// async function getSavedCards()
-// {
-// 	let lists = ["NAMED_CARDS", "RANDOM_CARDS"];
-
-// 	var cards = [];
-
-// 	for(var idx in lists)
-// 	{
-// 		var listName = lists[idx];
-// 		var listCards = await BingoShared.getSavedCardsPromise(listName);
-// 		cards = cards.concat(listCards);
-// 	}
-
-// 	return cards;
-// }
 
 function toggleGameSettings()
 {
@@ -934,10 +967,11 @@ function onSearchCard()
 			for(var idx in matches)
 			{
 				let match = matches[idx];
-				let name = match["name"];
+				let name = match["Name"];
+				let code = match["Code"];
 				let id = match["id"];
 
-				matchHTML += `<li data-card-match-name="${name}" class='matchingCard' onclick="onCheckCardForBingo(event)">${name}</li>`
+				matchHTML += `<li data-card-code="${code}" data-card-match-name="${name}" class='matchingCard' onclick="onCheckCardForBingo(event)">${name}</li>`
 			}
 			mydoc.setContent("#matchingCards", {"innerHTML":matchHTML});
 		}
@@ -1027,3 +1061,21 @@ function getSelectedVoice()
 	return selectedVoice
 }
 
+
+// Toggling the state of the BINGO headers
+function toggleBingoHeaders(state)
+{
+	document.querySelectorAll("[class*='card_header_']").forEach( (cell)=>{
+
+		if (state == "show")
+		{
+			cell.classList.add("bingo_blink");
+			cell.classList.remove("game_table_header");
+		}
+		else
+		{
+			cell.classList.remove("bingo_blink");
+			cell.classList.add("game_table_header");
+		}
+	});
+}

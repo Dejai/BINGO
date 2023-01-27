@@ -224,29 +224,10 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         });
     }
 
-    // Get bingo numbers from saved card
-    function getBingoNumbersFromCard(cardDesc)
-    {
-
-        // getFreeSpaceIcon(); 
-        let desc = cardDesc.split("\n");
-        let map = {};
-
-        desc.forEach( (val)=>{
-            // Then map the letters to their letters
-            let splits = val.split("=");
-            let letter = splits[0];
-            let values = splits[1].split(",")
-            map[letter] = values;
-        });
-
-        return map;
-    }
-
+    
     // Get the trello card and then set the card data
     async function loadTrelloCard(cardList)
     {
-
 
         let cards = cardList.split(",");
 
@@ -260,45 +241,23 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
             if(cardsAdded.includes(cardID))
                 continue;
 
+            // Get the card from Trello;
             let cardData = await CardPromises.getCard(cardID);
 
+            
             if (cardData != undefined)
             {
-                let nameValues = cardData["name"].split(" - ");
-                let cardName = nameValues[0];
-                let cardCode = nameValues[nameValues.length-1];
+                // Get a card formatted as an objectobject;
+                let cardObject = CardManager.getCardObject(cardData);
 
-                let cardDesc = cardData["desc"];
-                let cardNumbers = getBingoNumbersFromCard(cardDesc);
-
-                let cardObject = {
-                    "Name":cardName,
-                    "Code":cardCode
-                }
-
-                Object.keys(cardNumbers).forEach( (key)  =>{
-
-                    let numbers = cardNumbers[key];
-                    
-                    for(var idx in numbers)
-                    {
-                        let cardIdx = Number(idx)+1;
-                        let cardNum = numbers[idx];
-                        cardNum = (cardNum == "" || cardNum == "FS") ? getFreeSpaceIcon() : cardNum;
-                        let cardKey = `${key.toUpperCase()}${cardIdx}`;
-                        cardObject[cardKey] = cardNum;
-                    }
-                });
-
-                let template = await CardPromises.getTemplate("/templates/cardPlay2.html", cardObject);
-                mydoc.setContent("#cardBlockSection", {"innerHTML":template}, true);
+                // Then load the card where it ought to go
+                await CardManager.loadCard("play", "#cardBlockSection", cardObject, true);
 
                 // Indicate taht we added this card
                 cardsAdded.push(cardID);
             }
         }
         addNumberListener();
-
     }
 
     // Create a trello card
@@ -723,7 +682,7 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
             toggleEditAndClearButtons("clear");
 
             // Show the needed cells
-            onShowNeededCells(CURR_GAME);           
+            CardManager.setNeededCellsByGame(CURR_GAME);
         }
     }
 
@@ -787,6 +746,8 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
             });
         }
     }
+
+
     // Highlight the cells needed
     function hightlightNeededCells(table)
     {
@@ -866,29 +827,12 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
 
 /*********************** HELPERS *****************************/
 
-    // Check if the current card has achieved BINGO!
+    // Check if the current cards have achieved BINGO!
     function checkForBingo()
     {
-        let expected = games_object[CURR_GAME]["example"];
-
         let cards = document.querySelectorAll("div.cardBlock table.bingo_card_table");
-
         cards.forEach( (card) => {
-
-            let isBingo = false;
-
-            if(CURR_GAME == "Straight Line")
-            {
-                isBingo = isStraightLineBingo(card);
-            }
-            else
-            {
-                let cardState = getBoardState(card);
-                isBingo = (cardState.toString() == expected.toString() );
-            }
-
-            let bingoState = (isBingo) ? "show" : "";
-            toggleBingoHeaders(card, bingoState);
+            CardManager.checkForBingo(CURR_GAME, card);
         });
     }
 
