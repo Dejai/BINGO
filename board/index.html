@@ -45,7 +45,7 @@
 				<col style="width:25%;">
 			</colgroup>
 			<tr>
-				<td style="text-align:left; ">
+				<td style="text-align:left; vertical-align: top;">
 					<p id="game_started_timestamp" style="color:red; text-align:left; margin-bottom:0px;"></p>
 					<select id="gameOptions" class="game_options_select"></select>
 					
@@ -56,7 +56,7 @@
 						<span id="hideExampleLink" class="pointer hidden" onclick="onHideGameExample()">Hide Example</span>
 					</div>
 				 </td>
-				<td>
+				<td style="vertical-align: top;">
 					<button id="playThisGameButton" class="pointer hidden dlf_button_xxlarge dlf_button_round_corners dlf_button_blue" onclick="onAnnounceGame()">
 						PLAY THIS GAME
 					</button>
@@ -76,22 +76,20 @@
 					<div id="checkForBingoSectionLoading" class="hidden">
 						<img src="https://dejai.github.io/scripts/assets/img/loading1.gif" style="width:7%;height:7%;">
 					</div>
-					<div id="checkForBingoSection" style="width:70%;margin:auto;" class="hidden2">
+					<div id="checkForBingoSection" style="width:70%;margin:auto;" class="hidden">
 						<hr/>
 						<div style="width:100%;margin:auto;">
-							<!-- <label for="check_bingo_card">Card Name/Code:</label><br/> -->
-							<input id="check_bingo_card" type="text" placeholder="Search card number (#01) or code" style="font-size:20px;" onkeyup="onSearchCard()">
-							<div id="matchingCards" style="height: 100px; overflow:scroll; margin-top:2%; border-top:2px double red;"></div>
+							<div id="searchBarSection" style="width:60%;">
+								<div id="searchBar" class="searchBar searchPlaceholder" data-jpd-placeholder="Search cards ..." contenteditable="true" onkeyup="onFilterCards()" onfocus="onSearchFocus()" onblur="onSearchBlur()"></div>
+							</div>
+							<div id="matchingCards" style="height: 100px; overflow:scroll; margin-top:2%;"></div>
 						</div>
 					</div>
 				</td>
-				<td>
+				<td style="vertical-align: top;">
 					<button id="reset_game_button" class="theme_black_bg dlf_button_xxlarge dlf_button_round_corners dlf_button_red hidden"  onclick="onResetGame()">
 						RESET GAME
 					</button>
-
-					<!-- style="font-size:44px;cursor:pointer; " onclick="toggleGameSettings()" -->
-
 					<button id="game_settings_button" class="dlf_button_xxlarge dlf_button_round_corners dlf_button_blue" onclick="toggleGameSettings()">
 						<i class="fa fa-gear" ></i> SETTINGS
 					</button>
@@ -131,7 +129,7 @@
 <!-- My Bingo code -->
 <script type="text/javascript" src="/src/bingo_objects.js"></script>
 <script type="text/javascript" src="/src/bingo_shared.js"></script>
-<!-- <script type="text/javascript" src="../src/card.js"></script> -->
+<script type="text/javascript" src="/src/searchBar.js"></script>
 <script type="text/javascript" src="/src/cardPromises.js"></script>
 <script type="text/javascript" src="/src/cardManager.js"></script>
 <script type="text/javascript" src="/src/bingo.js"></script>

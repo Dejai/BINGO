@@ -553,16 +553,12 @@ async function onShowCheckBingoSection()
 
 	// Show the loading
 	mydoc.showContent("#checkForBingoSectionLoading");
-
+	
 	// Get all the cards
 	let namedCards = await CardPromises.getCardsByList("NAMED_CARDS");
 	let randomCards = await CardPromises.getCardsByList("RANDOM_CARDS");
 	SAVED_CARDS = SAVED_CARDS.concat(namedCards);
 	SAVED_CARDS = SAVED_CARDS.concat(randomCards);
-
-	console.log(namedCards);
-	console.log(randomCards);
-	console.log(SAVED_CARDS);
 
 	// Save all cards in a format for easy loading
 	for(var idx in SAVED_CARDS)
@@ -576,13 +572,8 @@ async function onShowCheckBingoSection()
 		mydoc.setContent("#matchingCards", {innerHTML: template}, true);
 	}
 
-	// Get the saved cards
-	// SAVED_CARDS = await BingoShared.getSavedCards();
-
-	// Get the card mapping
-	// CARDS = BingoShared.getCardMap(SAVED_CARDS);
-
-	console.log(CARDS);
+	// Blur the search bar;
+	onSearchBlur();
 
 	// Hide the ball and show the loading
 	mydoc.hideContent("#bingoBallSection");
@@ -953,6 +944,10 @@ function resetCellsInelligible()
 function onSearchCard()
 {
 	let cardValue = mydoc.getContent("#check_bingo_card")?.value ?? "";
+
+
+	// document.querySelectorAll(".checkBingoOption")?.forEach( ())
+
 
 	if(cardValue != "")
 	{
