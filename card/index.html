@@ -2,7 +2,8 @@
 <html>
 <head>
 	<title>BINGO - Card (Type)</title>
-	<link rel="stylesheet" type="text/css" href="../src/bingo.css">
+	<base href="../">
+	<link rel="stylesheet" type="text/css" href="/src/bingo.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -10,27 +11,17 @@
 <body class="theme_black_bg">
 	<div class="theme_black_bg">
 		<div class="centered">
-			<h1 style="text-align:center;">
-				Type of Card
-			</h1>
-            <div>
-                <a href="../" class="dlf_href_notextdec">
-                    <button style="float:left;" class="dlf_button_medium dlf_button_round_corners dlf_button_red">
-                        GO BACK
-                    </button>
-                </a>            
-            </div>
-            <br style="clear:both;"/>
+			<h1><a href="../" class="navBackTitle">BINGO</a></h1>
+			<h2 style="text-align:center;">
+				Open a Card
+			</h2>
 			<hr/>
 		</div>
 		<div class="centered">
-			<a href="./random.html" class="identify_yourself dlf_button_medium dlf_button_round_corners dlf_button_limegreen dlf_href_notextdec">
-				GENERATE A RANDOM CARD
+			<a href="/card/create/" class="identify_yourself dlf_button_medium dlf_button_round_corners dlf_button_limegreen dlf_href_notextdec">
+				CREATE A CARD
 			</a>
-			<a href="./build.html" class="identify_yourself dlf_button_medium dlf_button_round_corners dlf_button_blue dlf_href_notextdec">
-				BUILD MY OWN CARD 
-			</a>
-			<a href="./load.html" class="identify_yourself dlf_button_medium dlf_button_round_corners dlf_button_purple dlf_href_notextdec">
+			<a href="/card/load/" class="identify_yourself dlf_button_medium dlf_button_round_corners dlf_button_blue dlf_href_notextdec">
 				LOAD EXISTING CARD
 			</a>
 		</div>

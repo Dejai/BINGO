@@ -11,10 +11,14 @@ var TYPE_OF_CARD = "";
 // List IDs for Trello
 var LIST_IDS = {};
 
+// Card map
 var CARDS = {};
+var SAVED_CARDS = []; // list of saved cards
+
+// Setup the default card manager
+// var CARD_MANAGER = new CardManager();
 
 var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
-
 
 /*********************** GETTING STARTED *****************************/
 
@@ -29,12 +33,28 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
             TYPE_OF_CARD = "NAMED";
             getListID(TYPE_OF_CARD);
 
+
             // Load the saved cards
             loadSavedCards("", (card)=>{
                 createCardObject(card);
             });
         }
-        else if (location.pathname.includes("/random"))
+        else if (location.pathname.includes("/create/"))
+        {
+            populateCard();
+            TYPE_OF_CARD = "RANDOM";
+            getListID(TYPE_OF_CARD);
+        }
+        else if(location.pathname.includes("/play"))
+        {
+            // Load the game options
+            loadGameOptions();
+            let cardsList = mydoc.get_query_param("cardlist");
+            TYPE_OF_CARD = "RANDOM";
+            getListID(TYPE_OF_CARD);
+            loadTrelloCard(cardsList);
+        }
+        else if (location.pathname.includes("/random") || location.pathname.includes("/create/"))
         {
             IS_RANDOM_CARD = true;
             TYPE_OF_CARD = "RANDOM";
@@ -44,7 +64,7 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
             getListID(TYPE_OF_CARD);
 
         }
-        else if (location.pathname.includes("/build"))
+        else if (location.pathname.includes("/build") || location.pathname.includes("/create/"))
         {
             IS_CUSTOM_CARD = true;
             TYPE_OF_CARD = "NAMED";
@@ -68,14 +88,18 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
             // Make sure the page doesn't close once the game starts
             // window.addEventListener("beforeunload", onClosePage);
 
-            let cardID = mydoc.get_query_param("cardid")
-            if(cardID != undefined)
+            let cardID = mydoc.get_query_param("cardid");
+
+            // Get the set of card IDs (could be multiple)
+            let cardsList = mydoc.get_query_param("cardlist");
+
+            if(cardsList != undefined)
             {
                 // Load the game options
                 loadGameOptions();
 
                 // Load the card based on Trello
-                loadTrelloCard(cardID);
+                loadTrelloCard(cardsList);
             }
             else
             {
@@ -140,7 +164,7 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
 
             let row = `<tr class="bingo_row">
                             <td class="number_cell number_cell_b">${b[idx]}</td>
-                            <td class="number_cell number_cell_i"j>${i[idx]}</td>
+                            <td class="number_cell number_cell_i">${i[idx]}</td>
                             <td class="number_cell number_cell_n">${n[idx]}</td>
                             <td class="number_cell number_cell_g">${g[idx]}</td>
                             <td class="number_cell number_cell_o">${o[idx]}</td>
@@ -180,7 +204,7 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
             // Push the cell into the global storage
             GAME_BOARD_CELLS.push(rowList);
         });
-        console.log(GAME_BOARD_CELLS);
+        // console.log(GAME_BOARD_CELLS);
     }
 
 /*********************** TRELLO CALLS *****************************/
@@ -200,29 +224,80 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         });
     }
 
-    // Get the trello card and then set the card data
-    function loadTrelloCard(cardID)
+    // Get bingo numbers from saved card
+    function getBingoNumbersFromCard(cardDesc)
     {
-        // Load the card numbers;
-        MyTrello.get_single_card(cardID, (cardData)=>{
 
-            let card = myajax.GetJSON(cardData.responseText);
-            console.log(card);
+        // getFreeSpaceIcon(); 
+        let desc = cardDesc.split("\n");
+        let map = {};
 
-            let nameValues = card["name"].split(" - ");
-            let cardCode = nameValues[nameValues.length-1];
-            mydoc.loadContent(cardCode, "cardName");
-
-            let desc = card["desc"].split("\n");
-            let map = {}
-            desc.forEach( (val)=>{
-                let splits = val.split("=");
-                let letter = splits[0];
-                let values = splits[1].split(",")
-                map[letter] = values;
-            });
-            onSetCard(map);
+        desc.forEach( (val)=>{
+            // Then map the letters to their letters
+            let splits = val.split("=");
+            let letter = splits[0];
+            let values = splits[1].split(",")
+            map[letter] = values;
         });
+
+        return map;
+    }
+
+    // Get the trello card and then set the card data
+    async function loadTrelloCard(cardList)
+    {
+
+
+        let cards = cardList.split(",");
+
+        let cardsAdded = [];
+
+        for(var idx in cards)
+        {
+            let cardID = cards[idx];
+
+            // If we already processed this card ID .. move on;
+            if(cardsAdded.includes(cardID))
+                continue;
+
+            let cardData = await CardPromises.getCard(cardID);
+
+            if (cardData != undefined)
+            {
+                let nameValues = cardData["name"].split(" - ");
+                let cardName = nameValues[0];
+                let cardCode = nameValues[nameValues.length-1];
+
+                let cardDesc = cardData["desc"];
+                let cardNumbers = getBingoNumbersFromCard(cardDesc);
+
+                let cardObject = {
+                    "Name":cardName,
+                    "Code":cardCode
+                }
+
+                Object.keys(cardNumbers).forEach( (key)  =>{
+
+                    let numbers = cardNumbers[key];
+                    
+                    for(var idx in numbers)
+                    {
+                        let cardIdx = Number(idx)+1;
+                        let cardNum = numbers[idx];
+                        cardNum = (cardNum == "" || cardNum == "FS") ? getFreeSpaceIcon() : cardNum;
+                        let cardKey = `${key.toUpperCase()}${cardIdx}`;
+                        cardObject[cardKey] = cardNum;
+                    }
+                });
+
+                let template = await CardPromises.getTemplate("/templates/cardPlay2.html", cardObject);
+                mydoc.setContent("#cardBlockSection", {"innerHTML":template}, true);
+
+                // Indicate taht we added this card
+                cardsAdded.push(cardID);
+            }
+        }
+        addNumberListener();
 
     }
 
@@ -237,7 +312,6 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         {
             MyTrello.create_card(listID, encodedName,(newCardData)=>{
 
-                console.log(newCardData);
                 let newCard = myajax.GetJSON(newCardData.responseText);
                 let newCardID = newCard?.id ?? undefined;
     
@@ -255,6 +329,90 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         }
     }
 
+/*********** NEW CARD FUNCTIONS *****************************/
+
+
+
+    // Populate the build card table
+    async function populateCard()
+    {
+        let options = getNumberOptions();
+        let template = await CardPromises.getTemplate("/templates/cardBuild.html", options);
+        mydoc.setContent("#bingo_card_body", {"innerHTML":template});
+        setRandomNumbers();
+    }
+
+    // Set random numbers
+    function setRandomNumbers()
+    {
+        var letters = ["B", "I", "N", "G", "O"];
+
+        // Loop through th eletters
+        letters.forEach( (letter) =>{
+
+            let randomNumbers = generateRandomNumbers(letter);
+            let lowerCaseLetter = letter.toLowerCase();
+            let letterCells = document.querySelectorAll(`#bingo_card_body .build_card_${lowerCaseLetter}`);
+            
+            // Only proceed if the total numbers matches the cells available
+            if(randomNumbers.length == (letterCells?.length ?? 0))
+            {
+                for(var idx in randomNumbers)
+                {
+                    let num = randomNumbers[idx];
+                    let cell = letterCells[idx];
+
+                    // Don't do anything for Free Space
+                    if(num != "FS")
+                    {
+                        cell.querySelectorAll("option")?.forEach( (cell) =>{
+
+                            let cellValue = cell.getAttribute("value") ?? "";
+                            var _action = (cellValue == num) ? cell.setAttribute("selected", true) :
+                                            cell.removeAttribute("selected");
+                        });
+                    }
+                }
+            }
+        });
+    }
+
+    const CardPromises = {
+
+        getLists: () => {
+            return new Promise( resolve =>{
+               
+            })
+        },
+
+        getCard: (cardID) => {
+
+            return new Promise( resolve =>{
+
+                MyTrello.get_single_card(cardID, (cardData)=>{
+
+                    let card = myajax.GetJSON(cardData.responseText);
+                    resolve(card);
+
+                    // let cardObject = {
+
+                    // }
+        
+                    
+                });
+            });
+
+        },
+
+        getTemplate: (templatePath, object) =>{
+
+            return new Promise( (resolve) => {
+                MyTemplates.getTemplate(templatePath, object, (template) =>{
+                    resolve(template);
+                });
+            });
+        }
+    }
 
 /*********************** EVENT LISTENERS *****************************/
      
@@ -316,7 +474,7 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
 
                     let gameCode = Helper.getCode();
                     let cardName = `${givenCardName} - ${gameCode}`
-                    console.log("Creating a card = " + cardName);
+                    // console.log("Creating a card = " + cardName);
 
                     createTrelloCard(cardName, content, (cardID)=>{
                         if(cardID != null)
@@ -384,84 +542,7 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         createCardTable(b,i,n,g,o);
     }
 
-    // Validate and use a card
-    function onUseCard()
-    {
-        // By default, we assume this card is all set.
-        valid_card = true;
-
-        // Default the cardName to the type of card value
-        let cardName = `${TYPE_OF_CARD}`;
-
-        // Validate the numbers on the card
-        letters = Object.keys(bingo_letters);
-        card_values = getCardValues();
-        keys = Object.keys(card_values);
-        for(var idx = 0; idx < keys.length; idx++)
-        {
-            letter = keys[idx];
-            upper = letter.toUpperCase();
-            values = card_values[letter];
-
-            if(values.length != 5)
-            {
-                let errMessage = `ERROR:<br/>Cannot have duplicate values for letter: ${upper}`;
-                MyNotification.notify("#build_card_instructions",errMessage, "notify_red");
-                valid_card = false;
-                break;
-            }
-        }
-
-        // Validate that a Built card has a valid name
-        let cardNameField = document.getElementById("name_of_custom_card");
-        if(cardNameField != undefined)
-        {
-            let nameVal = cardNameField.value;
-
-            // Check against existing names
-            let existingNames = []
-            Object.keys(CARDS).forEach( (key)=>{
-                let splits = key.split("-");
-                let name = splits[0]?.trim() ?? ""
-                existingNames.push(name.toUpperCase());
-            });
-            let nameAlreadyUsed = existingNames.includes(nameVal.toUpperCase());
-
-            if(nameVal != "" && !nameAlreadyUsed)
-            {
-                cardName = nameVal;
-            }
-            else
-            {
-                let uniqueNameErr = "ERROR:<br/>This name is already used. Please use another name."
-                let noNameErr = "ERROR:<br/>Please enter a name for this card."
-                let errMessage = (nameAlreadyUsed) ? uniqueNameErr : noNameErr; 
-                MyNotification.notify("#build_card_instructions",errMessage, "notify_red");
-                valid_card = false;
-            }
-        }
-
-
-        if(valid_card)
-        {
-            b = "b=" + card_values["b"].join(",");
-            i = "i=" + card_values["i"].join(",");
-            n = "n=" + card_values["n"].join(",");
-            g = "g=" + card_values["g"].join(",");
-            o = "o=" + card_values["o"].join(",");
-
-            let content = [b,i,n,g,o].join("\n");
-            content = encodeURI(content);
-
-            let gameCode = Helper.getCode();
-            let fullCardName = `${cardName} - ${gameCode}`
-            console.log(fullCardName);
-
-            createTrelloCard(fullCardName, content, (newCardID)=>{
-                location.href = `./card.html?cardid=${newCardID}`
-            });
-        }
-    }
+ 
 
     // Navigate to a new page; With or without confirmation
     function onNavigate(url,message=undefined)
@@ -572,6 +653,24 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         }
     }
 
+    // Set/unset all instances of a number
+    function selectAllInstanceOfNumber(className, numberValue)
+    {
+
+        // Class to show as selected/not-selected
+        let selectedClassName = "number_selected";
+
+        document.querySelectorAll(className)?.forEach( (cell) =>{
+
+            let allowSelect = (CURR_GAME == "Straight Line") || cell.classList.contains("number_cell_needed")
+            if( allowSelect && cell.innerText == numberValue)
+            {
+                var _action = !cell.classList.contains(selectedClassName) ? cell.classList.add(selectedClassName) :
+                                cell.classList.remove(selectedClassName)
+            }
+        });
+    }
+
     // Select a value
     function onSelectNumber(event)
     {
@@ -585,21 +684,28 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         let target = event.target;
         let className = "number_selected"
         let closest = target.closest("td.number_cell");
-        let isSelected = closest.classList.contains(className);
+        let letterClass = Array.from(closest.classList).filter( (c) => { return c.includes("number_cell_"); } );
+        // let isSelected = closest.classList.contains(className);
 
+        let numberValue = closest.innerText;
 
-        if(isSelected)
-        {
-            closest.classList.remove(className);
-        }
-        else
-        {
-            closest.classList.add(className);
-        }
+        // Allows me to set/unset all instances of a number
+        selectAllInstanceOfNumber(`.${letterClass}`, numberValue);
+
+        // if(isSelected)
+        // {
+        //     closest.classList.remove(className);
+        // }
+        // else
+        // {
+        //     closest.classList.add(className);
+        // }
 
         // Always check for BINGO after changing the selected cells
         checkForBingo();
     }
+
+
 
     // Indicate which ones are needed
     function onSelectGame()
@@ -607,41 +713,17 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         // Always clear first when changing games;
         onClearNeededCells();
 
-        CURR_GAME = document.getElementById("gameOptionsOnCard").value
+
+        // Get teh current selected game
+        CURR_GAME = mydoc.getContent("#gameOptionsOnCard")?.value ?? "";
+
         if(CURR_GAME != "" )
         {
-
             // Toggle the view of the buttons
             toggleEditAndClearButtons("clear");
-            
-            // Show cost for every game;
-            let cost = games_object[CURR_GAME]["cost"];
-            mydoc.loadContent(`Cost: ${cost}`,"game_cost");
 
-            onShowNeededCells(CURR_GAME);
-            // if (CURR_GAME == "Straight Line")
-            // { 
-            //     examples = getStraightLinExamples();
-            //     idx = 0;
-            //     let straightLineInterval = setInterval( ()=>{
-
-            //         hightlightNeededCells(examples[idx]);	
-            //         idx+=1 
-            //         setTimeout( ()=>{
-            //             onClearNeededCells() // clear the needed cells; so folks don't think only one option is acceptable
-            //         },300);
-
-            //         if(idx == examples.length)
-            //         {
-            //             clearInterval(straightLineInterval);
-            //         }
-            //     }, 500);
-            // }
-            // else
-            // {
-            //     let expected = games_object[CURR_GAME]["example"];
-            //     hightlightNeededCells(expected);
-            // }            
+            // Show the needed cells
+            onShowNeededCells(CURR_GAME);           
         }
     }
 
@@ -654,7 +736,7 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
             idx = 0;
             let straightLineInterval = setInterval( ()=>{
 
-                hightlightNeededCells(examples[idx]);	
+                hightlightNeededCellsV2(examples[idx]);	
                 idx+=1 
                 setTimeout( ()=>{
                     onClearNeededCells() // clear the needed cells; so folks don't think only one option is acceptable
@@ -669,10 +751,42 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         else
         {
             let expected = games_object[CURR_GAME]["example"];
-            hightlightNeededCells(expected);
+            hightlightNeededCellsV2(expected);
         } 
     }
 
+    // Highlight the cells needed (Version 2)
+    function hightlightNeededCellsV2(table)
+    {
+        console.log(table);
+
+        let cardTables = document.querySelectorAll(".bingo_card_table tbody");
+
+        for(var rowIdx in table)
+        {
+            // Get the row of needed cells
+            let neededRow = table[rowIdx];
+
+            // Loop through all the tabes & highlight the cells
+            cardTables.forEach( (table)=>{
+
+                // Get the row that matches the current rowIdx
+                let row = table.querySelectorAll("tr")?.[rowIdx];
+                // Get the cells in that row
+                let cells = row.querySelectorAll("td");
+                
+                for(var cellIdx in cells)
+                {
+                    // If the neededRow index says 1 or 8, then highlight it.
+                    if(neededRow[cellIdx] == 1 || neededRow[cellIdx] == 8)
+                    {
+                        let cell = cells[cellIdx];
+                        cell.classList.add("number_cell_needed");
+                    }
+                }
+            });
+        }
+    }
     // Highlight the cells needed
     function hightlightNeededCells(table)
     {
@@ -701,7 +815,11 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
                 // obj.classList.remove("bingo_blink");
             });
 
-            toggleBingoHeaders("remove");
+            let cards = document.querySelectorAll("div.cardBlock table.bingo_card_table");
+
+            cards.forEach( (card) => {
+                toggleBingoHeaders(card, "remove");
+            });
 
             // Clear needed cells;
             onClearNeededCells();
@@ -709,7 +827,6 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
             // Reset selected game
             CURR_GAME = "";
             document.getElementById("gameOptionsOnCard").value = "";
-            mydoc.loadContent("","game_cost");
 
             // Show the edit button
             toggleEditAndClearButtons("edit");
@@ -733,14 +850,14 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         if(view == "edit")
         {
             // Show the Edit button and hide Clear button
-            mydoc.showContent("#edit_card_button");
-            mydoc.hideContent("#clear_card_button");
+            mydoc.showContent("#newCardButton");
+            mydoc.hideContent("#clearCardButton");
         }
         else
         {
             // Show the Clear Button and hide the Edit button
-            mydoc.showContent("#clear_card_button");
-            mydoc.hideContent("#edit_card_button");
+            mydoc.showContent("#clearCardButton");
+            mydoc.hideContent("#newCardButton");
         }
         
     }
@@ -752,26 +869,33 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
     // Check if the current card has achieved BINGO!
     function checkForBingo()
     {
-        if(CURR_GAME == "Straight Line")
-        {
-            IS_BINGO = checkForBingo_StraightLine();
-        }
-        else
-        {
-            let expected = games_object[CURR_GAME]["example"];
-            let theBoard = getBoardState();
-            IS_BINGO = (expected.toString() == theBoard.toString());
-        }
+        let expected = games_object[CURR_GAME]["example"];
 
-        // Alert if we have acheived BINGO
-        let state = (IS_BINGO) ? "show" : "";
-        toggleBingoHeaders(state);
+        let cards = document.querySelectorAll("div.cardBlock table.bingo_card_table");
+
+        cards.forEach( (card) => {
+
+            let isBingo = false;
+
+            if(CURR_GAME == "Straight Line")
+            {
+                isBingo = isStraightLineBingo(card);
+            }
+            else
+            {
+                let cardState = getBoardState(card);
+                isBingo = (cardState.toString() == expected.toString() );
+            }
+
+            let bingoState = (isBingo) ? "show" : "";
+            toggleBingoHeaders(card, bingoState);
+        });
     }
 
-    // Check specifically for any straight line
-    function checkForBingo_StraightLine()
+    // Check if a card has BINGO with a straight line
+    function isStraightLineBingo(card)
     {
-        console.log("Checking for straightline!");
+        Logger.log("Checking for straightline!");
         let expectedStraight = "11111";
         let hasStraightLine = false;
 
@@ -779,13 +903,34 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         diagLeftString = "";
         diagRightString = "";
 
+        // Get the map of the data cells;
+        let cells = Array.from(card.querySelectorAll("tbody td"));
+        let gameBoardMap = [];
+        let row = [];
+        for(var idx in cells)
+        {
+            let count = Number(idx) + 1;
+
+            // Add to row
+            row.push(cells[idx]);
+
+            // If multiple of 5, add to map
+            if( count % 5 == 0)
+            {
+                gameBoardMap.push(row);
+                row = [];
+            }
+
+        }
+
+        // Loop through & check the cards
         for(var idx = 0; idx < 5; idx++)
         {
             left = idx;
             right = (5-idx)-1;
 
             // Starting top-left down;
-            leftCell = GAME_BOARD_CELLS[idx][left];
+            leftCell = gameBoardMap[idx][left];
             diagLeftString  += leftCell.classList.contains("number_selected") ? "1" : "0";
             if(diagLeftString == expectedStraight)
             {
@@ -794,7 +939,7 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
             }
 
             // Starting top-right down;
-            rightCell = GAME_BOARD_CELLS[idx][right];
+            rightCell = gameBoardMap[idx][right];
             diagRightString += rightCell.classList.contains("number_selected") ? "1" : "0";
             if(diagRightString == expectedStraight)
             {
@@ -803,7 +948,7 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
             }
 
             // Check the row
-            row = GAME_BOARD_CELLS[idx];
+            row = gameBoardMap[idx];
             rowString = "";
             row.forEach( (cell) => {
                 rowString += cell.classList.contains("number_selected") ? "1" : "0";
@@ -816,7 +961,7 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
             
             // Check the column
             colString = "";
-            GAME_BOARD_CELLS.forEach( (row) =>{
+            gameBoardMap.forEach( (row) =>{
                 cell = row[idx];
                 colString += cell.classList.contains("number_selected") ? "1" : "0"
             });
@@ -831,9 +976,9 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
     }
 
     // Toggling the state of the BINGO headers
-    function toggleBingoHeaders(state)
+    function toggleBingoHeaders(card=document, state)
     {
-        document.querySelectorAll("[class*='card_header_']").forEach( (cell)=>{
+        card.querySelectorAll("[class*='card_header_']").forEach( (cell)=>{
 
             if (state == "show")
             {
@@ -845,16 +990,15 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
                 cell.classList.remove("bingo_blink");
                 cell.classList.add("game_table_header");
             }
-
         });
     }
 
     // Gets the state of the board -- represented as a
-    function getBoardState()
+    function getBoardState(xml=document)
     {
         let state = [];
         
-        document.querySelectorAll(".bingo_row")?.forEach( (row) =>{
+        xml.querySelectorAll(".bingo_row")?.forEach( (row) =>{
 
             rowList = [];
 
@@ -889,42 +1033,6 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         return state;
     }
 
-    // Get the values from the cells
-    function getCardValues()
-    {
-        valuesByLetter = {"b":[],"i":[],"n":[],"g":[],"o":[]};
-
-        letters = Object.keys(bingo_letters);
-
-        letters.forEach( (letter) => {
-
-            lower = letter.toLowerCase();
-
-            document.querySelectorAll(`.number_cell_${lower}`).forEach( (cell)=> {
-
-                value = "";
-
-                // Set the value based on type of card;
-                if(IS_CUSTOM_CARD)
-                {
-                    value = cell.classList.contains("build_card_free") ? "FS" : cell.querySelector("select").value;
-                }
-                else if (IS_RANDOM_CARD || IS_CARD_SET)
-                {   
-                    value = cell.innerText == "" ? "FS" : cell.innerText;
-                }
-
-                // Append value if not already there;
-                if(!valuesByLetter[lower].includes(value))
-                {
-                    valuesByLetter[lower].push(value);
-                }
-
-            });
-        });
-
-        return valuesByLetter;
-    }
 
     // Get the icon to use for the free space
     function getFreeSpaceIcon()

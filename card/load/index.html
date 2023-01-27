@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>BINGO - Card (Load)</title>
+	<base href="../../">
+	<link rel="stylesheet" type="text/css" href="/src/bingo.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body class="theme_black_bg">
+	<div class="theme_black_bg">
+		<div class="centered">
+			<h1><a href="../" class="navBackTitle">BINGO</a></h1>
+			<h2>Select up to 3 Cards</h2>
+            <br style="clear:both;"/>
+			<hr/>
+		</div>
+		<div class="centered">
+			
+			<div id="searchBarSection">
+				<div id="searchBar" class="searchBar searchPlaceholder" data-jpd-placeholder="Search cards ..." contenteditable="true" onkeyup="onFilterCards()" onfocus="onSearchFocus()" onblur="onSearchBlur()"></div>
+				<i id="searchClearIcon" class="fa fa-times-circle pointer hidden" aria-hidden="true" style="color:red;" onclick="onClearSearch()"></i>
+			</div>
+			<br/>
+			<div id="useCardSection" class="hidden">
+				<button id="useCardButton" class="dlf_button_medium dlf_button_round_corners dlf_button_limegreen" onclick="onUseSelectedCards()">
+					USE CARD
+				</button>
+			</div>
+			<hr/>
+			<div id="listOfCards" style="width:95%; margin:auto;">
+				<p style="text-align:center;">
+					<img id="loading_gif" src="https://dejai.github.io/scripts/assets/img/loading1.gif" style="width:10%;height:10%;">
+				</p>
+			</div>
+		</div>
+	</div>
+</body>
+<!-- Common Code -->
+<script src="https://dejai.github.io/scripts/js/common.js"></script>
+<!-- My Trello code -->
+<script src="https://dejai.github.io/scripts/js/trellowrapper.js"></script>
+
+<script type="text/javascript" src="/src/bingo_objects.js"></script>
+<script type="text/javascript" src="/src/bingo_shared.js"></script>
+<script type="text/javascript" src="/src/cardPromises.js"></script>
+<script type="text/javascript" src="/src/cardLoad.js"></script>
+<!-- <script type="text/javascript" src="/src/card.js"></script> -->
+
+
+</html>

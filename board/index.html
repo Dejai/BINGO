@@ -73,19 +73,20 @@
 						<span id="selected_cell" class="theme_black_bg"></span>
 					</div>
 					<div id="checkForBingoSectionLoading" class="hidden">
-						<img src="https://dejai.github.io/scripts/assets/img/loading1.gif" style="width:5%;height:5%;">
+						<img src="https://dejai.github.io/scripts/assets/img/loading1.gif" style="width:7%;height:7%;">
 					</div>
 					<div id="checkForBingoSection" style="width:50%;margin:auto;" class="hidden">
 						<hr/>
-						<div style="width:70%;margin:auto;">
+						<div style="width:90%;margin:auto;">
 							<label for="check_bingo_card">Card Name/Code:</label><br/>
-							<input id="check_bingo_card" type="text" list="card_names_data_list" placeholder="Type to search card name">
+							<input id="check_bingo_card" type="text" placeholder="Search card number (#01) or code" style="font-size:20px;" onkeyup="onSearchCard()">
 							<datalist id="card_names_data_list"></datalist>
 						</div>
 						<br/>
-						<button onclick="onCheckCardForBingo()">Check Card</button>
+						<div>
+							<ul id="matchingCards" style="text-align:left"></ul>
+						</div>
 					</div>
-				 	
 				</td>
 				<td>
 					<button id="reset_game_button" class="theme_black_bg dlf_button_xxlarge dlf_button_round_corners dlf_button_red hidden"  onclick="onResetGame()">

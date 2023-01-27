@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>BINGO Card</title>
+    <base href="../../">
+	<link rel="stylesheet" type="text/css" href="/src/bingo.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body class="theme_black_bg">
+
+    <div id="bingo_card_section">
+        <h2><a href="../card" class="navBackTitle">BINGO</a></h2>
+        <hr/>
+        <div>
+            <table style="width:100%;">
+                <colgroup>
+                    <col style="width:10%;">
+                    <col style="width:40%;">
+                    <col style="width:10%;">
+                </colgroup>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <select id="gameOptionsOnCard" style="width:100%;" class="dlf_select dlf_select_round_corners dlf_select_medium dlf_select_blue" onchange="onSelectGame()" >
+                            </select>
+                        </td>
+                        <td style="text-align:right;">
+                            <button id="clearCardButton" class="dlf_button_medium dlf_button_round_corners dlf_button_limegreen hidden" onclick="onClearCard()">
+                                CLEAR CARD
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <hr/>
+        <div id="cardBlockSection"></div>
+        <p style="margin-top:5%;" class="dlf_paragraph_medium">
+            <span id="card_created_timestamp"></span>
+        </p>
+    </div>
+
+</body>
+<!-- Common Code -->
+<script src="https://dejai.github.io/scripts/js/common.js"></script>
+<!-- My Trello code -->
+<script src="https://dejai.github.io/scripts/js/trellowrapper.js"></script>
+<!-- My custom code -->
+<script type="text/javascript" src="/src/bingo_objects.js"></script>
+<script type="text/javascript" src="/src/cardManager.js"></script>
+<script type="text/javascript" src="/src/card.js"></script>
+</html>

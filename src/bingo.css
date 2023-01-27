@@ -4,6 +4,25 @@
 	GENERAL: Applies to all pages;
 *****************************************************/
 
+#searchBarSection { text-align:left; border-radius:77px; border:1px solid gray; background-color:white; padding:1%; width:90%; margin:auto; font-size:20px; }
+.searchBar { text-align:left; width:85%; display:inline-block; }
+.searchBar:focus { border: none; outline: none; }
+#searchClearIcon { float:right; color: red !important; }
+
+.searchBar.searchPlaceholder { color:gray; }
+.searchBar.searchText { color: black; }
+
+.cardLoadBlock { float:left; width: 25%; border:2px solid gray; padding:1%; height:100px; margin:3%; } 
+/* float: left; width: 30%; border:1px dashed white;  margin-bottom:5%; margin-right:2%; height:100px;  } */
+.cardLoadBlock.selected { background-color: limegreen; color:black;}
+
+.matchingCard { margin-left:0px; margin-right:0px; cursor:pointer; }
+.selectedMatchingCard { color:limegreen; font-weight:bolder; }
+
+.bingo_card_table { border-bottom:2px dashed white; margin-bottom:5%; }
+
+.navBackTitle { text-decoration:none !important; color:inherit; cursor:pointer; }
+
 /* General purpose */
 	.hidden { display:none; }
 	.centered { text-align: center; }
@@ -169,7 +188,21 @@
 	.number_cell_needed { color: red } 
 	#card_created_timestamp { color:red; font-size:inherit; font-style:italic; }
 
+
+	/* New Game Card */
+	.bingo_card_table { margin-top:5%; }
+	.bingo_card_table tbody tr td { padding:3% !important;}
+	/* #bingo_card_section { width:60%; } */
+	.bingo_card_table .card_table_header { font-size:initial; }
+	.bingo_card_table td.number_cell { font-size:initial }
+	.bingo_card_table td.example { font-size:initial  }
+	.bingo_card_table td.number_selected { background-color:limegreen; color:white; border:none;}
+
+
+
+
 	/* Build Card*/
+	select.build_card_select{ width:100%; font-size:20px; }
 	select.build_card_b { background-color: blue; color:white;}
 	select.build_card_i { background-color: indigo; color:white;}
 	select.build_card_n { background-color: navy; color:white;}
@@ -237,6 +270,9 @@
 
 @media only screen and (min-device-width:1200px)
 {
+
+	#searchBarSection { width:40%;}
+
 	/* Headings */
 	.dlf_title { font-size:2em;}
 
@@ -274,10 +310,16 @@
 	.example { padding-top:2%; padding-bottom:2%; }	
 
 	/* Game Card*/
-	#bingo_card_section { width:60%; }
+	/* #bingo_card_section { width:60%; } */
 	#bingo_card_table .card_table_header { font-size:initial; }
 	#bingo_card_table td.number_cell { font-size:initial }
 	#bingo_card_table td.example { font-size:initial  }
 	.freeSpace { font-size:initial; }
+
+	/* New Game Card */
+	#bingo_card_section { width:70%; }
+	.bingo_card_table .card_table_header { font-size:initial; }
+	.bingo_card_table td.number_cell { font-size:initial }
+	.bingo_card_table td.example { font-size:initial  }
 
 }

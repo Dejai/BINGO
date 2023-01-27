@@ -13,6 +13,9 @@ var CARDS = {};
 
 var IS_SPEAKING = false;
 
+// Saved cards
+var SAVED_CARDS = [];
+
 // To determine the trigger for the ENTER button
 var CHECKING_FOR_BINGO = false;
 
@@ -83,7 +86,7 @@ function listenerOnKeyUp(){
 				}
 				else if (CHECKING_FOR_BINGO)
 				{
-					onCheckCardForBingo();
+					onSearchCard();
 				}
 				break;
 			default:
@@ -136,13 +139,28 @@ function listenerOnSpeakVoiceDemo()
 	}
 }
 	
+
+// Search for matching cards
+function lookupMatchingCards()
+{
+	onSearchCard();
+
+}
 // Checking a selected card for bingo
-function onCheckCardForBingo()
+function onCheckCardForBingo(event)
 {
 
 	console.log("Checking for BINGO on board");
 
-	let cardName = document.getElementById("check_bingo_card")?.value;
+	let target = event.target; 
+	let cardName = target.getAttribute("data-card-match-name") ?? "";
+	mydoc.removeClass(".selectedMatchingCard", "selectedMatchingCard");
+	target.classList.add("selectedMatchingCard");
+
+	// let cardName = document.getElementById("check_bingo_card")?.value;
+	console.log(Object.keys(CARDS));
+	console.log(cardName);
+
 	if(cardName != undefined & Object.keys(CARDS).includes(cardName))
 	{
 		toggleGameBoardTableBody("card");
@@ -501,37 +519,48 @@ function onChangeTheme(event)
 }
 
 // Check if someone has BINGOd
-function onShowCheckBingoSection()
+async function onShowCheckBingoSection()
 {
 	// Checking for BINGO is now true;
 	CHECKING_FOR_BINGO = true;
 
-	// Load the saved cards (again) to make sure nobody got missed
-	loadSavedCards("", (card)=>{
-		createCardObject(card);
-	});
+	// Show the loading
+	mydoc.showContent("#checkForBingoSectionLoading");
+
+	// Get the saved cards
+	SAVED_CARDS = await BingoShared.getSavedCards();
+
+	// Get the card mapping
+	CARDS = BingoShared.getCardMap(SAVED_CARDS);
+
+	console.log(CARDS);
 
 	// Hide the ball and show the loading
 	mydoc.hideContent("#bingoBallSection");
-	mydoc.showContent("#checkForBingoSectionLoading");
 
-	setTimeout(()=>{
-		// Clear the field
-		let cardNameField = document.getElementById("check_bingo_card");
-		if(cardNameField != undefined)
-		{
-			cardNameField.value = "";
-		}
+	// Show the option to find maching card
+	mydoc.showContent("#checkForBingoSection");
 
-		// Hide the loading
-		mydoc.hideContent("#checkForBingoSectionLoading");
-
-		// Show the sections
-		mydoc.showContent("#checkForBingoSection");
-	}, 2000)
-
-	
+	// Hide the loading
+	mydoc.hideContent("#checkForBingoSectionLoading");	
 }
+
+// Get the saved cards - async
+// async function getSavedCards()
+// {
+// 	let lists = ["NAMED_CARDS", "RANDOM_CARDS"];
+
+// 	var cards = [];
+
+// 	for(var idx in lists)
+// 	{
+// 		var listName = lists[idx];
+// 		var listCards = await BingoShared.getSavedCardsPromise(listName);
+// 		cards = cards.concat(listCards);
+// 	}
+
+// 	return cards;
+// }
 
 function toggleGameSettings()
 {
@@ -885,6 +914,38 @@ function resetCellsInelligible()
 		obj.classList.remove("inelligible");
 		obj.classList.add("cell_unseen");
 	});
+}
+
+// Search for a card
+function onSearchCard()
+{
+	let cardValue = mydoc.getContent("#check_bingo_card")?.value ?? "";
+
+	if(cardValue != "")
+	{
+		let matches = SAVED_CARDS.filter( (obj)=>{
+			return (obj.name.toUpperCase().includes(cardValue.toUpperCase()));
+		});
+
+		if(matches.length <= 5)
+		{
+			let matchHTML = "";
+			mydoc.setContent("#matchingCards", {"innerHTML":matchHTML});
+			for(var idx in matches)
+			{
+				let match = matches[idx];
+				let name = match["name"];
+				let id = match["id"];
+
+				matchHTML += `<li data-card-match-name="${name}" class='matchingCard' onclick="onCheckCardForBingo(event)">${name}</li>`
+			}
+			mydoc.setContent("#matchingCards", {"innerHTML":matchHTML});
+		}
+	}
+	else
+	{
+		mydoc.setContent("#matchingCards", {"innerHTML":""});
+	}
 }
 
 

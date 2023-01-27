@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>BINGO - Create Card</title>
+    <base href="../../">
+	<link rel="stylesheet" type="text/css" href="/src/bingo.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+</head>
+<body class="theme_black_bg">
+
+    <div id="bingo_card_section">
+        <h1><a href="../" class="navBackTitle">BINGO</a></h1>
+        <h2 style="text-align:center;">
+            Create a Card
+        </h2>
+        <hr>
+        <p>Get random numbers or set them yourself. </p>
+		<div class="dlf_center_block_medium">
+            <table stlye="width:100%;">
+                <colgroup>
+                    <col style="width:45%;">
+                    <col style="width:45%;">
+                </colgroup>
+                <tr>
+                    <td>
+                        <button onclick="setRandomNumbers()"class="dlf_button_medium dlf_button_round_corners dlf_button_orange">
+                            RANDOM NUMBERS
+                        </button>
+                    </td>
+                    <td>
+                        <button onclick="onUseCard()" class="dlf_button_medium dlf_button_round_corners dlf_button_limegreen">
+                            USE THIS CARD
+                        </button>
+                    </td>
+                </tr>
+            </table>            
+        </div>
+        <hr style="display:block; margin-bottom:5%;"/>
+        <span id="createCardMessage" style="color:red;"></span>
+        <table id="bingo_card_table" class="table">
+            <colgroup>
+                <col style="width:19%;">
+                <col style="width:19%;">
+                <col style="width:19%;">
+                <col style="width:19%;">
+                <col style="width:19%;">
+            </colgroup>
+            <thead id="bingo_card_head">
+                <tr class="theme_black_bg header">
+                    <th class="card_table_header game_table_header">B</th>
+                    <th class="card_table_header game_table_header">I</th>
+                    <th class="card_table_header game_table_header">N</th>
+                    <th class="card_table_header game_table_header">G</th>
+                    <th class="card_table_header game_table_header">0</th>
+                </tr>
+            </thead>
+            <tbody id="bingo_card_body"></tbody>
+        </table>
+    </div>
+
+    <div class="centered">
+        
+    </div>
+
+</body>
+<!-- Common Code -->
+<script src="https://dejai.github.io/scripts/js/common.js"></script>
+<!-- My Trello code -->
+<script src="https://dejai.github.io/scripts/js/trellowrapper.js"></script>
+
+<script type="text/javascript" src="/src/bingo_objects.js"></script>
+<script type="text/javascript" src="/src/cardPromises.js"></script>
+<script type="text/javascript" src="/src/cardCreate.js"></script>
+<!-- <script type="text/javascript" src="/src/card.js"></script> -->
+</html>
