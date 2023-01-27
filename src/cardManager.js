@@ -11,6 +11,16 @@ const CardManager = {
         mydoc.setContent(identifier, {"innerHTML":template}, append);
     },
 
+    // Save a card by updating it's name & moving it
+    saveCard: async (cardID, cardName) =>{
+
+        // Set new name
+        await CardPromises.UpdateCardName(cardID, cardName);
+
+        // Then move card
+        await CardPromises.MoveCard(cardID, "NAMED_CARDS");
+    },
+
     // Get the numbers from the card date
     getCardNumbers: (cardData) =>{
        
@@ -32,12 +42,14 @@ const CardManager = {
         
         // Get the basic details
         let nameValues = cardData["name"].split(" - ");
+        let cardID = cardData["id"];
         let cardName = nameValues[0];
         let cardCode = nameValues[nameValues.length-1];
 
 
         // Start a basic card object
         var cardObject = {
+            "ID": cardID,
             "Name":cardName,
             "Code":cardCode
         }

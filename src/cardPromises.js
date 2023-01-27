@@ -46,5 +46,31 @@ const CardPromises = {
                 resolve(template);
             });
         });
-    }
+    },
+
+    UpdateCardName: (cardID, cardName) => {
+        return new Promise( (resolve) =>{
+            MyTrello.update_card_name(cardID, cardName, (data)=>{
+                resolve("Name updaed");
+            });
+        });
+    },
+
+    MoveCard: (cardID, destination) =>{
+
+        return new Promise( resolve => {
+            MyTrello.get_list_by_name(destination, (data)=>{
+                
+                let response = JSON.parse(data.responseText);
+                let listID = response[0]?.id;
+
+                MyTrello.update_card_list(cardID, listID, (data2) =>{
+
+                    resolve("Card moved");
+
+                }, (err)=>{ resolve(err); });
+
+            },(err)=>{ resolve(err);})
+        });
+    },
 }

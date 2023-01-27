@@ -60,6 +60,15 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
                 // Get a card formatted as an objectobject;
                 let cardObject = CardManager.getCardObject(cardData);
 
+                console.log(cardObject);
+
+                let saveForm = "";
+                if(cardObject["Name"].includes("RANDOM"))
+                {
+                    saveForm = await CardPromises.getTemplate("/templates/saveCardForm.html", {});
+                }
+                cardObject["SaveForm"] = saveForm; 
+
                 // Then load the card where it ought to go
                 await CardManager.loadCard("play", "#cardBlockSection", cardObject, true);
 
@@ -135,7 +144,7 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         });
 
         // Load the grouped options
-        options = "<option value=''>SELECT GAME...</option>";
+        options = "<option value=''>SELECT A GAME...</option>";
         Object.keys(optgroups).forEach( (key)=>{
 
             group = optgroups[key];
@@ -148,6 +157,33 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         mydoc.loadContent(options, "gameOptionsOnCard");
     }
 
+
+    // Select a value
+    function onSelectNumber(event)
+    {
+
+        if(CURR_GAME == "")
+        {
+            mydoc.showContent("#selectGameWarning");
+            window.scrollTo(0,0);
+            return;
+        }
+
+        // Hide the warning
+        mydoc.hideContent("#selectGameWarning");
+
+
+        let target = event.target;
+        let closest = target.closest("td.number_cell");
+        let letterClass = Array.from(closest.classList).filter( (c) => { return c.includes("number_cell_"); } );
+        let numberValue = closest.innerText;
+
+        // Allows me to set/unset all instances of a number
+        selectAllInstanceOfNumber(`.${letterClass}`, numberValue);
+
+        // Always check for BINGO after changing the selected cells
+        checkForBingo();
+    }
 
     // Set/unset all instances of a number
     function selectAllInstanceOfNumber(className, numberValue)
@@ -167,28 +203,6 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         });
     }
 
-    // Select a value
-    function onSelectNumber(event)
-    {
-
-        if(CURR_GAME == "")
-        {
-            alert("Please select the game being played.");
-            return;
-        }
-
-        let target = event.target;
-        let closest = target.closest("td.number_cell");
-        let letterClass = Array.from(closest.classList).filter( (c) => { return c.includes("number_cell_"); } );
-        let numberValue = closest.innerText;
-
-        // Allows me to set/unset all instances of a number
-        selectAllInstanceOfNumber(`.${letterClass}`, numberValue);
-
-        // Always check for BINGO after changing the selected cells
-        checkForBingo();
-    }
-
 
 
     // Indicate which ones are needed
@@ -196,6 +210,10 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
     {
         // Always clear first when changing games;
         CardManager.clearNeededCells();
+
+        // Hide the warning;
+        mydoc.hideContent("#selectGameWarning");
+
 
         // Get teh current selected game
         CURR_GAME = mydoc.getContent("#gameOptionsOnCard")?.value ?? "";
@@ -292,3 +310,40 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         }
     }
 
+
+    // Show the save form
+    function onShowSaveCardForm()
+    {
+        mydoc.showContent(".saveCardForm");
+        mydoc.hideContent(".saveCardSentence");
+    }
+
+    // Save an existing card
+    async function onSaveCard()
+    {
+        let cardName = mydoc.getContent("[name='cardName']")?.value ?? "";
+        let cardCode = mydoc.getContent(".cardName")?.innerText;
+
+        if(cardName == "")
+        {
+            alert("Must enter a card name!");
+            return; 
+        }
+
+        let cardID = document.querySelector("[data-card-id]")?.getAttribute("data-card-id");
+
+        if(cardID != undefined && cardName != "")
+        {
+            mydoc.setContent(".saveCardForm", {"innerHTML":"Saving ..."});
+
+            await CardManager.saveCard(cardID, `${cardName} - ${cardCode}`);
+
+            mydoc.setContent(".saveCardForm", {"innerHTML":"Card Saved!"});
+
+            // Clear the form section
+            setTimeout(()=>{
+                mydoc.setContent(".saveCardSection", {"innerHTML":""});
+            },1500);
+            
+        }
+    }

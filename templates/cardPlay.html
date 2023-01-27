@@ -7,12 +7,12 @@
             <col style="width:19%;">
             <col style="width:19%;">
         </colgroup>
-        <thead class="bingo_card_head">
+        <thead class="bingo_card_head" data-card-id="{{ID}}">
             <tr colspan="5">
                 <h3>Card: <span class="cardName" style="color:orange;">{{Code}}</span></h3>
-                <p style="margin-top:1%;" class="dlf_paragraph_medium hidden">
-                    If you like this card, and want to use it again, <a href="#">click here to give this card a name</a> 
-                </p>
+                <div class="saveCardSection">
+                    {{SaveForm}}
+                </div>
             </tr>
             <tr class="theme_black_bg header">
                 <th class="card_table_header game_table_header card_header_b">B</th>
