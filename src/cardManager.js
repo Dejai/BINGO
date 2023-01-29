@@ -51,7 +51,8 @@ const CardManager = {
         var cardObject = {
             "ID": cardID,
             "Name":cardName,
-            "Code":cardCode
+            "Code":cardCode,
+            "NameAndCode": `${cardName} - ( ${cardCode} )`
         }
 
         // Get the numbrs & loop through them to build a key/value pair in the object
@@ -72,6 +73,11 @@ const CardManager = {
         });
 
         return cardObject;
+    },
+
+    // Get the card bodies
+    getCardBodies: ()=>{
+        return Array.from(document.querySelectorAll(".bingo_card_table tbody.bingo_card_body"));
     },
 
     // Get the icon to use for the free space
@@ -109,32 +115,40 @@ const CardManager = {
 
     setNeededCells: (expected) =>{
 
-        let cardTables = document.querySelectorAll(".bingo_card_table tbody");
+        let cardTables = CardManager.getCardBodies();
 
-        for(var rowIdx in expected)
-        {
-            // Get the row of needed cells
-            let neededRow = expected[rowIdx];
+        cardTables.forEach( (cardBody) =>{
 
-            // Loop through all the tabes & highlight the cells
-            cardTables.forEach( (table)=>{
+            // Get the rows in this table & loop through them
+            let cardRows = Array.from(cardBody.querySelectorAll("tr"));
 
-                // Get the row that matches the current rowIdx
-                let row = table.querySelectorAll("tr")?.[rowIdx];
-                // Get the cells in that row
-                let cells = row.querySelectorAll("td");
-                
-                for(var cellIdx in cells)
+            console.log("The rows in this table");
+            console.log(cardRows);
+
+            // Loop through
+            for(var idx in cardRows)
+            {
+                console.log("Checking for IDX: " + idx);
+
+                // Get the expected cells & the actual cells
+                let expectedCells = expected[idx];
+                let cardRowCells = Array.from(cardRows[idx].querySelectorAll("td"));
+
+                console.log("The cells in this row");
+                console.log(cardRowCells);
+
+                if(expectedCells.length == cardRowCells.length)
                 {
-                    // If the neededRow index says 1 or 8, then highlight it.
-                    if(neededRow[cellIdx] == 1 || neededRow[cellIdx] == 8)
-                    {
-                        let cell = cells[cellIdx];
-                        cell.classList.add("number_cell_needed");
-                    }
+                    expectedCells.forEach( (expected, idx) =>{
+
+                        if(expected == 1 || expected == 8)
+                        {
+                            let _action = cardRowCells[idx]?.classList.add("number_cell_needed") ?? "";
+                        }
+                    });
                 }
-            });
-        }
+            }
+        });
     },
 
     // Clear the "needed" cells
@@ -167,18 +181,20 @@ const CardManager = {
         }
 
         let bingoState = (isBingo) ? "show" : "";
-        CardManager.toggleBingoHeaders(cardElement, bingoState);
+
+
+        CardManager.toggleBingoHeaders(cardElement.closest("table"), bingoState);
     },
 
 
 
 
     /* HELPER FUNCTIONS:  */
-    getBoardState: (xml=document)=> {
+    getBoardState: (card)=> {
         
         let state = [];
 
-        xml.querySelectorAll(".bingo_row")?.forEach( (row) =>{
+        card.querySelectorAll(".bingo_row")?.forEach( (row) =>{
 
             rowList = [];
 

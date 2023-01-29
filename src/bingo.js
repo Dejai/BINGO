@@ -84,10 +84,6 @@ function listenerOnKeyUp(){
 				{
 					onPickNumber();
 				}
-				else if (CHECKING_FOR_BINGO)
-				{
-					onSearchCard();
-				}
 				break;
 			default:
 				return;
@@ -138,43 +134,34 @@ function listenerOnSpeakVoiceDemo()
 		speakText(text, subtext, 0.9, 0.6, 500);
 	}
 }
-	
-
-// Search for matching cards
-function lookupMatchingCards()
-{
-	onSearchCard();
-
-}
 
 
 // 
-function onCheckCardForBingo(cardCode)
+async function onCheckCardForBingo(cardCode)
 {
 	let cardObject = CARDS[cardCode];
 
 	toggleGameBoardTableBody("card");
 
-	CardManager.loadCard("example", "#bingo_card_body", cardObject);
+	// Load the card
+	mydoc.setContent("#bingoBoardCardName", {"innerHTML":cardObject["NameAndCode"]})
+	await CardManager.loadCard("example", "tbody.bingo_card_body", cardObject);
 
-	// Map the cells for reference
-	// GAME_BOARD_CELLS = []; // clear it to make sure no other card is in there;
-	// mapNumberCells();
 
 	// Show the needed cells for this game (if not straight line);
 	if(CURR_GAME != "Straight Line")
 	{
 		console.log("Showing needed cells");
 		CardManager.setNeededCellsByGame(CURR_GAME);
-		// onShowNeededCells(CURR_GAME);
 	}
 
 	// Highlight the numbers already called
 	showNumbersCalledOnCard();
 
-	// Check if BINGO is WON
-	CardManager.checkForBingo(CURR_GAME, document.querySelectorAll("table.bingo_card_table") )
-	// checkForBingo();
+	// Check if BINGO is on this card
+	let cardTables = CardManager.getCardBodies();
+	let exampleCardBody = cardTables?.[0];
+	CardManager.checkForBingo(CURR_GAME, exampleCardBody);
 }
 
 // Checking a selected card for bingo
@@ -208,7 +195,7 @@ function onCheckCardForBingo2(event)
 		if(CURR_GAME != "Straight Line")
 		{
 			console.log("Showing needed cells");
-			onShowNeededCells(CURR_GAME);
+			CardManager.setNeededCellsByGame(CURR_GAME);
 		}
 
 		// Highlight the numbers already called
@@ -322,7 +309,7 @@ function loadGameCells()
 // Show numbers already called on a card
 function showNumbersCalledOnCard()
 {
-	let cells = document.querySelectorAll("#bingo_card_body .number_cell");
+	let cells = document.querySelectorAll(".bingo_card_body .number_cell");
 
 	cells.forEach( (cell)=>{
 
@@ -339,13 +326,15 @@ function showNumbersCalledOnCard()
 
 }
 
+
 /****************** GAME SETTING ACTIONS ****************************/
 
 // Action to describe the selected game
 function onDescribeGame(game,sayCost=false)
 {
-	desc 	= games_object[game]["desc"];
-	cost = (sayCost) ? `This game costs ${games_object[game]["cost"]}` : undefined;
+	desc = games_object[game]["desc"];
+	cost = undefined;
+	// cost = (sayCost) ? `This game costs ${games_object[game]["cost"]}` : undefined;
 
 	// Describe the game and cost;
 	speakText(desc, cost, 0.9, 0.9, 700);
@@ -554,7 +543,11 @@ async function onShowCheckBingoSection()
 	// Show the loading
 	mydoc.showContent("#checkForBingoSectionLoading");
 	
+	// Clear old search options
+	mydoc.setContent("#matchingCards", {"innerHTML":""});
+
 	// Get all the cards
+	SAVED_CARDS = [];
 	let namedCards = await CardPromises.getCardsByList("NAMED_CARDS");
 	let randomCards = await CardPromises.getCardsByList("RANDOM_CARDS");
 	SAVED_CARDS = SAVED_CARDS.concat(namedCards);
@@ -609,18 +602,18 @@ function toggleGameBoardTableBody(state)
 		case "example":
 			mydoc.hideContent("#game_table_body");
 			mydoc.showContent("#game_example_table_body");
-			mydoc.hideContent("#bingo_card_body");
+			mydoc.hideContent(".bingo_card_body");
 			break;
 		case "card":
 			mydoc.hideContent("#game_table_body");
 			mydoc.hideContent("#game_example_table_body");
-			mydoc.showContent("#bingo_card_body");
+			mydoc.showContent(".bingo_card_body");
 			break;
 		// Default to the board view
 		default:
 			mydoc.showContent("#game_table_body");
 			mydoc.hideContent("#game_example_table_body");
-			mydoc.hideContent("#bingo_card_body");
+			mydoc.hideContent(".bingo_card_body");
 
 	}
 }
@@ -717,6 +710,8 @@ function onPickNumber()
 	// Make sure the board is showing
 	toggleGameBoardTableBody("board");
 	toggleBingoHeaders("remove"); // Make sure any BINGO already shown is cleared
+	onClearSearch();
+	mydoc.setContent("#bingoBoardCardName", {"innerHTML":""});
 
 	// Show the ball section
 	mydoc.showContent("#bingoBallSection");
@@ -881,8 +876,10 @@ function onResetGame()
 		mydoc.hideContent("#reset_game_button");
 		mydoc.hideContent("#exampleLinks");
 
-		// Reset the headers
+		// Reset the headers for bingo
 		toggleBingoHeaders("remove");
+		mydoc.setContent("#bingoBoardCardName", {"innerHTML":""});
+		onClearSearch();
 
 		// Reset the board table view
 		toggleGameBoardTableBody("board");
@@ -939,44 +936,6 @@ function resetCellsInelligible()
 		obj.classList.add("cell_unseen");
 	});
 }
-
-// Search for a card
-function onSearchCard()
-{
-	let cardValue = mydoc.getContent("#check_bingo_card")?.value ?? "";
-
-
-	// document.querySelectorAll(".checkBingoOption")?.forEach( ())
-
-
-	if(cardValue != "")
-	{
-		let matches = SAVED_CARDS.filter( (obj)=>{
-			return (obj.name.toUpperCase().includes(cardValue.toUpperCase()));
-		});
-
-		if(matches.length <= 5)
-		{
-			let matchHTML = "";
-			mydoc.setContent("#matchingCards", {"innerHTML":matchHTML});
-			for(var idx in matches)
-			{
-				let match = matches[idx];
-				let name = match["Name"];
-				let code = match["Code"];
-				let id = match["id"];
-
-				matchHTML += `<li data-card-code="${code}" data-card-match-name="${name}" class='matchingCard' onclick="onCheckCardForBingo(event)">${name}</li>`
-			}
-			mydoc.setContent("#matchingCards", {"innerHTML":matchHTML});
-		}
-	}
-	else
-	{
-		mydoc.setContent("#matchingCards", {"innerHTML":""});
-	}
-}
-
 
 /******************** SPEECH SYNTHESIS ACTIONS **************************/
 

@@ -66,7 +66,7 @@
 					<button id="pickNumberButton" class="hidden dlf_button_xxlarge dlf_button_round_corners dlf_button_limegreen" onclick="onPickNumber()">
 						Select a Number
 					</button>
-					<button id="checkForBingoButton" class="hidden2 dlf_button_xxlarge dlf_button_round_corners dlf_button_gold" onclick="onShowCheckBingoSection()">
+					<button id="checkForBingoButton" class="hidden dlf_button_xxlarge dlf_button_round_corners dlf_button_gold" onclick="onShowCheckBingoSection()">
 						Check for BINGO
 					</button>
 					<br/>
@@ -97,7 +97,7 @@
 			</tr>
 		</table>
 	</div>
-	<table id="game_table" class="table">
+	<table id="game_table" class="table bingo_card_table">
 		<colgroup>
 			<col style="width:19%">
 			<col style="width:19%">
@@ -106,6 +106,9 @@
 			<col style="width:19%">
 		</colgroup>
 		<thead id="bingo_card_head">
+			<tr>
+				<th id="bingoBoardCardName" colspan="5" style="text-align:center;"></th>
+			</tr>
 			<tr class="theme_black_bg header">
 				<th class="game_table_header card_header_b">B</th>
 				<th class="game_table_header card_header_i">I</th>
@@ -116,7 +119,7 @@
 		</thead>
 		<tbody id="game_table_body"></tbody>
 		<tbody id="game_example_table_body" class="hidden"></tbody>
-		<tbody id="bingo_card_body" class="hidden"></tbody>
+		<tbody class="bingo_card_body" class="hidden"></tbody>
 	</table>
 
 
