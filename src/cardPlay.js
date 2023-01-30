@@ -158,7 +158,7 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         });
 
 
-        mydoc.loadContent(options, "gameOptionsOnCard");
+        mydoc.setContent("#gameOptionsOnCard", {"innerHTML":options});
     }
 
 
@@ -175,6 +175,9 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
 
         // Hide the warning
         mydoc.hideContent("#selectGameWarning");
+
+        // Lock the game selector
+        mydoc.setContent("#gameOptionsOnCard", {"disabled":"true"});
 
 
         let target = event.target;
@@ -208,7 +211,6 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
     }
 
 
-
     // Indicate which ones are needed
     function onSelectGame()
     {
@@ -239,6 +241,9 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         if(proceed)
         {
 
+            // Unlock the selector
+            mydoc.setContent("#gameOptionsOnCard", {"disabled":""});
+
             document.querySelectorAll(".number_cell").forEach( (obj) =>{
                 obj.classList.remove("number_selected");
                 // obj.classList.remove("bingo_blink");
@@ -255,7 +260,7 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
 
             // Reset selected game
             CURR_GAME = "";
-            document.getElementById("gameOptionsOnCard").value = "";
+            mydoc.setContent("#gameOptionsOnCard", {"value":""});
 
             // Show the edit button
             toggleEditAndClearButtons("edit");
