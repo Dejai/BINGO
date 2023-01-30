@@ -77,6 +77,10 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
             }
         }
         addNumberListener();
+
+        // Set the datetime of the card being created
+        let time = Helper.getDate("H:m:s K");
+        document.getElementById("card_created_timestamp").innerText = time;
     }
 
 /*********************** EVENT LISTENERS *****************************/
