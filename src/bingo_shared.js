@@ -3,6 +3,74 @@
     A set of calls that are shared across BINGO pages
 */
 
+class CardObject 
+{
+	constructor(card)
+	{
+		// Get key details
+		var desc = card["desc"];
+		var cols = desc.split("\n");
+
+		// set key parts
+		this.cardID = card["id"];
+		this.cardName = card["name"];
+		
+		cols.forEach( (col)=>{
+
+			let splits = col.split("=");
+			let key = splits[0] ?? "x";
+			let vals = splits[1]?.split(",") ?? [];
+			this[key] = vals;
+		});
+	}
+}
+
+const BingoShared = {
+
+	// Get the saved cards - via a promise
+	getSavedCardsPromise: (listName) =>	{
+		console.log("Getting cards for list = " + listName);
+		return new Promise( resolve => {
+			MyTrello.get_cards_by_list_name(listName, (data)=>{
+
+				let cards = JSON.parse(data.responseText);
+				resolve(cards);
+
+			}, (err)=>{ resolve("Error"); } );
+		});
+	},
+
+	// Get the list of savd cards;
+	getSavedCards: async (listNames="NAMED_CARDS,RANDOM_CARDS") =>{
+		
+		// Split names of lists to check;
+		let lists = listNames.split(",");
+
+		var cards = [];
+
+		for(var idx in lists)
+		{
+			var listName = lists[idx];
+			var listCards = await BingoShared.getSavedCardsPromise(listName);
+			cards = cards.concat(listCards);
+		}
+		return cards;
+	},
+
+	// Get a map of the given cards (mapping to the name);
+	getCardMap: (cards) =>{
+
+		var cardMap = {};
+		cards.forEach( (card)=>{
+			let cardObject = new CardObject(card);
+			cardMap[cardObject.cardName] = cardObject;
+		});
+
+		return cardMap;
+	}
+}
+
+
 // Load the saved cards and run a callback (required)
 function loadSavedCards(boardName="", successCallback)
 {
@@ -71,6 +139,8 @@ function createCardObject(card)
 	// Also add the option in the datalist
 	addSavedCardOption(cardName);
 }
+
+// Get card object
 
 // Add the card names to set of options
 function addSavedCardOption(cardName)

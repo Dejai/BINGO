@@ -2,7 +2,8 @@
 <html>
 <head>
 	<title>BINGO Board</title>
-	<link rel="stylesheet" type="text/css" href="../src/bingo.css">
+	<base href="../">
+	<link rel="stylesheet" type="text/css" href="/src/bingo.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body class="theme_black_bg">
@@ -44,7 +45,7 @@
 				<col style="width:25%;">
 			</colgroup>
 			<tr>
-				<td style="text-align:left; ">
+				<td style="text-align:left; vertical-align: top;">
 					<p id="game_started_timestamp" style="color:red; text-align:left; margin-bottom:0px;"></p>
 					<select id="gameOptions" class="game_options_select"></select>
 					
@@ -55,7 +56,7 @@
 						<span id="hideExampleLink" class="pointer hidden" onclick="onHideGameExample()">Hide Example</span>
 					</div>
 				 </td>
-				<td>
+				<td style="vertical-align: top;">
 					<button id="playThisGameButton" class="pointer hidden dlf_button_xxlarge dlf_button_round_corners dlf_button_blue" onclick="onAnnounceGame()">
 						PLAY THIS GAME
 					</button>
@@ -73,27 +74,22 @@
 						<span id="selected_cell" class="theme_black_bg"></span>
 					</div>
 					<div id="checkForBingoSectionLoading" class="hidden">
-						<img src="https://dejai.github.io/scripts/assets/img/loading1.gif" style="width:5%;height:5%;">
+						<img src="https://dejai.github.io/scripts/assets/img/loading1.gif" style="width:7%;height:7%;">
 					</div>
-					<div id="checkForBingoSection" style="width:50%;margin:auto;" class="hidden">
+					<div id="checkForBingoSection" style="width:70%;margin:auto;" class="hidden">
 						<hr/>
-						<div style="width:70%;margin:auto;">
-							<label for="check_bingo_card">Card Name/Code:</label><br/>
-							<input id="check_bingo_card" type="text" list="card_names_data_list" placeholder="Type to search card name">
-							<datalist id="card_names_data_list"></datalist>
+						<div style="width:100%;margin:auto;">
+							<div id="searchBarSection" style="width:60%;">
+								<div id="searchBar" class="searchBar searchPlaceholder" data-jpd-placeholder="Search cards ..." contenteditable="true" onkeyup="onFilterCards()" onfocus="onSearchFocus()" onblur="onSearchBlur()"></div>
+							</div>
+							<div id="matchingCards" style="height: 100px; overflow:scroll; margin-top:2%;"></div>
 						</div>
-						<br/>
-						<button onclick="onCheckCardForBingo()">Check Card</button>
 					</div>
-				 	
 				</td>
-				<td>
+				<td style="vertical-align: top;">
 					<button id="reset_game_button" class="theme_black_bg dlf_button_xxlarge dlf_button_round_corners dlf_button_red hidden"  onclick="onResetGame()">
 						RESET GAME
 					</button>
-
-					<!-- style="font-size:44px;cursor:pointer; " onclick="toggleGameSettings()" -->
-
 					<button id="game_settings_button" class="dlf_button_xxlarge dlf_button_round_corners dlf_button_blue" onclick="toggleGameSettings()">
 						<i class="fa fa-gear" ></i> SETTINGS
 					</button>
@@ -101,7 +97,7 @@
 			</tr>
 		</table>
 	</div>
-	<table id="game_table" class="table">
+	<table id="game_table" class="table bingo_card_table">
 		<colgroup>
 			<col style="width:19%">
 			<col style="width:19%">
@@ -110,6 +106,9 @@
 			<col style="width:19%">
 		</colgroup>
 		<thead id="bingo_card_head">
+			<tr>
+				<th id="bingoBoardCardName" colspan="5" style="text-align:center;"></th>
+			</tr>
 			<tr class="theme_black_bg header">
 				<th class="game_table_header card_header_b">B</th>
 				<th class="game_table_header card_header_i">I</th>
@@ -120,7 +119,7 @@
 		</thead>
 		<tbody id="game_table_body"></tbody>
 		<tbody id="game_example_table_body" class="hidden"></tbody>
-		<tbody id="bingo_card_body" class="hidden"></tbody>
+		<tbody class="bingo_card_body" class="hidden"></tbody>
 	</table>
 
 
@@ -131,8 +130,10 @@
 <!-- My Trello code -->
 <script src="https://dejai.github.io/scripts/js/trellowrapper.js"></script>
 <!-- My Bingo code -->
-<script type="text/javascript" src="../src/bingo_objects.js"></script>
-<script type="text/javascript" src="../src/bingo_shared.js"></script>
-<script type="text/javascript" src="../src/card.js"></script>
-<script type="text/javascript" src="../src/bingo.js"></script>
+<script type="text/javascript" src="/src/bingo_objects.js"></script>
+<script type="text/javascript" src="/src/bingo_shared.js"></script>
+<script type="text/javascript" src="/src/searchBar.js"></script>
+<script type="text/javascript" src="/src/cardPromises.js"></script>
+<script type="text/javascript" src="/src/cardManager.js"></script>
+<script type="text/javascript" src="/src/bingo.js"></script>
 </html>
