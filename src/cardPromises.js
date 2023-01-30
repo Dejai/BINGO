@@ -3,11 +3,35 @@
 */
 const CardPromises = {
 
-    getLists: () => {
+    createCard: (listID, cardName)=>{
+
+        return new Promise( resolve => {
+            MyTrello.create_card(listID, cardName,(data)=>{
+                let response = JSON.parse(data.responseText);
+                resolve(response);
+            });
+        });
+    },
+
+    updateCardDescription: (cardID, cardDesc)=>{
+        return new Promise( resolve => {
+            MyTrello.update_card_description(cardID, cardDesc, (data)=>{
+                let response = JSON.parse(data.responseText);
+                resolve(response);
+            });
+        });
+    },
+
+    getListID: (listName) => {
         return new Promise( resolve =>{
-            
+            MyTrello.get_list_by_name(listName, (data)=>{
+                let response = JSON.parse(data.responseText);
+                let listID = response?.[0]?.["id"] ?? undefined;
+                resolve(listID);
+            });
         })
     },
+
 
     getCardsByList: (listName) =>{
 

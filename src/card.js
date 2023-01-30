@@ -260,33 +260,6 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         addNumberListener();
     }
 
-    // Create a trello card
-    function createTrelloCard(cardName, content, successCallback)
-    {
-        let listID = LIST_IDS[TYPE_OF_CARD];
-        console.log(`Creating card ${cardName} on list ${listID}`);
-        let encodedName = encodeURIComponent(cardName);
-
-        if(listID != undefined)
-        {
-            MyTrello.create_card(listID, encodedName,(newCardData)=>{
-
-                let newCard = myajax.GetJSON(newCardData.responseText);
-                let newCardID = newCard?.id ?? undefined;
-    
-                if(newCardID != undefined)
-                {
-                    MyTrello.update_card_description(newCardID, content, (data)=>{
-                        console.log("CARD UPDATED");
-                        if(successCallback != undefined)
-                        {
-                            successCallback(newCardID);
-                        }
-                    });
-                }
-            });
-        }
-    }
 
 /*********** NEW CARD FUNCTIONS *****************************/
 
@@ -380,74 +353,6 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
     {
         event.preventDefault();
         event.returnValue='';
-    }
-
-    // Create a batch of cards
-    function onCreateCardsBatch()
-    {
-        let ele = document.getElementById("card_input_text_area");
-        let value = ele?.value;
-        let cards = value.split("\n");
-
-        // Track the status of each created
-        let batchStatus = document.getElementById("create_batch_status");
-        mydoc.showContent("#trackStatusSection");
-        mydoc.hideContent("#enterCardSection");
-
-        // Loop through the cards
-        cards.forEach( (card)=>{
-
-            if(card != "")
-            {
-                let cardInfo = card.split("/");
-
-                let givenCardName = cardInfo[0].trim() ?? "NAME NOT GIVEN";
-                let numbers = cardInfo[1]?.trim().split(" ") ?? [];
-
-                // Add an element to the tracking
-                let elementTrack = `
-                    <hr/>
-                    <span id="${givenCardName}">
-	                     <img src="https://dejai.github.io/scripts/assets/img/loading1.gif" style="width:5%;height:5%;">
-                    </span> &nbsp; >>>
-                    <span>
-                        ${card}
-                    </span><br/>
-                `;
-                batchStatus.innerHTML += elementTrack;
-
-                // Ensure it is only 24 (no free space yet)
-                if(numbers.length == 24)
-                {
-                    // Add the FS symbol at 
-                    numbers.splice(12,0,"FS");
-
-                    b = "b=" + numbers.slice(0,5).join(",")
-                    i = "i=" + numbers.slice(5,10).join(",")
-                    n = "n=" + numbers.slice(10,15).join(",")
-                    g = "g=" + numbers.slice(15,20).join(",")
-                    o = "o=" + numbers.slice(20,25).join(",")
-
-                    let content = [b,i,n,g,o].join("\n");
-                    content = encodeURI(content);
-
-                    let gameCode = Helper.getCode();
-                    let cardName = `${givenCardName} - ${gameCode}`
-                    // console.log("Creating a card = " + cardName);
-
-                    createTrelloCard(cardName, content, (cardID)=>{
-                        if(cardID != null)
-                        {
-                            mydoc.loadContent("SUCCESS",givenCardName);
-                        }
-                    });
-                }
-                else
-                {
-                    mydoc.loadContent("FAIL!",givenCardName);
-                }
-            }
-        });
     }
 
     // Validate and use a card

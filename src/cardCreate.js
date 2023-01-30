@@ -223,7 +223,7 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
 
            let gameCode = Helper.getCode();
            let fullCardName = `${cardName} - ${gameCode}`
-           createTrelloCard(fullCardName, content, (newCardID)=>{
+           createTrelloCard("RANDOM", fullCardName, content, (newCardID)=>{
                location.href = `/card/play/?cardlist=${newCardID}`
            });
        }
@@ -260,98 +260,159 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
     }
 
     // Create a trello card
-    function createTrelloCard(cardName, content, successCallback)
+    async function createTrelloCard(listType, cardName, content, successCallback)
     {
-        let listID = LIST_IDS[TYPE_OF_CARD];
+        let listID = await CardPromises.getListID(`${listType}_CARDS`);
+
+        if(listID == undefined)
+        {
+            alert("Invalid List ID. Cannot create card");
+            return;
+        }
+
         console.log(`Creating card ${cardName} on list ${listID}`);
         let encodedName = encodeURIComponent(cardName);
 
-        if(listID != undefined)
-        {
-            MyTrello.create_card(listID, encodedName,(newCardData)=>{
+        // Create the card
+        let createdCard = await CardPromises.createCard(listID, encodedName);
 
-                let newCard = myajax.GetJSON(newCardData.responseText);
-                let newCardID = newCard?.id ?? undefined;
-    
-                if(newCardID != undefined)
-                {
-                    MyTrello.update_card_description(newCardID, content, (data)=>{
-                        console.log("CARD UPDATED");
-                        if(successCallback != undefined)
-                        {
-                            successCallback(newCardID);
-                        }
-                    });
-                }
-            });
-        }
+        // Update the card
+        await CardPromises.updateCardDescription(createdCard["id"], content);
+
+        // Call the callback;
+        successCallback(createdCard["id"]);
     }
 
 
     // Create a batch of cards
-    function onCreateCardsBatch()
+    async function onCreateCardsBatch()
     {
-        let ele = document.getElementById("card_input_text_area");
-        let value = ele?.value;
-        let cards = value.split("\n");
 
-        // Track the status of each created
-        let batchStatus = document.getElementById("create_batch_status");
-        mydoc.showContent("#trackStatusSection");
-        mydoc.hideContent("#enterCardSection");
+        let cardData = mydoc.getContent("#card_input_text_area")?.value?.trim() ?? ""
 
-        // Loop through the cards
-        cards.forEach( (card)=>{
+        if(cardData != "")
+        {
 
-            if(card != "")
+            let batchStatus = document.getElementById("create_batch_status");
+            mydoc.showContent("#trackStatusSection");
+            mydoc.hideContent("#enterCardsSection");
+
+            let cards = cardData.split("\n");
+
+            for(var idx in cards)
             {
-                let cardInfo = card.split("/");
+                let newCard = cards[idx];
+                console.log(newCard);
 
+                // Get teh appropriate card info
+                let cardInfo = newCard.split("/");
                 let givenCardName = cardInfo[0].trim() ?? "NAME NOT GIVEN";
                 let numbers = cardInfo[1]?.trim().split(" ") ?? [];
+                let cardCode = Helper.getCode();
 
-                // Add an element to the tracking
+
+                    // Add an element to the tracking
                 let elementTrack = `
                     <hr/>
-                    <span id="${givenCardName}">
-	                     <img src="https://dejai.github.io/scripts/assets/img/loading1.gif" style="width:5%;height:5%;">
+                    <span id="${cardCode}">
+                            <img src="https://dejai.github.io/scripts/assets/img/loading1.gif" style="width:5%;height:5%;">
                     </span> &nbsp; >>>
                     <span>
-                        ${card}
+                        ${newCard}
                     </span><br/>
                 `;
-                batchStatus.innerHTML += elementTrack;
 
-                // Ensure it is only 24 (no free space yet)
+                // Set the tracking of the creating of the card
+                mydoc.setContent("#create_batch_status", {"innerHTML":elementTrack}, true);
+
+                // Should have 24 numbers
                 if(numbers.length == 24)
                 {
                     // Add the FS symbol at 
                     numbers.splice(12,0,"FS");
 
+                    // Build the BINGO fields
                     b = "b=" + numbers.slice(0,5).join(",")
                     i = "i=" + numbers.slice(5,10).join(",")
                     n = "n=" + numbers.slice(10,15).join(",")
                     g = "g=" + numbers.slice(15,20).join(",")
                     o = "o=" + numbers.slice(20,25).join(",")
-
                     let content = [b,i,n,g,o].join("\n");
                     content = encodeURI(content);
 
-                    let gameCode = Helper.getCode();
-                    let cardName = `${givenCardName} - ${gameCode}`
-                    // console.log("Creating a card = " + cardName);
+                    let cardName = `${givenCardName} - ${cardCode}`;
 
-                    createTrelloCard(cardName, content, (cardID)=>{
-                        if(cardID != null)
-                        {
-                            mydoc.loadContent("SUCCESS",givenCardName);
+                    await createTrelloCard("NAMED", cardName, content, (card)=>{
+                        if(card != undefined){
+                            mydoc.setContent(`#${cardCode}`, {"innerHTML": "SUCCESS!"});
                         }
                     });
                 }
                 else
                 {
-                    mydoc.loadContent("FAIL!",givenCardName);
+                    mydoc.setContent(`#${givenCardName}`,{"innerHTML":"FAIL!"});
                 }
             }
-        });
+        }
+
+        // let ele = document.getElementById("card_input_text_area");
+        // let value = ele?.value;
+        // let cards = value.split("\n");
+
+        // // Track the status of each created
+        // let batchStatus = document.getElementById("create_batch_status");
+        // mydoc.showContent("#trackStatusSection");
+        // mydoc.hideContent("#enterCardSection");
+
+        // // Loop through the cards
+        // cards.forEach( (card)=>{
+
+        //     if(card != "")
+        //     {
+                
+
+        //         // Add an element to the tracking
+        //         let elementTrack = `
+        //             <hr/>
+        //             <span id="${givenCardName}">
+	    //                  <img src="https://dejai.github.io/scripts/assets/img/loading1.gif" style="width:5%;height:5%;">
+        //             </span> &nbsp; >>>
+        //             <span>
+        //                 ${card}
+        //             </span><br/>
+        //         `;
+        //         batchStatus.innerHTML += elementTrack;
+
+        //         // Ensure it is only 24 (no free space yet)
+        //         if(numbers.length == 24)
+        //         {
+        //             // Add the FS symbol at 
+        //             numbers.splice(12,0,"FS");
+
+        //             b = "b=" + numbers.slice(0,5).join(",")
+        //             i = "i=" + numbers.slice(5,10).join(",")
+        //             n = "n=" + numbers.slice(10,15).join(",")
+        //             g = "g=" + numbers.slice(15,20).join(",")
+        //             o = "o=" + numbers.slice(20,25).join(",")
+
+        //             let content = [b,i,n,g,o].join("\n");
+        //             content = encodeURI(content);
+
+        //             let gameCode = Helper.getCode();
+        //             let cardName = `${givenCardName} - ${gameCode}`
+        //             // console.log("Creating a card = " + cardName);
+
+        //             createTrelloCard("RANDOM", cardName, content, (cardID)=>{
+        //                 if(cardID != null)
+        //                 {
+        //                     mydoc.loadContent("SUCCESS",givenCardName);
+        //                 }
+        //             });
+        //         }
+        //         else
+        //         {
+        //             mydoc.loadContent("FAIL!",givenCardName);
+        //         }
+        //     }
+        // });
     }
