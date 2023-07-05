@@ -176,9 +176,9 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         
         var cardListArr = cardsList.split(",");
         if(cardListArr.length > 1 ){ 
-            mydoc.setContent("#addCardButton", {"innerText": "CHANGE CARDS"});
+            mydoc.setContent("#changeCardButton", {"innerText": "CHANGE CARDS"});
         }
-        mydoc.showContent("#addCardButton");
+        mydoc.showContent("#changeCardButton");
 
     }
 
@@ -200,6 +200,8 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         // Lock the game selector
         mydoc.setContent("#gameOptionsOnCard", {"disabled":"true"});
 
+        // Don't show the option to change card anymore
+        mydoc.hideContent("#changeCardButton");
 
         let target = event.target;
         let closest = target.closest("td.number_cell");
@@ -262,12 +264,17 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         if(proceed)
         {
 
+            // Make sure all cards are visible
+            CardManager.showAllCards();
+
             // Unlock the selector
             mydoc.setContent("#gameOptionsOnCard", {"disabled":""});
 
+            // Show the change button again
+            mydoc.showContent("#changeCardButton");
+
             document.querySelectorAll(".number_cell").forEach( (obj) =>{
                 obj.classList.remove("number_selected");
-                // obj.classList.remove("bingo_blink");
             });
 
             let cards = document.querySelectorAll("div.cardBlock table.bingo_card_table");
@@ -314,9 +321,16 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
     function checkForBingo()
     {
         let cards = document.querySelectorAll("div.cardBlock table.bingo_card_table");
+        let isBingoCount = 0;
         cards.forEach( (card) => {
-            CardManager.checkForBingo(CURR_GAME, card);
+            isBingoCount += CardManager.checkForBingo(CURR_GAME, card) ? 1 : 0;
         });
+
+        // Set global indicator for if any card is in BINGO
+        IS_BINGO = (isBingoCount > 0);
+        
+        // If there is a BINGO card, only show that one, else show all
+        var _ = (IS_BINGO) ? CardManager.onlyShowCardsInBingo() : CardManager.showAllCards();
     }
 
 

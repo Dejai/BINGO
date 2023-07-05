@@ -182,8 +182,9 @@ const CardManager = {
 
         let bingoState = (isBingo) ? "show" : "";
 
-
         CardManager.toggleBingoHeaders(cardElement.closest("table"), bingoState);
+
+        return isBingo;
     },
 
 
@@ -359,20 +360,40 @@ const CardManager = {
     },
 
     // Toggling the state of the BINGO headers
-    toggleBingoHeaders: (card, state) =>   {
+    toggleBingoHeaders: (cardTable, state) =>   {
 
-        card.querySelectorAll("[class*='card_header_']").forEach( (cell)=>{
+        cardTable.querySelectorAll("[class*='card_header_']").forEach( (cell)=>{
+
+            var cardBlock = cardTable.closest("div.cardBlock");
 
             if (state == "show")
             {
                 cell.classList.add("bingo_blink");
                 cell.classList.remove("game_table_header");
+                cardBlock.classList.add("IS-BINGO");
             }
             else
             {
                 cell.classList.remove("bingo_blink");
                 cell.classList.add("game_table_header");
+                cardBlock.classList.remove("IS-BINGO");
             }
+        });
+    },
+
+    // Hide all cards that are NOT currently In BINGO state
+    onlyShowCardsInBingo: () =>{
+        document.querySelectorAll(".cardBlock")?.forEach( (table) =>{
+            if( !table.classList.contains("IS-BINGO")) {
+                table.classList.add("hidden");
+            }
+        })
+    },
+
+    // Make sure all cards are visible
+    showAllCards: () => {
+        document.querySelectorAll(".cardBlock")?.forEach( (table) => {
+            table.classList.remove("hidden");
         });
     }
 
