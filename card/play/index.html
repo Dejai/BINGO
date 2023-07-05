@@ -10,7 +10,7 @@
 <body class="theme_black_bg">
 
     <div id="bingo_card_section">
-        <h2><a href="../card" class="navBackTitle">BINGO</a></h2>
+        <h2><a href="/" class="navBackTitle">BINGO</a></h2>
         <hr/>
         <div>
             <table style="width:100%;">
@@ -37,11 +37,11 @@
             <h3 id="selectGameWarning" style="color:red;" class="hidden">Please select a game before choosing numbers</h3>
         </div>
         <hr/>
-        <div id="cardBlockSection"></div>
         <p style="margin-top:5%;" class="dlf_paragraph_medium">
             <span id="card_created_timestamp"></span>
         </p>
-        
+        <div id="cardBlockSection"></div>
+        <button id="addCardButton" class="hidden dlf_button_medium dlf_button_round_corners dlf_button_limegreen" style="width:200px; padding:1%;" onclick="onAddCard(event)">CHANGE CARD</button>        
     </div>
 
 </body>
@@ -51,7 +51,7 @@
 <script src="https://dejai.github.io/scripts/js/trellowrapper.js"></script>
 <!-- My custom code -->
 <script type="text/javascript" src="/src/bingo_objects.js"></script>
-<script type="text/javascript" src="/src/cardPromises.js"></script>
-<script type="text/javascript" src="/src/cardManager.js"></script>
-<script type="text/javascript" src="/src/cardPlay.js"></script>
+<script type="text/javascript" src="/card/src/js/cardPromises.js"></script>
+<script type="text/javascript" src="/card/src/js/cardManager.js"></script>
+<script type="text/javascript" src="/card/src/js/cardPlay.js"></script>
 </html>

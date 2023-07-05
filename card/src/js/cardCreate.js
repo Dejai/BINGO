@@ -158,12 +158,8 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
        // By default, we assume this card is all set.
        var valid_card = true;
 
-       // Default the cardName to the type of card value
-       let cardName = `${TYPE_OF_CARD}`;
-
        // Validate the numbers on the card
-       letters = Object.keys(bingo_letters);
-       card_values = getCardValues();
+       var card_values = getCardValues();
        keys = Object.keys(card_values);
        for(var idx = 0; idx < keys.length; idx++)
        {
@@ -180,36 +176,8 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
            }
        }
 
-       // Validate that a Built card has a valid name
-       let cardNameField = document.getElementById("name_of_custom_card");
-       if(cardNameField != undefined)
-       {
-           let nameVal = cardNameField.value;
 
-           // Check against existing names
-           let existingNames = []
-           Object.keys(CARDS).forEach( (key)=>{
-               let splits = key.split("-");
-               let name = splits[0]?.trim() ?? ""
-               existingNames.push(name.toUpperCase());
-           });
-           let nameAlreadyUsed = existingNames.includes(nameVal.toUpperCase());
-
-           if(nameVal != "" && !nameAlreadyUsed)
-           {
-               cardName = nameVal;
-           }
-           else
-           {
-               let uniqueNameErr = "ERROR:<br/>This name is already used. Please use another name."
-               let noNameErr = "ERROR:<br/>Please enter a name for this card."
-               let errMessage = (nameAlreadyUsed) ? uniqueNameErr : noNameErr; 
-               MyNotification.notify("#build_card_instructions",errMessage, "notify_red");
-               valid_card = false;
-           }
-       }
-
-
+       // Create card only if valid
        if(valid_card)
        {
            b = "b=" + card_values["b"].join(",");
@@ -222,7 +190,7 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
            content = encodeURI(content);
 
            let gameCode = Helper.getCode();
-           let fullCardName = `${cardName} - ${gameCode}`
+           let fullCardName = `RANDOM - ${gameCode}`
            createTrelloCard("RANDOM", fullCardName, content, (newCardID)=>{
                location.href = `/card/play/?cardlist=${newCardID}`
            });
@@ -415,4 +383,21 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         //         }
         //     }
         // });
+    }
+
+
+    // On toggle save game
+    function onToggleSaveGame(event){
+
+        let target = event.target;
+        let value = target?.value ?? "";
+
+        console.log(target);
+
+        if(value != "" && value == "Yes"){
+            mydoc.showContent("#cardNameSection");
+        } else {
+            mydoc.hideContent("#cardNameSection");
+        }
+
     }

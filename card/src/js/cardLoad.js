@@ -6,16 +6,19 @@ var TEST = undefined;
 /*********************** GETTING STARTED *****************************/
 
     // Once doc is ready
-    mydoc.ready(()=>{
+    mydoc.ready( async ()=>{
 
         // Set Trello board name
     	MyTrello.SetBoardName("bingo");
 
-        // Load the saved cards
-        loadSavedCards();
-
         // Search bar
         onSearchBlur();
+
+        // Load the saved cards
+        await loadSavedCards();
+
+        // Set any preselected cards
+        onSetPreselectedCards();
     });
 
     // Get the saved cards
@@ -42,12 +45,34 @@ var TEST = undefined;
         mydoc.setContent("#listOfCards", {"innerHTML":cardLoadHTML});
     }
 
+    // Set pre-selected cards
+    function onSetPreselectedCards(){ 
+
+        console.log("SEtting preselected cards"); 
+
+        var search = location.search;
+
+        var cardIds = mydoc.get_query_param("cardlist")?.split(",");
+
+        console.log(cardIds);
+
+        cardIds?.forEach( (x) => {
+
+            let card = document.querySelector(`[data-card-id="${x}"] button`);
+            console.log(card);
+            if(card != undefined){
+                card.click();
+            }
+        });
+
+
+    }
+
     // Toggle a card being selected
     function onToggleCardSelect(event)
     {
 
         // Check how many are already selected
-
         
         // Get the selected bloc
         let target = event.target;
@@ -67,7 +92,7 @@ var TEST = undefined;
             mydoc.addClass(`[data-card-id='${cardID}']`, "selected");
             mydoc.addClass(`[data-card-id='${cardID}'] .selectCardButton`, "dlf_button_red");
             mydoc.removeClass(`[data-card-id='${cardID}'] .selectCardButton`, "unselected");
-            mydoc.setContent(`[data-card-id='${cardID}'] .selectCardButton`, {"innerText": "REMOVE"});
+            mydoc.setContent(`[data-card-id='${cardID}'] .selectCardButton`, {"innerText": "UNSELECT"});
         }
         else
         {

@@ -11,7 +11,7 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
 /*********************** GETTING STARTED *****************************/
 
     // Once doc is ready
-    mydoc.ready(()=>{
+    mydoc.ready( async ()=>{
 
         // Set Trello board name
     	MyTrello.SetBoardName("bingo");
@@ -19,7 +19,10 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         // Load the game options
         loadGameOptions();
         let cardsList = mydoc.get_query_param("cardlist");
-        loadTrelloCard(cardsList);
+        await loadTrelloCard(cardsList);
+
+        // Show 'Add Card' button once cards loaded
+        showAddCardButton(cardsList);
        
     });
 
@@ -113,6 +116,13 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
     {
         onNavigate("./", "Are you sure you want to leave this Card?");
     }
+
+    // Add a new card to the list
+    function onAddCard(){
+        let currentHref = location.href;
+        let newHref = currentHref.replace("play", "load");
+        window.open(newHref, "_top");
+    }
  
 
     // Navigate to a new page; With or without confirmation
@@ -159,6 +169,17 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
 
 
         mydoc.setContent("#gameOptionsOnCard", {"innerHTML":options});
+    }
+
+    // On show Add/Change Button
+    function showAddCardButton(cardsList="") {
+        
+        var cardListArr = cardsList.split(",");
+        if(cardListArr.length > 1 ){ 
+            mydoc.setContent("#addCardButton", {"innerText": "CHANGE CARDS"});
+        }
+        mydoc.showContent("#addCardButton");
+
     }
 
 
