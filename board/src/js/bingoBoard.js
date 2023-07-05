@@ -561,7 +561,7 @@ async function onShowCheckBingoSection()
 		CARDS[cardObject["Code"]] = cardObject;
 
 		// Get the option template & load immediately
-		let template = await CardPromises.getTemplate("/templates/checkBingoOption.html", cardObject);
+		let template = await CardPromises.getTemplate("/board/src/templates/checkBingoOption.html", cardObject);
 		mydoc.setContent("#matchingCards", {innerHTML: template}, true);
 	}
 

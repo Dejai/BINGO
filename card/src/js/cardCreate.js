@@ -38,7 +38,7 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
     async function populateCard()
     {
         let options = getNumberOptions();
-        let template = await CardPromises.getTemplate("/templates/cardCreate.html", options);
+        let template = await CardPromises.getTemplate("/card/src/templates/cardCreate.html", options);
         mydoc.setContent("#bingo_card_body", {"innerHTML":template});
         setRandomNumbers();
     }

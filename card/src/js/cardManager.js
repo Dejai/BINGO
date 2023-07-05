@@ -6,7 +6,7 @@ const CardManager = {
 
     // Load a card (with one of these options: play/example/build)
     loadCard: async(type, identifier, cardObject, append=false) =>{
-        let templatePath = (type == "play") ? "/templates/cardPlay.html" : "/templates/cardExample.html";
+        let templatePath = (type == "play") ? "/card/src/templates/cardPlay.html" : "/examples/src/templates/cardExample.html";
         let template = await CardPromises.getTemplate(templatePath, cardObject);
         mydoc.setContent(identifier, {"innerHTML":template}, append);
     },

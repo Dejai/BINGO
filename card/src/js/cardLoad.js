@@ -38,7 +38,7 @@ var TEST = undefined;
             var cardNameSplit = card["name"]?.split(" - ") ?? ["n/a", "n/a"];
             var cardObj = { "ID":card["id"] , "Name":cardNameSplit[0], "Code":cardNameSplit[1] };
 
-            let template = await CardPromises.getTemplate("/templates/cardLoad.html", cardObj);
+            let template = await CardPromises.getTemplate("/card/src/templates/cardLoad.html", cardObj);
 
             cardLoadHTML += template;
         }

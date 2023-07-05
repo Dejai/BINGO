@@ -68,7 +68,7 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
                 let saveForm = "";
                 if(cardObject["Name"].includes("RANDOM"))
                 {
-                    saveForm = await CardPromises.getTemplate("/templates/saveCardForm.html", {});
+                    saveForm = await CardPromises.getTemplate("/templates//card/src/templates/saveCardForm.html", {});
                 }
                 cardObject["SaveForm"] = saveForm; 
 
