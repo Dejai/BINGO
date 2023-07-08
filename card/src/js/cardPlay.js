@@ -1,12 +1,9 @@
 
 /************************ GLOBAL VARIABLES ****************************************/
-var CURR_GAME = "";
-var IS_BINGO = false;
-
-// Card map
-var CARDS = {};
-
 var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
+
+// The BINGO Board that will be used for managing key parts of this page
+const bingoBoard = new BingoBoard();
 
 /*********************** GETTING STARTED *****************************/
 
@@ -16,178 +13,71 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         // Set Trello board name
     	MyTrello.SetBoardName("bingo");
 
+        // Set the board with the game options
+        bingoBoard.setCards(BingoGames, true);
+
         // Load the game options
-        loadGameOptions();
-        let cardsList = mydoc.get_query_param("cardlist");
-        await loadTrelloCard(cardsList);
+        var options = bingoBoard.getGameOptions();
+        mydoc.setContent("#gameOptionsOnCard", {"innerHTML":options});
+
+        // Get the cards for this page
+        var trelloCards = await getTrelloCards( mydoc.get_query_param("cardlist"));
+        bingoBoard.setCards(trelloCards);
+
+        // Set the play cards on this page
+        var playCards = bingoBoard.getPlayCards();
+        for(var idx in playCards){
+            var card = playCards[idx];
+            console.log(card);
+            var templates = await card.getTemplates();
+            var template = templates?.[0];
+            mydoc.setContent("#cardBlockSection", {"innerHTML":template}, true);
+        }
 
         // Show 'Add Card' button once cards loaded
-        showAddCardButton(cardsList);
-       
-    });
-
-    // Add the listener for the cells
-    function addNumberListener()
-    {
-        let cells = document.querySelectorAll(".number_cell");
-        
-        cells.forEach( (obj)=>{
-            obj.addEventListener(touchEvent, onSelectNumber);
-        });
-    }
-
-/*********************** TRELLO CALLS *****************************/
-    
-    // Get the trello card and then set the card data
-    async function loadTrelloCard(cardList)
-    {
-
-        let cards = cardList.split(",");
-
-        let cardsAdded = [];
-
-        for(var idx in cards)
-        {
-            let cardID = cards[idx];
-
-            // If we already processed this card ID .. move on;
-            if(cardsAdded.includes(cardID))
-                continue;
-
-            // Get the card from Trello;
-            let cardData = await CardPromises.getCard(cardID);
-
-            
-            if (cardData != undefined)
-            {
-                // Get a card formatted as an objectobject;
-                let cardObject = CardManager.getCardObject(cardData);
-
-                console.log(cardObject);
-
-                let saveForm = "";
-                if(cardObject["Name"].includes("RANDOM"))
-                {
-                    saveForm = await CardPromises.getTemplate("/templates//card/src/templates/saveCardForm.html", {});
-                }
-                cardObject["SaveForm"] = saveForm; 
-
-                // Then load the card where it ought to go
-                await CardManager.loadCard("play", "#cardBlockSection", cardObject, true);
-
-                // Indicate taht we added this card
-                cardsAdded.push(cardID);
-            }
-        }
-        addNumberListener();
-
-        // Set the datetime of the card being created
-        let time = Helper.getDate("H:m:s K");
-        document.getElementById("card_created_timestamp").innerText = time;
-    }
-
-/*********************** EVENT LISTENERS *****************************/
-     
-    // Prevent the page accidentally closing
-    function onClosePage(event)
-    {
-        event.preventDefault();
-        event.returnValue='';
-    }
-
-    // Validate and use a card
-    function onEditCard()
-    {
-        letters = Object.keys(bingo_letters);
-
-        card_values = getCardValues();
-        b = card_values["b"].join(",");
-        i = card_values["i"].join(",");
-        n = card_values["n"].join(",");
-        g = card_values["g"].join(",");
-        o = card_values["o"].join(",");
-
-        let newPath = `./build.html?b=${b}&i=${i}&n=${n}&g=${g}&o=${o}`
-        onNavigate(newPath,"Are you sure you want to edit this Card?");
-    }
-
-    // Creating a new card
-    function onNewCard()
-    {
-        onNavigate("./", "Are you sure you want to leave this Card?");
-    }
-
-    // Add a new card to the list
-    function onAddCard(){
-        let currentHref = location.href;
-        let newHref = currentHref.replace("play", "load");
-        window.open(newHref, "_top");
-    }
- 
-
-    // Navigate to a new page; With or without confirmation
-    function onNavigate(url,message=undefined)
-    {
-        let canProceed = (message != undefined) ? confirm(message) : true;
-        if(canProceed)
-        {
-            location.href = url;
-        }
-    }
-
-
-/*********************** DOM: Update Page *****************************/
-
-    // Load the game options object
-    function loadGameOptions()
-    {	
-        game_keys = Object.keys(games_object);
-        optgroups = {};        
-        // Group all the games
-        game_keys.forEach( (key)=> {
-
-            game = games_object[key];
-            group = game["group"];
-
-            if(!optgroups.hasOwnProperty(group))
-            {
-                optgroups[group] = `<optgroup label="${group}">`
-            }
-            option = "<option class='game_option' value=\"" + key + "\">" + key + "</option>";
-            optgroups[group] += option;
-        });
-
-        // Load the grouped options
-        options = "<option value=''>SELECT A GAME...</option>";
-        Object.keys(optgroups).forEach( (key)=>{
-
-            group = optgroups[key];
-            group += "</optgroup>";
-
-            options += group;
-        });
-
-
-        mydoc.setContent("#gameOptionsOnCard", {"innerHTML":options});
-    }
-
-    // On show Add/Change Button
-    function showAddCardButton(cardsList="") {
-        
-        var cardListArr = cardsList.split(",");
-        if(cardListArr.length > 1 ){ 
+        if(playCards.length > 0){
             mydoc.setContent("#changeCardButton", {"innerText": "CHANGE CARDS"});
         }
         mydoc.showContent("#changeCardButton");
 
+        // Add listener for number selection
+        let cells = document.querySelectorAll(".number_cell");
+        cells.forEach( (obj)=>{
+            obj.addEventListener(touchEvent, onSelectNumber);
+        });
+
+        // Set the datetime of the card being created
+        let time = Helper.getDate("H:m:s K");
+        document.getElementById("card_created_timestamp").innerText = time;       
+    });
+
+/*********************** TRELLO CALLS *****************************/
+    
+    // Get the trello card and then set the card data
+    async function getTrelloCards(cardIDs)
+    {
+        let uniqueCards = Array.from(new Set(cardIDs.split(",")) );
+        let trelloCards = [];  
+
+        for(var idx in uniqueCards)
+        {
+            var cardID = uniqueCards[idx];
+
+            // Get the card from Trello;
+            let cardData = await CardManager.getCard(cardID);
+
+            // Add card to the list
+            trelloCards.push(cardData);
+        }
+        return trelloCards;
     }
 
+/*********************** EVENT LISTENERS *****************************/
 
     // Select a value
     function onSelectNumber(event)
     {
-
-        if(CURR_GAME == "")
+        if(bingoBoard.getGameName() == "")
         {
             mydoc.showContent("#selectGameWarning");
             window.scrollTo(0,0);
@@ -207,153 +97,136 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         let closest = target.closest("td.number_cell");
         let letterClass = Array.from(closest.classList).filter( (c) => { return c.includes("number_cell_"); } );
         let numberValue = closest.innerText;
-
-        // Allows me to set/unset all instances of a number
-        selectAllInstanceOfNumber(`.${letterClass}`, numberValue);
-
-        // Always check for BINGO after changing the selected cells
-        checkForBingo();
-    }
-
-    // Set/unset all instances of a number
-    function selectAllInstanceOfNumber(className, numberValue)
-    {
-
+         
         // Class to show as selected/not-selected
         let selectedClassName = "number_selected";
 
-        document.querySelectorAll(className)?.forEach( (cell) =>{
+        // Find all cases of this class & set/unset it
+         document.querySelectorAll(`.${letterClass}`)?.forEach( (cell) =>{
+ 
+             let allowSelect = (bingoBoard.getGameName() == "Straight Line") || cell.classList.contains("number_cell_needed")
+             if( allowSelect && cell.innerText == numberValue)
+             {
+                 var action = (!cell.classList.contains(selectedClassName)) ? "select" : "deselect";
+                 if(action == "select"){
+                     cell.classList.add(selectedClassName);
+                     bingoBoard.addNumber(numberValue);
+                 } else {
+                     cell.classList.remove(selectedClassName);
+                     bingoBoard.removeNumber(numberValue);
+                 }
+             }
+         });
 
-            let allowSelect = (CURR_GAME == "Straight Line") || cell.classList.contains("number_cell_needed")
-            if( allowSelect && cell.innerText == numberValue)
-            {
-                var _action = !cell.classList.contains(selectedClassName) ? cell.classList.add(selectedClassName) :
-                                cell.classList.remove(selectedClassName)
-            }
-        });
+        // Always check for BINGO after changing the selected cells
+        onCheckForBingo();
     }
-
 
     // Indicate which ones are needed
     function onSelectGame()
     {
-        // Always clear first when changing games;
-        CardManager.clearNeededCells();
+        var name = mydoc.getContent("#gameOptionsOnCard")?.value ?? ""
+        bingoBoard.setGameName(name);
 
         // Hide the warning;
         mydoc.hideContent("#selectGameWarning");
 
+        // Always clear first when changing games;
+        CardManager.clearNeededCells();
 
-        // Get teh current selected game
-        CURR_GAME = mydoc.getContent("#gameOptionsOnCard")?.value ?? "";
+        // Loop through required slots & show them;
+        var requiredSlots = bingoBoard.getRequiredSlots() ?? [[]];
+        console.log(requiredSlots);
+        console.log(requiredSlots[0]);
 
-        if(CURR_GAME != "" )
-        {
-            // Toggle the view of the buttons
-            toggleEditAndClearButtons("clear");
-
-            // Show the needed cells
-            CardManager.setNeededCellsByGame(CURR_GAME);     
+        if(requiredSlots.length > 1){
+            CardManager.setNeededCells2(requiredSlots[0]);
+            var idx = 1;
+            let reqSlotsInterval = setInterval(() => {
+                if(idx < requiredSlots.length){
+                    CardManager.clearNeededCells();
+                    CardManager.setNeededCells2(requiredSlots[idx]);
+                    idx++;
+                } else {
+                    clearInterval(reqSlotsInterval);
+                    CardManager.clearNeededCells();
+                }       
+            }, 700);
+        } else {
+            CardManager.setNeededCells2(requiredSlots[0]);
         }
+
+        // Show the buttons to clear
+        mydoc.showContent("#clearCardButton");
     }
     
     // Clear the card
     function onClearCard()
     {
-        let proceed = (IS_BINGO) ? true : confirm("Are you sure you want to clear the card?");
+        let numBingoCards = document.querySelectorAll(".IS-BINGO")?.length;
+        let proceed = (numBingoCards > 0) ? true : confirm("Are you sure you want to clear the card?");
         if(proceed)
         {
+            // Set new game on the Board
+            bingoBoard.newGame();
 
-            // Make sure all cards are visible
-            CardManager.showAllCards();
+            // Clear things via manager;
+            onShowAllCards();
+            CardManager.clearNeededCells();
 
             // Unlock the selector
             mydoc.setContent("#gameOptionsOnCard", {"disabled":""});
+            mydoc.setContent("#gameOptionsOnCard", {"value":""});
 
-            // Show the change button again
+            // Show the change button again; Hide clear button;
             mydoc.showContent("#changeCardButton");
+            mydoc.hideContent("#clearCardButton");
 
             document.querySelectorAll(".number_cell").forEach( (obj) =>{
                 obj.classList.remove("number_selected");
             });
-
-            let cards = document.querySelectorAll("div.cardBlock table.bingo_card_table");
-
-            cards.forEach( (card) => {
-                CardManager.toggleBingoHeaders(card, "remove");
-            });
-
-            // Clear needed cells;
-            CardManager.clearNeededCells();
-
-            // Reset selected game
-            CURR_GAME = "";
-            mydoc.setContent("#gameOptionsOnCard", {"value":""});
-
-            // Show the edit button
-            toggleEditAndClearButtons("edit");
         }
     }
-
-    // Toggle between the Edit and Clear buttons on the actual card
-    function toggleEditAndClearButtons(view)
-    {
-        if(view == "edit")
-        {
-            // Show the Edit button and hide Clear button
-            mydoc.showContent("#newCardButton");
-            mydoc.hideContent("#clearCardButton");
-        }
-        else
-        {
-            // Show the Clear Button and hide the Edit button
-            mydoc.showContent("#clearCardButton");
-            mydoc.hideContent("#newCardButton");
-        }
-        
-    }
-
-
-
-/*********************** HELPERS *****************************/
 
     // Check if the current card has achieved BINGO!
-    function checkForBingo()
+    function onCheckForBingo()
     {
-        let cards = document.querySelectorAll("div.cardBlock table.bingo_card_table");
-        let isBingoCount = 0;
-        cards.forEach( (card) => {
-            isBingoCount += CardManager.checkForBingo(CURR_GAME, card) ? 1 : 0;
+
+        let numbers = bingoBoard.getNumbers();
+        let boardCard = bingoBoard.getGameCard();
+        let playCards = bingoBoard.getPlayCards();
+
+        let bingoCount = 0;
+        playCards.forEach( (card) =>{
+            let isBingo = card.isBingo(numbers, boardCard.getRequiredSlots());
+            if(isBingo?.verdict){
+                bingoCount += 1;
+                var selector = `[data-card-block="${card.Code}"]`;
+                CardManager.setBingoHeader(selector);        
+            }
         });
 
-        // Set global indicator for if any card is in BINGO
-        IS_BINGO = (isBingoCount > 0);
-        
-        // If there is a BINGO card, only show that one, else show all
-        var _ = (IS_BINGO) ? CardManager.onlyShowCardsInBingo() : CardManager.showAllCards();
-    }
-
-
-    // Get a random int based on interval
-    // https://stackoverflow.com/questions/4959975/generate-random-number-between-two-numbers-in-javascript 
-    // min and max included 
-    function randomIntFromInterval(min, max) 
-    { 
-        return Math.floor(Math.random() * (max - min + 1) + min)
-    }
-
-    // Select the text in an element
-    // https://stackoverflow.com/questions/1173194/select-all-div-text-with-single-mouse-click
-    function selectText(element)
-    {
-        if (window.getSelection) {
-            var range = document.createRange();
-            range.selectNode(element);
-            window.getSelection().removeAllRanges();
-            window.getSelection().addRange(range);
+        if(bingoCount > 0){
+            let blocksToHide = Array.from(document.querySelectorAll(".cardBlock"))?.filter(x => !x.classList.contains("IS-BINGO") );
+            blocksToHide.forEach( (block) => {
+                block.classList.add("hidden");
+            });
+        } else {
+            onShowAllCards();
         }
     }
 
+    // Show all the cards (after BINGO or CLEAR)
+    function onShowAllCards(){
+        // Make sure no header is showing BINGO
+        CardManager.clearBingoHeaders();
+
+        // Make sure all blocks are visible;
+        document.querySelectorAll(".cardBlock")?.forEach( (block)=>{
+            block.classList.remove("IS-BINGO");
+            block.classList.remove("hidden");
+        });
+    }
 
     // Show the save form
     function onShowSaveCardForm()
@@ -368,12 +241,12 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         let cardName = mydoc.getContent("[name='cardName']")?.value ?? "";
         let cardCode = mydoc.getContent(".cardName")?.innerText;
 
-        if(cardName == "")
-        {
+        if(cardName == "") {
             alert("Must enter a card name!");
             return; 
         }
 
+        // Get card ID
         let cardID = document.querySelector("[data-card-id]")?.getAttribute("data-card-id");
 
         if(cardID != undefined && cardName != "")
@@ -389,5 +262,45 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
                 mydoc.setContent(".saveCardSection", {"innerHTML":""});
             },1500);
             
+        }
+    }
+
+/********************** NAVIGATION LISTENERS ***********************/
+    // Prevent the page accidentally closing
+    function onClosePage(event)
+    {
+        event.preventDefault();
+        event.returnValue='';
+    }
+
+    // Validate and use a card
+    function onEditCard()
+    {
+        letters = Object.keys(BingoLetters);
+
+        card_values = getCardValues();
+        b = card_values["b"].join(",");
+        i = card_values["i"].join(",");
+        n = card_values["n"].join(",");
+        g = card_values["g"].join(",");
+        o = card_values["o"].join(",");
+
+        let newPath = `./build.html?b=${b}&i=${i}&n=${n}&g=${g}&o=${o}`
+        onNavigate(newPath,"Are you sure you want to edit this Card?");
+    }
+
+    // Add a new card to the list
+    function onChangeCards(){
+        let currentHref = location.href;
+        let newHref = currentHref.replace("play", "load");
+        onNavigate(newHref, "Are you sure you want to change cards?");
+    }
+
+    // Navigate to a new page; With or without confirmation
+    function onNavigate(url,message=undefined)
+    {
+        let canProceed = (message != undefined) ? confirm(message) : true;
+        if(canProceed) {
+            window.open(url, "_top");
         }
     }

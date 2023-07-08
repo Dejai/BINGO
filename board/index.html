@@ -7,36 +7,6 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body class="theme_black_bg">
-	<div id="game_settings_section" class="theme_black_bg hidden">
-		<button id="close_game_settings" onclick="toggleGameSettings()">Close</button>
-		<br/>
-		<h2>Game Settings</h2>
-		<table id="game_settings_table">
-			<tr>
-				<td>
-					<h4>Speak Value?</h4>
-				</td>
-				<td>
-					<select id="speak_value" name="Speak Value">
-						<option value="Yes" selected>Yes</option>
-						<option value="No">No</option>
-					</select>
-				</td>
-				<td>&nbsp;</td>
-			</tr>
-			<tr>
-				<td>
-					<h4>Select Voice</h4>
-				</td>
-				<td>
-					<select id="voiceSelect"></select>
-				</td>
-				<td>
-					<p style="color:white;cursor:pointer;" class="fa fa-volume-up" onclick="listenerOnSpeakVoiceDemo()">&nbsp;Test Voice</p>
-				</td>
-			</tr>
-		</table>
-	</div>
 	<div id="menu_section">
 		<table class="table" style="margin-bottom:1%;">
 			<colgroup>
@@ -46,53 +16,55 @@
 			</colgroup>
 			<tr>
 				<td style="text-align:left; vertical-align: top;">
-					<p id="game_started_timestamp" style="color:red; text-align:left; margin-bottom:0px;"></p>
-					<select id="gameOptions" class="game_options_select"></select>
+					<select id="gameOptions" class="game_options_select" onchange="onSelectGame(event)"></select>
 					
 					<br style="clear:both;"/>
-					<div id="exampleLinks" style="text-align:right;padding-right:1%;" class="hidden">
-						<span id="showExampleLink" class="pointer" onclick="onAnnounceGame()">Show Example Again</span>
+					<div id="exampleLinks" style="text-align:right;padding-right:1%;" class="hidden2">
+						<span id="showExampleLink" class="pointer hidden showOnStart showOnSelect hideOnExample hideOnReset" onclick="onShowExampleAndDescribe()">Show Example Again</span>
 						<!-- &nbsp; | &nbsp; -->
-						<span id="hideExampleLink" class="pointer hidden" onclick="onHideGameExample()">Hide Example</span>
+						<span id="hideExampleLink" class="pointer hidden showOnExampleAgain hideOnStart hideOnSelect hideOnReset" onclick="onHideExample()">Hide Example</span>
 					</div>
 				 </td>
 				<td style="vertical-align: top;">
-					<button id="playThisGameButton" class="pointer hidden dlf_button_xxlarge dlf_button_round_corners dlf_button_blue" onclick="onAnnounceGame()">
-						PLAY THIS GAME
-					</button>
-					<button id="startGameButton" class="pointer hidden dlf_button_xxlarge dlf_button_round_corners dlf_button_gray" onclick="onStartGame()" disabled>
+					<button id="startGameButton" class="pointer hidden showOnGameSelect hideOnStart hideOnReset dlf_button_xxlarge dlf_button_round_corners dlf_button_gray mainGameButtons" onclick="onStartGame()" disabled>
 						START GAME
 					</button>
-					<button id="pickNumberButton" class="hidden dlf_button_xxlarge dlf_button_round_corners dlf_button_limegreen" onclick="onPickNumber()">
+					<button id="pickNumberButton" class="hidden showOnStart hideOnReset dlf_button_xxlarge dlf_button_round_corners dlf_button_limegreen mainGameButtons" onclick="onSelectNumber()">
 						Select a Number
 					</button>
-					<button id="checkForBingoButton" class="hidden dlf_button_xxlarge dlf_button_round_corners dlf_button_gold" onclick="onShowCheckBingoSection()">
+					<button id="checkForBingoButton" class="hidden showOnStart hideOnReset dlf_button_xxlarge dlf_button_round_corners dlf_button_gold mainGameButtons" onclick="onCheckForBingo()">
 						Check for BINGO
 					</button>
+					<button id="reset_game_button" class="theme_black_bg dlf_button_xxlarge dlf_button_round_corners dlf_button_red hidden hideOnReset"  onclick="onResetGame()">
+						RESET GAME
+					</button>
 					<br/>
-					<div id="bingoBallSection" class="hidden">
+					<p id="describeGameLink" class="pointer hidden showOnGameSelect hideOnStart hideOnReset" onclick="onShowExampleAndDescribe()">Describe Game</p>
+					<br/>
+					<div id="bingoBallSection" class="hidden showOnSelect hideOnExample hideOnCheckBingo hideOnReset">
 						<span id="selected_cell" class="theme_black_bg"></span>
 					</div>
-					<div id="checkForBingoSectionLoading" class="hidden">
-						<img src="https://dejai.github.io/scripts/assets/img/loading1.gif" style="width:7%;height:7%;">
-					</div>
-					<div id="checkForBingoSection" style="width:70%;margin:auto;" class="hidden">
+					<div id="checkForBingoSection" style="width:70%;margin:auto;" class="hidden showOnCheckBingo hideOnSelect hideOnExample hideOnReset">
 						<hr/>
-						<div style="width:100%;margin:auto;">
-							<div id="searchBarSection" style="width:60%;">
-								<div id="searchBar" class="searchBar searchPlaceholder" data-jpd-placeholder="Search cards ..." contenteditable="true" onkeyup="onFilterCards()" onfocus="onSearchFocus()" onblur="onSearchBlur()"></div>
+						<h3 id="totalMatchingCards" class="clearOnSelect clearOnCheckBingo clearOnReset"></h3>
+						<div>
+							<img id="checkingForBingoLoading" src="https://dejai.github.io/scripts/assets/img/loading1.gif" style="width:7%;height:7%;" class="hidden showOnCheckBingo hideOnReset">
+							<div id="matchingCards" style="margin-top:2%;" class="clearOnCheckBingo"></div>
+							<p id="dontSeeCard" class="hidden hideOnSelect hideOnCheckBingo hideOnExample hideOnReset" style="clear:both;text-align:left;">Don't see a card? <span style="color:orange;font-style:italic;cursor:pointer;" onclick="onShowCheckSpecificCard()">Check a specific card</span></p>
+							<div id="checkSpecificCard" class="hidden hideOnSelect hideOnExample hideOnCheckBingo hideOnReset" style="margin-top:2%;">
+								<input id="specificCardInput" type="text" name="checkSpecificCard" placeholder="Enter card code ..." style="font-size:110%;"/> <br/>
+								<button class="dlf_button dlf_button_round_corners dlf_button_gold" onclick="onCheckSpecificCard()">Check Specific Card</button>
 							</div>
-							<div id="matchingCards" style="height: 100px; overflow:scroll; margin-top:2%;"></div>
 						</div>
 					</div>
 				</td>
 				<td style="vertical-align: top;">
-					<button id="reset_game_button" class="theme_black_bg dlf_button_xxlarge dlf_button_round_corners dlf_button_red hidden"  onclick="onResetGame()">
-						RESET GAME
-					</button>
-					<button id="game_settings_button" class="dlf_button_xxlarge dlf_button_round_corners dlf_button_blue" onclick="toggleGameSettings()">
-						<i class="fa fa-gear" ></i> SETTINGS
-					</button>
+					<div id="voiceSection">
+						<select id="voiceSelect" onchange="onChangeVoice(event)">
+							<option value="NONE">NO VOICE</option>
+						</select>
+						<span style="color:white;cursor:pointer;" class="fa fa-volume-up" onclick="onTestSpeaker()"></span>
+					</div>
 				</td>
 			</tr>
 		</table>
@@ -107,7 +79,7 @@
 		</colgroup>
 		<thead id="bingo_card_head">
 			<tr>
-				<th id="bingoBoardCardName" colspan="5" style="text-align:center;"></th>
+				<th id="bingoBoardCardName" colspan="5" style="text-align:center;" class="clearOnSelect clearOnCheckBingo clearOnReset"></th>
 			</tr>
 			<tr class="theme_black_bg header">
 				<th class="game_table_header card_header_b">B</th>
@@ -117,23 +89,21 @@
 				<th class="game_table_header card_header_o">O</th>
 			</tr>
 		</thead>
-		<tbody id="game_table_body"></tbody>
-		<tbody id="game_example_table_body" class="hidden"></tbody>
-		<tbody class="bingo_card_body" class="hidden"></tbody>
+		<tbody id="game_table_body" class="showOnStart showOnSelect showOnReset hideOnExample"></tbody>
+		<tbody id="game_example_table_body" class="hidden showOnExample hideOnStart hideOnSelect hideOnCheckBingo hideOnReset"></tbody>
+		<tbody id="bingo_card_body" class="hidden hideOnStart hideOnSelect hideOnExample hideOnCheckBingo hideOnReset"></tbody>
 	</table>
-
-
 	<br/>
+	<p id="game_started_timestamp" style="color:red; text-align:center;"></p>
 </body>
 <!-- Common Code -->
 <script src="https://dejai.github.io/scripts/js/common.js"></script>
 <!-- My Trello code -->
 <script src="https://dejai.github.io/scripts/js/trellowrapper.js"></script>
 <!-- My Bingo code -->
-<script type="text/javascript" src="/src/js/bingoObjects.js"></script>
-<script type="text/javascript" src="/src/js/bingoShared.js"></script>
-<script type="text/javascript" src="/src/searchBar.js"></script>
+<script type="text/javascript" src="/src/js/bingoModels.js"></script>
 <script type="text/javascript" src="/card/src/js/cardPromises.js"></script>
 <script type="text/javascript" src="/card/src/js/cardManager.js"></script>
-<script type="text/javascript" src="/board/src/js/bingoBoard.js"></script>
+<script type="text/javascript" src="/board/src/js/bingoVoice.js"></script>
+<script type="text/javascript" src="/board/src/js/bingoMain.js"></script>
 </html>

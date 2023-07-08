@@ -1,24 +1,12 @@
 
 /************************ GLOBAL VARIABLES ****************************************/
-var GAME_BOARD_CELLS = [];
-var CURR_GAME = "";
-var IS_CARD_SET = false;
-var IS_BINGO = false;
-var IS_RANDOM_CARD = false;
-var IS_CUSTOM_CARD = false;
+var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
+
 var TYPE_OF_CARD = "";
 
 // List IDs for Trello
 var LIST_IDS = {};
 
-// Card map
-var CARDS = {};
-var SAVED_CARDS = []; // list of saved cards
-
-// Setup the default card manager
-// var CARD_MANAGER = new CardManager();
-
-var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
 
 /*********************** GETTING STARTED *****************************/
 
@@ -28,115 +16,35 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         // Set Trello board name
     	MyTrello.SetBoardName("bingo");
 
-        populateCard();
+        // Set the random card
+        setRandomCard();
+
         TYPE_OF_CARD = "RANDOM";
         getListID(TYPE_OF_CARD);
     });
 
+    // Set a random card
+    async function setRandomCard(){
+        let card = new BingoCard();
 
-    // Populate the build card table
-    async function populateCard()
-    {
-        let options = getNumberOptions();
-        let template = await CardPromises.getTemplate("/card/src/templates/cardCreate.html", options);
+        let templates = await card.getTemplates("create");
+        var template = templates?.[0];
         mydoc.setContent("#bingo_card_body", {"innerHTML":template});
-        setRandomNumbers();
-    }
 
-    // Get the options for each letter
-    function getNumberOptions()
-    {
-        let options = {
-            "B":"",
-            "I":"",
-            "N":"",
-            "G":"",
-            "O":""
-        };
+        // Set the card name
+        mydoc.setContent("#newCardName", {"innerHTML":card.Code});
 
-        Object.keys(options).forEach( (letter)=>{
-
-            let optionHtml = "";
-            range = bingo_letters[letter];
-            lower = range[0];
-            upper = range[1]+1;
-            for(var idx = lower; idx < upper; idx++)
-            {
-                optionHtml += `<option value="${idx}">${idx}</option>`;
-            }
-            options[letter] = optionHtml;
-        });
-
-        return options;
-    }
-
-    // Set random numbers
-    function setRandomNumbers()
-    {
-        var letters = ["B", "I", "N", "G", "O"];
-
-        // Loop through th eletters
-        letters.forEach( (letter) =>{
-
-            let randomNumbers = generateRandomNumbers(letter);
-            let lowerCaseLetter = letter.toLowerCase();
-            let letterCells = document.querySelectorAll(`#bingo_card_body .build_card_${lowerCaseLetter}`);
-            
-            // Only proceed if the total numbers matches the cells available
-            if(randomNumbers.length == (letterCells?.length ?? 0))
-            {
-                for(var idx in randomNumbers)
-                {
-                    let num = randomNumbers[idx];
-                    let cell = letterCells[idx];
-
-                    // Don't do anything for Free Space
-                    if(num != "FS")
-                    {
-                        cell.querySelectorAll("option")?.forEach( (cell) =>{
-
-                            let cellValue = cell.getAttribute("value") ?? "";
-                            var _action = (cellValue == num) ? cell.setAttribute("selected", true) :
-                                            cell.removeAttribute("selected");
-                        });
-                    }
-                }
-            }
+        // Set each <select> with the right option
+        document.querySelectorAll(".build_card_select")?.forEach( (select) => {
+            let initValue = select.getAttribute("data-initial-value");
+            let option = select.querySelector(`[value="${initValue}"]`);
+            if(option != undefined){ option.selected = true; }
         });
     }
 
-    // Generate the numbers for the card
-    function generateRandomNumbers(letter, isEmptyCard=false)
-    {
-        // Using 'bingo_letters' from bingo_objects.js
-        let min = bingo_letters[letter][0];
-        let max = bingo_letters[letter][1];
-        let numbers = [];
 
-        // Get 5 random numbers (not repeated);
-        while(numbers.length < 5)
-        {
-            rand = Math.floor(Math.random() * (max - min + 1) + min)
 
-            if (numbers.includes(rand)) continue;
 
-            if(numbers.length == 2 && letter == "N")
-            {
-                // numbers.push(`<span class='freeSpace number_cell'><i class="number_cell fa fa-star-o"></i></span>`);
-                numbers.push("FS");
-            }
-            else if(isEmptyCard)
-            {
-                numbers.push("*");
-            }
-            else
-            {
-                numbers.push(rand);
-            }
-        }
-
-        return numbers;
-    }
     // Get the list ID based on type of card
     function getListID(type)
     {
@@ -151,14 +59,20 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
             }
         });
     }
-    
-   // Validate and use a card
-   function onUseCard()
-   {
-       // By default, we assume this card is all set.
-       var valid_card = true;
 
-       // Validate the numbers on the card
+    // Validate the card on changing any card number
+    function onNumberChange() { 
+        onIsValidCard();
+    }
+
+    // Validate the current card
+    function onIsValidCard() {
+        var isValid = true;
+
+        // Clear any messages first
+        mydoc.setContent("#createCardMessage", {"innerHTML":""});
+
+        // Validate the numbers on the card
        var card_values = getCardValues();
        keys = Object.keys(card_values);
        for(var idx = 0; idx < keys.length; idx++)
@@ -170,15 +84,26 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
            if(values.length != 5)
            {
                let errMessage = `ERROR:<br/>Cannot have duplicate values for letter: ${upper}`;
-               mydoc.setContent("#createCardMessage", {"innerHTML":errMessage})
+               mydoc.setContent("#createCardMessage", {"innerHTML":errMessage});
                valid_card = false;
                break;
            }
        }
 
+       return isValid;
+    }
+    
+
+   // Validate and use a card
+   function onUseCard()
+   {
+
+        // The list of values on the card;
+        var card_values = getCardValues();
 
        // Create card only if valid
-       if(valid_card)
+       var isValidCard = onIsValidCard();
+       if(isValidCard)
        {
            b = "b=" + card_values["b"].join(",");
            i = "i=" + card_values["i"].join(",");
@@ -197,12 +122,59 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
        }
    }
 
+   // Get the card values as a string (to save in a card);
+   function getCardString(){
+        var values = getCardValues();
+
+        b = "b=" + values["b"].join(",");
+        i = "i=" + values["i"].join(",");
+        n = "n=" + values["n"].join(",");
+        g = "g=" + values["g"].join(",");
+        o = "o=" + values["o"].join(",");
+
+        let content = [b,i,n,g,o].join("\n");
+        return content;
+   }
+
+   // Create the new card
+   async function onCreateNewCard(){
+
+        mydoc.showContent("#createCardLoading");
+
+        var listID = await CardManager.getListID("RANDOM_CARDS");
+
+        if(listID == undefined){
+            mydoc.setContent("#createCardMessage", {"innerHTML":"Could not use this card. :("});
+            mydoc.hideContent("#createCardLoading");
+            return;
+        }
+
+        // Get the name & create card
+        let cardName = mydoc.getContent("#newCardName")?.innerText?.trim() ?? "";
+        let cardFullName = `RANDOM - ${cardName}`;
+        let encodedName = encodeURIComponent(cardFullName);
+
+        // Create New Card
+        let newCard = await CardPromises.createCard(listID, encodedName);
+        let newCardID = newCard?.["id"] ??""
+
+        // Update card with desc
+        if(newCardID != ""){
+            var content = getCardString();
+            content = encodeURI(content);
+            await CardPromises.updateCardDescription(newCard["id"], content);
+
+            // Once all set, then navigate to the new card
+            location.href = `/card/play/?cardlist=${newCardID}`
+        }
+   }
+
     // Get the values from the cells
     function getCardValues()
     {
         valuesByLetter = {"b":[],"i":[],"n":[],"g":[],"o":[]};
 
-        letters = Object.keys(bingo_letters);
+        letters = Object.keys(BingoLetters);
 
         letters.forEach( (letter) => {
 
@@ -245,7 +217,6 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
         let createdCard = await CardPromises.createCard(listID, encodedName);
 
         // Update the card
-        await CardPromises.updateCardDescription(createdCard["id"], content);
 
         // Call the callback;
         successCallback(createdCard["id"]);
@@ -322,82 +293,4 @@ var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
                 }
             }
         }
-
-        // let ele = document.getElementById("card_input_text_area");
-        // let value = ele?.value;
-        // let cards = value.split("\n");
-
-        // // Track the status of each created
-        // let batchStatus = document.getElementById("create_batch_status");
-        // mydoc.showContent("#trackStatusSection");
-        // mydoc.hideContent("#enterCardSection");
-
-        // // Loop through the cards
-        // cards.forEach( (card)=>{
-
-        //     if(card != "")
-        //     {
-                
-
-        //         // Add an element to the tracking
-        //         let elementTrack = `
-        //             <hr/>
-        //             <span id="${givenCardName}">
-	    //                  <img src="https://dejai.github.io/scripts/assets/img/loading1.gif" style="width:5%;height:5%;">
-        //             </span> &nbsp; >>>
-        //             <span>
-        //                 ${card}
-        //             </span><br/>
-        //         `;
-        //         batchStatus.innerHTML += elementTrack;
-
-        //         // Ensure it is only 24 (no free space yet)
-        //         if(numbers.length == 24)
-        //         {
-        //             // Add the FS symbol at 
-        //             numbers.splice(12,0,"FS");
-
-        //             b = "b=" + numbers.slice(0,5).join(",")
-        //             i = "i=" + numbers.slice(5,10).join(",")
-        //             n = "n=" + numbers.slice(10,15).join(",")
-        //             g = "g=" + numbers.slice(15,20).join(",")
-        //             o = "o=" + numbers.slice(20,25).join(",")
-
-        //             let content = [b,i,n,g,o].join("\n");
-        //             content = encodeURI(content);
-
-        //             let gameCode = Helper.getCode();
-        //             let cardName = `${givenCardName} - ${gameCode}`
-        //             // console.log("Creating a card = " + cardName);
-
-        //             createTrelloCard("RANDOM", cardName, content, (cardID)=>{
-        //                 if(cardID != null)
-        //                 {
-        //                     mydoc.loadContent("SUCCESS",givenCardName);
-        //                 }
-        //             });
-        //         }
-        //         else
-        //         {
-        //             mydoc.loadContent("FAIL!",givenCardName);
-        //         }
-        //     }
-        // });
-    }
-
-
-    // On toggle save game
-    function onToggleSaveGame(event){
-
-        let target = event.target;
-        let value = target?.value ?? "";
-
-        console.log(target);
-
-        if(value != "" && value == "Yes"){
-            mydoc.showContent("#cardNameSection");
-        } else {
-            mydoc.hideContent("#cardNameSection");
-        }
-
     }

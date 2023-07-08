@@ -6,7 +6,6 @@
 	<link rel="stylesheet" type="text/css" href="/src/css/bingo.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
 </head>
 <body class="theme_black_bg">
 
@@ -25,12 +24,12 @@
                 </colgroup>
                 <tr>
                     <td>
-                        <button onclick="setRandomNumbers()"class="dlf_button_medium dlf_button_round_corners dlf_button_orange">
-                            RANDOM NUMBERS
+                        <button onclick="setRandomCard()"class="dlf_button_medium dlf_button_round_corners dlf_button_orange">
+                            RANDOM CARD
                         </button>
                     </td>
                     <td>
-                        <button onclick="onUseCard()" class="dlf_button_medium dlf_button_round_corners dlf_button_limegreen">
+                        <button onclick="onCreateNewCard()" class="dlf_button_medium dlf_button_round_corners dlf_button_limegreen">
                             USE THIS CARD
                         </button>
                     </td>
@@ -38,7 +37,9 @@
             </table>            
         </div>
         <hr style="display:block; margin-bottom:5%;"/>
+        <img id="createCardLoading" src="https://dejai.github.io/scripts/assets/img/loading1.gif" style="width:7%;height:7%;" class="hidden">
         <span id="createCardMessage" style="color:red;"></span>
+        <h2 id="create-card-name">Card: <span id="newCardName"></span></h2>
         <table id="bingo_card_table" class="table">
             <colgroup>
                 <col style="width:19%;">
@@ -64,7 +65,8 @@
 <script src="https://dejai.github.io/scripts/js/common.js"></script>
 <!-- My Trello code -->
 <script src="https://dejai.github.io/scripts/js/trellowrapper.js"></script>
-<script type="text/javascript" src="/src/js/bingoObjects.js"></script>
+<script type="text/javascript" src="/src/js/bingoModels.js"></script>
 <script type="text/javascript" src="/card/src/js/cardPromises.js"></script>
+<script type="text/javascript" src="/card/src/js/cardManager.js"></script>
 <script type="text/javascript" src="/card/src/js/cardCreate.js"></script>
 </html>

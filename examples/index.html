@@ -6,22 +6,20 @@
 	<link rel="stylesheet" type="text/css" href="/src/css/bingo.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-
 </head>
 <body class="theme_black_bg">
     <div class="centered">
-        <h1><a href="../identify/player" class="navBackTitle">BINGO</a></h1>
-        <h2>Examples</h2>
+        <h1><a href="../identify/player" class="navBackTitle">BINGO</a> - Examples</h1>
     </div>
 	<p class="centered dlf_paragraph_medium">
-		Select a Game to see an example card. 
-		<br/>
-		<span style="color:limegreen">Green spaces</span> indicate a space you can use for that game. 
+		Select a Game to see an example card. <br/>
+		<span style="color:limegreen">Green spaces</span> indicate a space you would need for that game. 
 	</p>
-	<div class="centered dlf_center_block_small">
-		<select id="gameOptions" style="width:90%; font-size:25px;" class="dlf_select dlf_select_round_corners dlf_select_medium dlf_select_blue"></select>
+
+	<div class="centered">
+		<select id="gameOptions" style="width:80%; padding:1%; font-size:110%" class="dlf_select_round_corners dlf_select_medium dlf_select_blue" onchange="onSelectGame(event)"></select>
 	</div>
-	<table id="bingo_card_table" style="margin-top:2%; " class="table">
+	<table id="game_table" style="margin-top:2%; " class="table bingo_card_table">
 		<colgroup>
 			<col style="width:19%">
 			<col style="width:19%">
@@ -31,11 +29,11 @@
 		</colgroup>
 		<thead>
 			<tr class="theme_black_bg header">
-				<th class="card_table_header game_table_header">B</th>
-				<th class="card_table_header game_table_header">I</th>
-				<th class="card_table_header game_table_header">N</th>
-				<th class="card_table_header game_table_header">G</th>
-				<th class="card_table_header game_table_header">0</th>
+				<th class="game_table_header card_header_b">B</th>
+				<th class="game_table_header card_header_b">I</th>
+				<th class="game_table_header card_header_b">N</th>
+				<th class="game_table_header card_header_b">G</th>
+				<th class="game_table_header card_header_b">O</th>
 		</tr>
 		</thead>
 		<tbody id="game_example_table_body"></tbody>
@@ -46,7 +44,7 @@
 <!-- My Trello code -->
 <script src="https://dejai.github.io/scripts/js/trellowrapper.js"></script>
 
-<script type="text/javascript" src="/src/js/bingoObjects.js"></script>
-<script type="text/javascript" src="/src/js/bingoShared.js"></script>
+<script type="text/javascript" src="/src/js/bingoModels.js"></script>
+<script type="text/javascript" src="/card/src/js/cardManager.js"></script>
 <script type="text/javascript" src="/examples/src/js/examples.js"></script>
 </html>

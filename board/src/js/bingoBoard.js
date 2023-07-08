@@ -1,8 +1,113 @@
 
+
+/* Used to manage the state of the BINGO Board */
+class BingoBoard {
+
+	constructor() {
+		this.GameCards = {};
+		this.Game = new BingoGame();
+		this.loadGameCards();
+		this.GameStarted = false;
+	}
+
+	// For new games, create a whole new instance of BingoGame
+	newGame(name){
+		this.Game = new BingoGame(name);
+		this.Game.setCurrentCard(this.GameCards[name]);
+	}
+
+	// Load game options based on list from shared bingo objects;
+	loadGameCards(){
+		gameObjects2.forEach( (card) => {
+			let cardObj = new CardObject(card, true);
+			this.GameCards[cardObj.Name] = cardObj;
+		});
+	}
+
+	// Get Game Options <option> Tags
+	getGameOptions() {
+		let cardObjs = Object.values(this.GameCards);
+		var optgroups = {};
+		cardObjs.forEach( (card) => {
+			let group = card.Group;
+			let key = card.Name;
+
+			if(!optgroups.hasOwnProperty(group)) {
+				optgroups[group] = `<optgroup label="${group}">`
+			}
+			var option = "<option class='game_option' value=\"" + key + "\">" + key + "</option>";
+			optgroups[group] += option;
+		});
+
+		// Build the set of options
+		var options = "<option value=''>SELECT GAME...</option>";
+		Object.keys(optgroups).forEach( (key)=>{
+			var group = optgroups[key];
+			group += "</optgroup>";
+			options += group;
+		});
+		return options;
+	}
+
+	// Get the game board
+	async setGameBoard(){
+		// Load the game board
+		await MyTemplates.getTemplate("/board/src/templates/bingoBoard.html", {}, (template) => {
+			mydoc.setContent("#game_table_body", {"innerHTML":template});
+		});
+	}
+
+	// When someone wins
+	async endGame(){
+		// Reset the board
+		await this.setGameBoard();
+	}
+
+	// Get the card table for the current selected game
+	async getGameCardTable(cardName) {
+		
+		var gameCardTable = await this.Game.getCurrentCard()?.getCardTable();
+		return gameCardTable;
+	}
+
+
+	// ******** SHOW-and-tell *********/
+
+	// Show a game example
+	async showGameExample(name){
+		var gameCard = this.GameCards[name];
+		console.log(gameCard);
+
+		if(gameCard == undefined){
+			return;
+		}
+		var cardTable = await gameCard.getCardTable();
+		mydoc.setContent("#game_example_table_body", { "innerHTML": cardTable });
+
+			// Hide things
+			mydoc.hideContent("#game_table_body");
+			mydoc.hideContent(".bingo_card_body");
+
+			// Show things
+			mydoc.showContent("#game_example_table_body");
+			
+	}
+
+	// Ignore letters based on game
+	ignoreLettersByGame(){
+		// Get current cared & process the ignores;
+		let gameCard = this.Game.getCurrentCard();
+		gameCard?.Ignores?.forEach( (letter) => {
+			var selector = `[data-letter^="${letter}"]`;
+			mydoc.removeClass(selector, "cell_unseen");
+			mydoc.addClass(selector, "inelligible");
+		});
+	}
+}
+
 /************************ GLOBAL VARIABLES ****************************************/
-var synth = window.speechSynthesis;
+// var synth = window.speechSynthesis;
 var voicesMap = {};
-var letterCounts = {"B":0, "I":0, "N":0, "G":0,"O":0 };
 
 var CURR_GAME = undefined;
 var GAME_STARTED = false;
@@ -19,293 +124,10 @@ var SAVED_CARDS = [];
 // To determine the trigger for the ENTER button
 var CHECKING_FOR_BINGO = false;
 
-/*********************** GETTING STARTED *****************************/
+var BOARD_CARDS = {};
 
-// Once doc is ready
-mydoc.ready(function(){
-
-	MyTrello.SetBoardName("bingo");
-
-	let isExamplePage = location.pathname.includes("/examples")
-	if(isExamplePage) { IS_BOARD_PAGE = false; }
-
-	// Always Load the game options and add a listener for them
-	loadGameOptions();
-	listenerOnGameOptionChange();
-
-	if(IS_BOARD_PAGE)
-	{
-		// Make sure the page doesn't close once the game starts
-		// window.addEventListener("beforeunload", onClosePage);
-
-		// Load the game cells table
-		loadGameCells();
-
-		// Load the game voice options
-		loadVoiceOptions();
-
-		// Add listener for "Enter Key"
-		listenerOnKeyUp();
-	}
-	else
-	{
-		// Load an empty example table
-		table = [
-					[0,0,0,0,0],
-					[0,0,0,0,0],	
-					[0,0,3,0,0],	
-					[0,0,0,0,0],	
-					[0,0,0,0,0]		
-				]
-		onLoadGameExampleTable(table);
-	}
-});
-
-/********************* LISTENERS *************************************/
-
-// Prevent the page accidentally closing
-function onClosePage(event)
-{
-	event.preventDefault();
-	event.returnValue='';
-}
-
-// Adds a listener for keystrokes (on keyup);
-function listenerOnKeyUp(){
-	document.addEventListener("keyup", function(event){
-		switch(event.code)
-		{
-			case "Enter":
-				if(!GAME_STARTED && !CHECKING_FOR_BINGO)
-				{
-					onStartGame();
-				}
-				else if (GAME_STARTED && !CHECKING_FOR_BINGO)
-				{
-					onPickNumber();
-				}
-				break;
-			default:
-				return;
-		}
-	});
-}
-
-// Adds listener for when new game is selected
-function listenerOnGameOptionChange()
-{
-	options = document.getElementById("gameOptions");
-	if(options != undefined)
-	{
-		options.addEventListener("change", (event)=>{
-
-			// Disable the start button whenever changing game;
-			toggleGameBoardInput("startGameButton","disable");
-
-			let ele = event.target;
-			CURR_GAME = ele.value ?? "";
-
-			if(CURR_GAME != "")
-			{
-				mydoc.showContent("#playThisGameButton");
-
-				// Load the game example
-				onLoadGameExample(ele.value);
-			}
-		});
-	}
-}
-
-
-// Add listener for the speaker's voice demo
-function listenerOnSpeakVoiceDemo()
-{
-
-	let voiceSelect = document.getElementById("voiceSelect");
-	// ele = event.target; 
-	value = voiceSelect.value;
-	option  = voiceSelect.querySelector("option[data-name='"+value+"']");
-	if (option != undefined)
-	{
-		let speakerName = option.getAttribute("data-name");
-		// https://dev.to/asaoluelijah/text-to-speech-in-3-lines-of-javascript-b8h
-		text = "Hello. My name is " + speakerName + ". And this is how I would call a number:"
-		subtext = "I 20";
-		speakText(text, subtext, 0.9, 0.6, 500);
-	}
-}
-
-
-// 
-async function onCheckCardForBingo(cardCode)
-{
-	let cardObject = CARDS[cardCode];
-
-	toggleGameBoardTableBody("card");
-
-	// Load the card
-	mydoc.setContent("#bingoBoardCardName", {"innerHTML":cardObject["NameAndCode"]})
-	await CardManager.loadCard("example", "tbody.bingo_card_body", cardObject);
-
-
-	// Show the needed cells for this game (if not straight line);
-	if(CURR_GAME != "Straight Line")
-	{
-		console.log("Showing needed cells");
-		CardManager.setNeededCellsByGame(CURR_GAME);
-	}
-
-	// Highlight the numbers already called
-	showNumbersCalledOnCard();
-
-	// Check if BINGO is on this card
-	let cardTables = CardManager.getCardBodies();
-	let exampleCardBody = cardTables?.[0];
-	CardManager.checkForBingo(CURR_GAME, exampleCardBody);
-}
-
-// Checking a selected card for bingo
-function onCheckCardForBingo2(event)
-{
-
-	console.log("Checking for BINGO on board");
-
-	let target = event.target; 
-	let cardName = target.getAttribute("data-card-match-name") ?? "";
-	mydoc.removeClass(".selectedMatchingCard", "selectedMatchingCard");
-	target.classList.add("selectedMatchingCard");
-
-	if(Object.keys(CARDS).includes(cardName))
-	{
-		toggleGameBoardTableBody("card");
-
-		// Create the card using teh stored values;
-		b = CARDS[cardName]["b"];
-		i= CARDS[cardName]["i"];
-		n = CARDS[cardName]["n"];
-		g = CARDS[cardName]["g"];
-		o = CARDS[cardName]["o"];
-		createCardTable(b,i,n,g,o);
-
-		// Map the cells for reference
-		GAME_BOARD_CELLS = []; // clear it to make sure no other card is in there;
-		mapNumberCells();
-
-		// Show the needed cells for this game (if not straight line);
-		if(CURR_GAME != "Straight Line")
-		{
-			console.log("Showing needed cells");
-			CardManager.setNeededCellsByGame(CURR_GAME);
-		}
-
-		// Highlight the numbers already called
-		showNumbersCalledOnCard();
-
-		// Check if BINGO is WON
-		checkForBingo();
-	}
-	else
-	{
-		alert("Enter a valid card name");
-	}
-
-}
 
 /********************** LOAD CONTENT *******************************/
-
-// Gets the list of voices
-function getListOfVoices() {
-  // voices = synth.getVoices();
-  var voices = synth.getVoices();
-  var voiceSelect = document.querySelector('#voiceSelect');
-
-  for(i = 0; i < voices.length ; i++) {
-  	var current_voice = voices[i];
-  	voicesMap[current_voice.name] = voices[i];
-
-  	if (current_voice.lang.includes("en") && !current_voice.name.includes("Google"))
-  	// if (current_voice.lang.includes("en") || true)
-  	{
-  		var option = document.createElement('option');
-    	option.textContent = current_voice.name;
-    	 // + ' (' + current_voice.lang + ')';
-    	// if(current_voice.default) {
-	    //   option.textContent += ' -- DEFAULT';
-	    // }
-	    option.setAttribute('data-lang', voices[i].lang);
-    	option.setAttribute('data-name', voices[i].name);
-    	voiceSelect.appendChild(option);
-  	} 
-  }
-}
-
-// Calls prev function & loads voices;
-function loadVoiceOptions()
-{
-	getListOfVoices();
-	if (speechSynthesis.onvoiceschanged !== undefined) {
-	  speechSynthesis.onvoiceschanged = getListOfVoices;
-	}
-}
-
-// Load the game options object
-function loadGameOptions()
-{	
-	game_keys = Object.keys(games_object);
-	optgroups = {};        
-	// Group all the games
-	game_keys.forEach( (key)=> {
-
-		game = games_object[key];
-		group = game["group"];
-
-		if(!optgroups.hasOwnProperty(group))
-		{
-			optgroups[group] = `<optgroup label="${group}">`
-		}
-		option = "<option class='game_option' value=\"" + key + "\">" + key + "</option>";
-		optgroups[group] += option;
-	});
-
-	// Load the grouped options
-	options = "<option value=''>SELECT GAME...</option>";
-	Object.keys(optgroups).forEach( (key)=>{
-
-		group = optgroups[key];
-		group += "</optgroup>";
-
-		options += group;
-	});
-
-
-	mydoc.loadContent(options, "gameOptions");
-}
-
-// Load the table of game cells
-function loadGameCells()
-{
-	data = bingo_letters;
-
-	cells = "";
-	for (var letter in data)
-	{
-		if (letter != "contains")
-		{
-			cells += "<td class='game_table_cell'><table class=\"table\">";
-			range = bingo_letters[letter];
-			start = range[0];
-			end   = range[range.length-1];
-			for(var idx = start; idx <= end; idx++ )
-			{
-				cells += "<tr><td class='bingo_cell theme_black_bg cell_unseen' data-letter=\"" + letter+ "\">" + idx + "</td></tr>";
-
-			}
-			cells += "</table></td>";
-		}
-	}
-	mydoc.loadContent(cells, "game_table_body");
-}
-
 // Show numbers already called on a card
 function showNumbersCalledOnCard()
 {
@@ -323,9 +145,7 @@ function showNumbersCalledOnCard()
 			cell.classList.add("number_selected");
 		}
 	});
-
 }
-
 
 /****************** GAME SETTING ACTIONS ****************************/
 
@@ -339,6 +159,7 @@ function onDescribeGame(game,sayCost=false)
 	// Describe the game and cost;
 	speakText(desc, cost, 0.9, 0.9, 700);
 }
+
 
 // Action to load the selected game example
 function onLoadGameExample(value, depth=0)
@@ -415,53 +236,6 @@ function onLoadGameExampleTable(game_table)
 	mydoc.loadContent(game_example, "game_example_table_body");
 }
 
-function onAnnounceGame()
-{
-	let selectField = document.getElementById("gameOptions")
-	let value = selectField?.value;
-
-	if(value != undefined)
-	{
-
-		// Hide the play button
-		mydoc.hideContent("#playThisGameButton");
-
-		// Hide the example link
-		mydoc.hideContent("#showExampleLink");
-
-		// Toggle the start game button to be temporarily disabled;
-		if(!GAME_STARTED)
-		{
-			mydoc.showContent("#startGameButton");
-			toggleGameBoardInput("startGameButton","disable");
-		}
-		// Toggle the example link
-		else 
-		{
-			mydoc.showContent("#hideExampleLink")
-		}
-		
-
-		// Load the game example
-		onLoadGameExample(value);
-		ignoreCellsByGame(value);
-
-		// Only describe a game if not already speaking;
-		if(IS_BOARD_PAGE && !IS_SPEAKING)
-		{
-			runAfterSpeaking(()=>{
-				onDescribeGame(value, true);
-			});
-		}
-		
-		if(!GAME_STARTED)
-		{
-			runAfterSpeaking(()=>{
-				toggleGameBoardInput("startGameButton","enable");
-			});
-		}
-	}
-}
 
 // Hide the example again
 function onHideGameExample()
@@ -534,49 +308,6 @@ function onChangeTheme(event)
 	});
 }
 
-// Check if someone has BINGOd
-async function onShowCheckBingoSection()
-{
-	// Checking for BINGO is now true;
-	CHECKING_FOR_BINGO = true;
-
-	// Show the loading
-	mydoc.showContent("#checkForBingoSectionLoading");
-	
-	// Clear old search options
-	mydoc.setContent("#matchingCards", {"innerHTML":""});
-
-	// Get all the cards
-	SAVED_CARDS = [];
-	let namedCards = await CardPromises.getCardsByList("NAMED_CARDS");
-	let randomCards = await CardPromises.getCardsByList("RANDOM_CARDS");
-	SAVED_CARDS = SAVED_CARDS.concat(namedCards);
-	SAVED_CARDS = SAVED_CARDS.concat(randomCards);
-
-	// Save all cards in a format for easy loading
-	for(var idx in SAVED_CARDS)
-	{
-		let card = SAVED_CARDS[idx];
-		let cardObject = CardManager.getCardObject(card);
-		CARDS[cardObject["Code"]] = cardObject;
-
-		// Get the option template & load immediately
-		let template = await CardPromises.getTemplate("/board/src/templates/checkBingoOption.html", cardObject);
-		mydoc.setContent("#matchingCards", {innerHTML: template}, true);
-	}
-
-	// Blur the search bar;
-	onSearchBlur();
-
-	// Hide the ball and show the loading
-	mydoc.hideContent("#bingoBallSection");
-
-	// Show the option to find maching card
-	mydoc.showContent("#checkForBingoSection");
-
-	// Hide the loading
-	mydoc.hideContent("#checkForBingoSectionLoading");	
-}
 
 
 function toggleGameSettings()
@@ -650,216 +381,6 @@ function toggleGameBoardInput(identifier, state, className)
 
 /************************ GAME BOARD ACTIONS *******************************/
 
-function onStartGame()
-{
-	if(CURR_GAME == "")
-	{
-		alert("Please select a game first!");
-		return;
-	}
-
-	// Show the reset button
-	mydoc.showContent("#reset_game_button");
-	
-
-	// Show the example links and hide the announce game
-	mydoc.showContent("#exampleLinks");
-	mydoc.showContent("#showExampleLink");
-	mydoc.hideContent("#playThisGameButton");
-
-
-	// Disable the option to change the game:
-	toggleGameBoardInput("gameOptions","disable");
-
-	// Hide/Show things
-	mydoc.hideContent("#startGameButton");
-	toggleGameBoardTableBody("board");
-	mydoc.showContent("#checkForBingoButton")
-
-	mydoc.showContent("#pickNumberButton");
-	
-	speakText("Let the Game Begin");
-	GAME_STARTED = true;
-
-
-	// Set the time the game was started
-	let time = Helper.getDate("H:m:s K");
-	mydoc.loadContent(`Game started @ ${time}`, "game_started_timestamp");
-}
-
-// Pick a random number from the board; Only from unseen
-function onPickNumber()
-{
-
-	if(!GAME_STARTED)
-	{
-		alert("Please select a game first!");
-		return;
-	}
-
-	// If already disabled, do nothing
-	let pickNumButton = document.getElementById("pickNumberButton");
-	if (pickNumButton.disabled)
-	{
-		return;
-	}
-
-	// Not checking for BINGO if this is being called
-	CHECKING_FOR_BINGO = false;
-
-	// Make sure the board is showing
-	toggleGameBoardTableBody("board");
-	toggleBingoHeaders("remove"); // Make sure any BINGO already shown is cleared
-	onClearSearch();
-	mydoc.setContent("#bingoBoardCardName", {"innerHTML":""});
-
-	// Show the ball section
-	mydoc.showContent("#bingoBallSection");
-
-	// Hide the Check Bingo Sections
-	mydoc.hideContent("#checkForBingoSection");
-	mydoc.hideContent("#checkForBingoSectionLoading");
-
-	// Toggle the example links
-	mydoc.hideContent("#hideExampleLink");
-	mydoc.showContent("#showExampleLink");
-
-
-	// Disable picker temporarily 
-	toggleGameBoardInput("pickNumberButton", "disable");
-
-	// Get the amount of unseen cells
-	unseen_cells = document.getElementsByClassName("cell_unseen");
-	amount = unseen_cells.length;
-
-	// Get a random number and pick that cell
-	selected_num = Math.floor(Math.random() * amount);
-	selected_cell = unseen_cells[selected_num];
-
-	// Get the letter and number of the selected cell
-	letter = selected_cell.getAttribute("data-letter");
-	number = selected_cell.innerText;
-
-	// Mark that cell as seen
-	selected_cell.classList.remove("cell_unseen");
-	selected_cell.classList.add("cell_seen");
-
-	// Show the selected number and add to see
-	selected_ball = letter + " " + number;
-	NUMBERS_CALLED.push(number);
-
-	// Set the selected cell;
-	setBingoBall(selected_ball);
-
-	// Speak the number if setting says "Yes";
-	speak = document.getElementById("speak_value").value;
-	if ( speak == "Yes" )
-	{
-		speakText(selected_ball, selected_ball, 0.9, 0.6, 1000);
-	}
-
-	incrementLetterCount(letter);
-
-	runAfterSpeaking(()=>{
-		toggleGameBoardInput("pickNumberButton", "enable");
-	});
-	
-}
-
-// Increment how many numbers have been called for a letter
-function incrementLetterCount(letter)
-{
-	current_count = letterCounts[letter]
-	if(current_count != undefined)
-	{
-		letterCounts[letter] += 1
-	}
-
-	let speak = document.getElementById("speak_value").value;
-	
-	if (letterCounts[letter] == 15 && speak == "Yes")
-	{
-		runAfterSpeaking(()=>{
-			msg = "All numbers under the letter " + letter + " have been called.";
-			speakText(msg, msg, 0.9, 0.6, 500);
-		});
-	}
-}
-
-// Ignore cells for certain games;
-function ignoreCellsByGame(game)
-{
-	if(games_object[game].hasOwnProperty("ignore"))
-	{
-		let list = games_object[game]["ignore"];
-		list.forEach(function(letter){
-			ignoreCells(letter)
-		});
-	}
-	else
-	{
-		resetCellsInelligible();
-	}
-}
-
-// Helper to udpate the cells with a certain letter
-function ignoreCells(letter)
-{
-	selector = "[data-letter^='" + letter + "']";
-
-	list = Array.from(document.querySelectorAll(selector));
-
-	if (list != undefined)
-	{
-		list.forEach(function(obj){
-			obj.classList.remove("cell_unseen");
-			obj.classList.add("inelligible");
-
-		});	
-	}
-}
-
-// Set the selected cell
-function setBingoBall(value)
-{
-	let identifier = "selected_cell";
-	let ballEle = document.getElementById("selected_cell");
-
-	// Set the ball text
-	ballEle.innerText = value;
-
-	// Check if to set ball color
-	if(value != "")
-	{
-		mydoc.addClass(`#${identifier}`, "bingo_ball_circle");
-		setBingoBallColor(identifier,value);
-	}
-	else
-	{
-		mydoc.removeClass(`#${identifier}`, "bingo_ball_circle");
-		setBingoBallColor(identifier,"");
-	}
-}
-
-function setBingoBallColor(identifier, value)
-{
-
-	// Default: Always remove all of the colors
-	mydoc.removeClass(`#${identifier}`, "bingo_ball_letter_b");
-	mydoc.removeClass(`#${identifier}`, "bingo_ball_letter_i");
-	mydoc.removeClass(`#${identifier}`, "bingo_ball_letter_n");
-	mydoc.removeClass(`#${identifier}`, "bingo_ball_letter_g");
-	mydoc.removeClass(`#${identifier}`, "bingo_ball_letter_o");
-
-	// Then add the one for the current color (if applicable)
-	let letter = value.split(" ")[0]?.toLowerCase() ?? "";
-	if(letter != "")
-	{
-		mydoc.addClass(`#${identifier}`, `bingo_ball_letter_${letter}`);
-	}
-}
-
-
 // Reset the entire board (including reseting unseen cells)
 function onResetGame()
 {
@@ -867,7 +388,6 @@ function onResetGame()
 
 	if(confirm_reset)
 	{
-
 		// Reset GAME_STARTED and CHECKING_FOR_BINGO
 		GAME_STARTED = false;
 		CHECKING_FOR_BINGO = false;
@@ -938,53 +458,6 @@ function resetCellsInelligible()
 }
 
 /******************** SPEECH SYNTHESIS ACTIONS **************************/
-
-//  Generic value for speaking text value
-function speakText(text, subtext=undefined, rate=0.9, subrate=0.6, pause=2000)
-{
-
-	IS_SPEAKING = true; 
-
-	let synth = window.speechSynthesis;
-	
-	// https://dev.to/asaoluelijah/text-to-speech-in-3-lines-of-javascript-b8h	
-	var msg = new SpeechSynthesisUtterance();
-	msg.rate = rate;
-	msg.text = text;
-	selectedVoice = getSelectedVoice()
-	if(selectedVoice != undefined)
-	{
-		msg.voice = selectedVoice;
-	}
-	synth.speak(msg);
-
-	if (subtext != undefined)
-	{
-		stillSpeaking = setInterval(function(){
-			if(!synth.speaking)
-			{
-				clearInterval(stillSpeaking);
-				//  Do the sub description 
-				setTimeout(function(){
-					// msg.text = subtext;
-					// msg.rate = subrate;
-					speakText(subtext,undefined,subrate)
-					// synth.speak(msg);
-				}, pause);
-			}
-		}, 500);
-	}
-	else
-	{
-		let waitTilFinishSpeaking = setInterval(()=>{
-			if(!synth.speaking)
-			{
-				IS_SPEAKING = false;
-				clearInterval(waitTilFinishSpeaking);
-			}
-		},500);
-	}
-}
 
 // Run a function once a statement is done speaking
 function runAfterSpeaking(callBackFunction)

@@ -157,8 +157,6 @@
 	.cell_seen { background-color:limegreen; color:red; }
 
 	/* Game Settings */
-	#game_settings_section.theme_black_bg { background-color:gray; color:black; }
-	#game_settings_section.theme_black_bg #close_game_settings { color:white; background-color:red;}
 	#reset_game_button.theme_black_bg { background-color:red; color:white; }
 
 	/* Game Example */
@@ -234,25 +232,14 @@
 /* Game Table*/
 	.table { width:100%; text-align: center; border-spacing: 0; border:1px solid black; }
 	.header th { font-size:120%; }
-	.inelligible { visibility:hidden; }
-
-/* Game Settings */
-	#game_settings_section { position:absolute; border:1px solid red; z-index:1000; 
-							width:50%; margin-left:25%; margin-top:2%; text-align:center; }
-
-	#game_settings_section #close_game_settings { float:right; clear:both; padding-right:1%; }
-	#game_settings_table { width:60%; margin:auto; text-align: left; }
-	#game_settings_table td:nth-child(1) { text-align:right; }
-	#game_settings_table td:nth-child(2) { padding-left:5%; }
-	#game_settings_table select { width:100%; }
-
+	.inelligible { visibility:hidden !important; }
 
 /**************************************************** 
 	GAME EXAMPLES: The example page
 *****************************************************/
 /* Game Example */
 	.example { padding-top:8%; padding-bottom:8%;}
-	.example_filled { background-color:limegreen; color:red;  }
+	.example_filled, .exampleX, .exampleFREERequired { background-color:limegreen; color:red;  }
 	.example_empty { background-color:inherit; color:inerit;  }
 
 	#game_example_block { position:absolute; border:1px solid red; z-index:1000; 
