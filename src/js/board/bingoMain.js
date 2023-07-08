@@ -31,7 +31,7 @@ mydoc.ready( async() => {
 
     // Set the main Game Board
     // Load the game board
-    await MyTemplates.getTemplate("/board/src/templates/bingoBoard.html", {}, (template) => {
+    await MyTemplates.getTemplate("/src/templates/board/bingoBoard.html", {}, (template) => {
         mydoc.setContent("#game_table_body", {"innerHTML":template});
     });
 	
@@ -122,7 +122,7 @@ async function onCheckForBingo()
         mydoc.setContent("#totalMatchingCards", {"innerHTML":`${matchingCards.length} Cards Found!`});
         // Get just the codes of the cards; Sorted; 
         var codes = matchingCards.map( card => card.Code)?.sort()?.map( code => { return {"Code": code} });
-        await MyTemplates.getTemplate("/board/src/templates/checkBingoOption.html", codes, (template) =>{
+        await MyTemplates.getTemplate("/src/templates/board/checkBingoButton.html", codes, (template) =>{
             mydoc.setContent("#matchingCards", {"innerHTML":template});
         });
         mydoc.hideContent("#checkingForBingoLoading");

@@ -1,6 +1,9 @@
 
 /************************ GLOBAL VARIABLES ****************************************/
+
+// Variables related to the "touch" event
 var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
+var touchtime = 0; // Used to keep track of times between clicks (to hack a double click);
 
 // The BINGO Board that will be used for managing key parts of this page
 const bingoBoard = new BingoBoard();
@@ -74,52 +77,19 @@ const bingoBoard = new BingoBoard();
 
 /*********************** EVENT LISTENERS *****************************/
 
-    // Select a value
-    function onSelectNumber(event)
-    {
-        if(bingoBoard.getGameName() == "")
-        {
-            mydoc.showContent("#selectGameWarning");
-            window.scrollTo(0,0);
-            return;
+    // Check if a click is a "double click"
+    function isDoubleClick(){
+        // Assume it is a double click by default
+        var isDblClick = true; 
+
+        // Check the time between clicks
+        var thisTime = (new Date().getTime() );
+        if(touchtime == 0 || (thisTime - touchtime) > 800){
+            isDblClick = false;
+            touchtime = new Date().getTime();
+            // touchattempts++;    
         }
-
-        // Hide the warning
-        mydoc.hideContent("#selectGameWarning");
-
-        // Lock the game selector
-        mydoc.setContent("#gameOptionsOnCard", {"disabled":"true"});
-
-        // Don't show the option to change card anymore
-        mydoc.hideContent("#changeCardButton");
-
-        let target = event.target;
-        let closest = target.closest("td.number_cell");
-        let letterClass = Array.from(closest.classList).filter( (c) => { return c.includes("number_cell_"); } );
-        let numberValue = closest.innerText;
-         
-        // Class to show as selected/not-selected
-        let selectedClassName = "number_selected";
-
-        // Find all cases of this class & set/unset it
-         document.querySelectorAll(`.${letterClass}`)?.forEach( (cell) =>{
- 
-             let allowSelect = (bingoBoard.getGameName() == "Straight Line") || cell.classList.contains("number_cell_needed")
-             if( allowSelect && cell.innerText == numberValue)
-             {
-                 var action = (!cell.classList.contains(selectedClassName)) ? "select" : "deselect";
-                 if(action == "select"){
-                     cell.classList.add(selectedClassName);
-                     bingoBoard.addNumber(numberValue);
-                 } else {
-                     cell.classList.remove(selectedClassName);
-                     bingoBoard.removeNumber(numberValue);
-                 }
-             }
-         });
-
-        // Always check for BINGO after changing the selected cells
-        onCheckForBingo();
+        return isDblClick; 
     }
 
     // Indicate which ones are needed
@@ -129,7 +99,7 @@ const bingoBoard = new BingoBoard();
         bingoBoard.setGameName(name);
 
         // Hide the warning;
-        mydoc.hideContent("#selectGameWarning");
+        mydoc.hideContent(".hideOnGameSelect");
 
         // Always clear first when changing games;
         CardManager.clearNeededCells();
@@ -140,12 +110,12 @@ const bingoBoard = new BingoBoard();
         console.log(requiredSlots[0]);
 
         if(requiredSlots.length > 1){
-            CardManager.setNeededCells2(requiredSlots[0]);
+            CardManager.setNeededCells(requiredSlots[0]);
             var idx = 1;
             let reqSlotsInterval = setInterval(() => {
                 if(idx < requiredSlots.length){
                     CardManager.clearNeededCells();
-                    CardManager.setNeededCells2(requiredSlots[idx]);
+                    CardManager.setNeededCells(requiredSlots[idx]);
                     idx++;
                 } else {
                     clearInterval(reqSlotsInterval);
@@ -153,13 +123,70 @@ const bingoBoard = new BingoBoard();
                 }       
             }, 700);
         } else {
-            CardManager.setNeededCells2(requiredSlots[0]);
+            CardManager.setNeededCells(requiredSlots[0]);
         }
 
         // Show the buttons to clear
         mydoc.showContent("#clearCardButton");
     }
     
+    // Select a value
+    function onSelectNumber(event)
+    {
+        // Clear touch attempts if successfully double clicked;
+        // Check if this is a double clieck
+        if( !isDoubleClick()) {
+            return;
+        }
+        console.log("Double click!");
+
+        // Check for game before moving on.
+        if(bingoBoard.getGameName() == "") {
+            mydoc.hideContent(".hideOnGameWarning");
+            mydoc.showContent("#selectGameWarning");
+            window.scrollTo(0,0);
+            return;
+        }
+
+        // Get the target of the game change; 
+        let target = event.target;
+        let closest = target.closest("td.number_cell");
+        if(closest != undefined) {
+
+            // Hide things
+            mydoc.hideContent(".hideOnSelect");
+        
+            // Lock the game selector
+            mydoc.setContent("#gameOptionsOnCard", {"disabled":"true"});
+
+            let letterClass = Array.from(closest.classList).filter( (c) => { return c.includes("number_cell_"); } );
+            let numberValue = closest.innerText;
+            
+            // Class to show as selected/not-selected
+            let selectedClassName = "number_selected";
+
+            // Find all cases of this class & set/unset it
+            document.querySelectorAll(`.${letterClass}`)?.forEach( (cell) =>{
+    
+                let allowSelect = (bingoBoard.getGameName() == "Straight Line") || cell.classList.contains("number_cell_needed")
+                if( allowSelect && cell.innerText == numberValue)
+                {
+                    var action = (!cell.classList.contains(selectedClassName)) ? "select" : "deselect";
+                    if(action == "select"){
+                        cell.classList.add(selectedClassName);
+                        bingoBoard.addNumber(numberValue);
+                    } else {
+                        cell.classList.remove(selectedClassName);
+                        bingoBoard.removeNumber(numberValue);
+                    }
+                }
+            });
+
+            // Always check for BINGO after changing the selected cells
+            onCheckForBingo();
+        }
+    }
+
     // Clear the card
     function onClearCard()
     {

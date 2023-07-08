@@ -3,6 +3,7 @@
 <head>
 	<title>BINGO Board</title>
 	<base href="../">
+	<link rel="stylesheet" type="text/css" href="https://dejai.github.io/scripts/css/dlf_styles.css">
 	<link rel="stylesheet" type="text/css" href="/src/css/bingo.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
@@ -44,13 +45,13 @@
 					<div id="bingoBallSection" class="hidden showOnSelect hideOnExample hideOnCheckBingo hideOnReset">
 						<span id="selected_cell" class="theme_black_bg"></span>
 					</div>
-					<div id="checkForBingoSection" style="width:70%;margin:auto;" class="hidden showOnCheckBingo hideOnSelect hideOnExample hideOnReset">
+					<div id="checkForBingoSection" style="width:50%;text-align:left; margin:auto;" class="hidden showOnCheckBingo hideOnSelect hideOnExample hideOnReset">
 						<hr/>
 						<h3 id="totalMatchingCards" class="clearOnSelect clearOnCheckBingo clearOnReset"></h3>
 						<div>
 							<img id="checkingForBingoLoading" src="https://dejai.github.io/scripts/assets/img/loading1.gif" style="width:7%;height:7%;" class="hidden showOnCheckBingo hideOnReset">
-							<div id="matchingCards" style="margin-top:2%;" class="clearOnCheckBingo"></div>
-							<p id="dontSeeCard" class="hidden hideOnSelect hideOnCheckBingo hideOnExample hideOnReset" style="clear:both;text-align:left;">Don't see a card? <span style="color:orange;font-style:italic;cursor:pointer;" onclick="onShowCheckSpecificCard()">Check a specific card</span></p>
+							<div id="matchingCards" style="margin-top:2%;" class="clearOnCheckBingo" style="width:60%; margin:auto;"></div>
+							<p id="dontSeeCard" class="hidden hideOnSelect hideOnCheckBingo hideOnExample hideOnReset" style="clear:both;">Don't see a card? <span style="color:orange;font-style:italic;cursor:pointer;" onclick="onShowCheckSpecificCard()">Check a specific card</span></p>
 							<div id="checkSpecificCard" class="hidden hideOnSelect hideOnExample hideOnCheckBingo hideOnReset" style="margin-top:2%;">
 								<input id="specificCardInput" type="text" name="checkSpecificCard" placeholder="Enter card code ..." style="font-size:110%;"/> <br/>
 								<button class="dlf_button dlf_button_round_corners dlf_button_gold" onclick="onCheckSpecificCard()">Check Specific Card</button>
@@ -101,9 +102,9 @@
 <!-- My Trello code -->
 <script src="https://dejai.github.io/scripts/js/trellowrapper.js"></script>
 <!-- My Bingo code -->
-<script type="text/javascript" src="/src/js/bingoModels.js"></script>
-<script type="text/javascript" src="/card/src/js/cardPromises.js"></script>
-<script type="text/javascript" src="/card/src/js/cardManager.js"></script>
-<script type="text/javascript" src="/board/src/js/bingoVoice.js"></script>
-<script type="text/javascript" src="/board/src/js/bingoMain.js"></script>
+<script type="text/javascript" src="/src/js/shared/bingoModels.js"></script>
+<script type="text/javascript" src="/src/js/card/cardPromises.js"></script>
+<script type="text/javascript" src="/src/js/card/cardManager.js"></script>
+<script type="text/javascript" src="/src/js/board/bingoVoice.js"></script>
+<script type="text/javascript" src="/src/js/board/bingoMain.js"></script>
 </html>

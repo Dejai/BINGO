@@ -309,8 +309,6 @@ class BingoCard {
         return result;
     }
 
-
-
     // Get a mapping of the numbers;
     getCardNumbers(numberString="") { 
         // If no specific numbers passed, then use random ones
@@ -439,16 +437,19 @@ class BingoCard {
         switch(type)
         {
             case "example":
-                templatePath = "/examples/src/templates/cardExample.html";
+                templatePath = "/src/templates/examples/cardExample.html";
                 break;
             case "create":
-                templatePath = "/card/src/templates/cardCreate.html";
+                templatePath = "/src/templates/card/cardCreate.html";
+                break;
+            case "load":
+                templatePath = "/src/templates/card/cardLoad.html";
                 break;
             case "board":
-                templatePath = "/card/src/templates/boardCard.html";
+                templatePath = "/src/templates/card/boardCard.html";
                 break;
             default: // default is "play"
-                templatePath = "/card/src/templates/cardPlay.html"
+                templatePath = "/src/templates/card/cardPlay.html"
                 break;
         };      
         let cardTemplateObj = this.#getCardTemplateObject(type);
@@ -463,6 +464,7 @@ class BingoCard {
     // PRIVATE: Get object for template building
    #getCardTemplateObject(type=""){ 
         let template = this.NumberCells;
+        template["Name"] = this.Name;
         template["CardID"] = this.CardID;
         template["Code"] = this.Code;
         template["IsRandom"] = (this.IsRandom) ? "random" : "hidden";

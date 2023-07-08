@@ -131,7 +131,7 @@ class CardObject {
     // Get the actual card representation
     async getCardTable(){
         // return this.CardTable;
-        let templatePath = (this.IsExample) ? "/examples/src/templates/cardExample.html" : "/card/src/templates/cardPlay.html";
+        let templatePath = (this.IsExample) ? "/examples/src/templates/cardExample.html" : "/src/templates/card/cardPlay.html";
         let cardTemplateObj = this.getCardTemplateObject();
 
         return new Promise( (resolve) => {

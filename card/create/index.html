@@ -3,6 +3,7 @@
 <head>
 	<title>BINGO - Create Card</title>
     <base href="../../">
+	<link rel="stylesheet" type="text/css" href="https://dejai.github.io/scripts/css/dlf_styles.css">
 	<link rel="stylesheet" type="text/css" href="/src/css/bingo.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -16,25 +17,13 @@
         </h2>
         <hr>
         <p>Get random numbers or set them yourself. </p>
-		<div class="dlf_center_block_medium">
-            <table stlye="width:100%;">
-                <colgroup>
-                    <col style="width:45%;">
-                    <col style="width:45%;">
-                </colgroup>
-                <tr>
-                    <td>
-                        <button onclick="setRandomCard()"class="dlf_button_medium dlf_button_round_corners dlf_button_orange">
-                            RANDOM CARD
-                        </button>
-                    </td>
-                    <td>
-                        <button onclick="onCreateNewCard()" class="dlf_button_medium dlf_button_round_corners dlf_button_limegreen">
-                            USE THIS CARD
-                        </button>
-                    </td>
-                </tr>
-            </table>            
+		<div class="dlf_centered" style="text-align:center; ">
+            <button onclick="setRandomCard()"class="dlf_button_medium dlf_button_round_corners dlf_button_orange">
+                RANDOM NUMBERS
+            </button>
+            <button onclick="onCreateNewCard()" class="dlf_button_medium dlf_button_round_corners dlf_button_limegreen">
+                USE THIS CARD
+            </button>
         </div>
         <hr style="display:block; margin-bottom:5%;"/>
         <img id="createCardLoading" src="https://dejai.github.io/scripts/assets/img/loading1.gif" style="width:7%;height:7%;" class="hidden">
@@ -65,8 +54,8 @@
 <script src="https://dejai.github.io/scripts/js/common.js"></script>
 <!-- My Trello code -->
 <script src="https://dejai.github.io/scripts/js/trellowrapper.js"></script>
-<script type="text/javascript" src="/src/js/bingoModels.js"></script>
-<script type="text/javascript" src="/card/src/js/cardPromises.js"></script>
-<script type="text/javascript" src="/card/src/js/cardManager.js"></script>
-<script type="text/javascript" src="/card/src/js/cardCreate.js"></script>
+<script type="text/javascript" src="/src/js/shared/bingoModels.js"></script>
+<script type="text/javascript" src="/src/js/card/cardPromises.js"></script>
+<script type="text/javascript" src="/src/js/card/cardManager.js"></script>
+<script type="text/javascript" src="/src/js/card/cardCreate.js"></script>
 </html>

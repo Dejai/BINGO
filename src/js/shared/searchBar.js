@@ -1,7 +1,9 @@
 // Get the search related values
 function onGetSearchValues()
 {
-    let placeholder = document.getElementById("searchBar")?.getAttribute("data-jpd-placeholder");
+    let placeholderFromAttribute = document.getElementById("searchBar")?.getAttribute("data-jpd-placeholder");
+    let placeholderCnt = document.querySelectorAll(".searchableBlock")?.length;
+    var placeholder = (placeholderCnt > 0 ) ? `Search ${placeholderCnt} Cards ...` :placeholderFromAttribute;
     let filterValue = mydoc.getContent("#searchBar")?.innerText ?? "";
     filterValue = (filterValue == "" || filterValue == placeholder) ? " " : filterValue;
 
@@ -20,28 +22,21 @@ function onFilterCards()
     } 
 
     document.querySelectorAll(".searchableBlock")?.forEach( (item)=>{
-
-        let innerText = item.innerText.toUpperCase().replace("\n", " ");
+        let titleText = item.querySelector(".cardTitle")?.innerText?.toUpperCase().replace("\n", " ");
         let searchText = search.Filter.toUpperCase().trim();
-
-        if(!innerText.includes(searchText))
-        {
+        let searchText2 = `#${searchText}`; // searching by numbered values;
+        if(!titleText.includes(searchText) && !titleText.includes(searchText2)) {
             item.classList.add("hidden");
-        }
-        else
-        {
+        } else {
             item.classList.remove("hidden");
         }
-    }); 
-
+    });
 }
 
 // Focusing into the search bar
-function onSearchFocus()
-{
+function onSearchFocus() {
     let search = onGetSearchValues();
-    if(search.Filter == " ")
-    {
+    if(search.Filter == " ") {
         mydoc.setContent("#searchBar", {"innerText":""});
     }
     mydoc.addClass("#searchBar", "searchText");
