@@ -1,0 +1,71 @@
+<div class="cardBlock" data-card-block="{{Code}}">
+    <table class="bingo_card_table table">
+        <colgroup>
+            <col style="width:19%;">
+            <col style="width:19%;">
+            <col style="width:19%;">
+            <col style="width:19%;">
+            <col style="width:19%;">
+        </colgroup>
+        <thead class="bingo_card_head" data-card-id="{{CardID}}">
+            <tr colspan="5">
+                <h3>Card: <span class="cardName" style="color:orange;">{{Code}}</span></h3>
+                <div class="saveCardSection {{IsRandom}}">
+                    <p class="saveCardSentence" style="margin-top:1%;" class="dlf_paragraph_medium">
+                        If you like this card and want to use it again, <span style="color:limegreen" class="pointer" onclick="onShowSaveCardForm()">save this card</span>
+                    </p>
+                    <div class="saveCardForm hidden">
+                        <p>Enter a new name for the card</p>
+                        <input type="text" name="cardName" placeholder="Enter card name">
+                        <br/><br/>
+                        <button class="dlf_button dlf_button_round_corners dlf_button_limegreen" onclick="onSaveCard()">Save Card </button>
+                    </div>
+                </div>
+            </tr>
+            <tr class="theme_black_bg header">
+                <th class="card_table_header game_table_header card_header_b">B</th>
+                <th class="card_table_header game_table_header card_header_i">I</th>
+                <th class="card_table_header game_table_header card_header_n">N</th>
+                <th class="card_table_header game_table_header card_header_g">G</th>
+                <th class="card_table_header game_table_header card_header_o">O</th>
+            </tr>
+        </thead>
+        <tbody class="bingo_card_body">
+            <tr class="bingo_row">
+                <td class="number_cell number_cell_b number_slot_B1">{{B1}}</td>
+                <td class="number_cell number_cell_i number_slot_I1">{{I1}}</td>
+                <td class="number_cell number_cell_n number_slot_N1">{{N1}}</td>
+                <td class="number_cell number_cell_g number_slot_G1">{{G1}}</td>
+                <td class="number_cell number_cell_o number_slot_O1">{{O1}}</td>
+            </tr>
+            <tr class="bingo_row">
+                <td class="number_cell number_cell_b number_slot_B2">{{B2}}</td>
+                <td class="number_cell number_cell_i number_slot_I2">{{I2}}</td>
+                <td class="number_cell number_cell_n number_slot_N2">{{N2}}</td>
+                <td class="number_cell number_cell_g number_slot_G2">{{G2}}</td>
+                <td class="number_cell number_cell_o number_slot_O2">{{O2}}</td>
+            </tr>
+            <tr class="bingo_row">
+                <td class="number_cell number_cell_b number_slot_B3">{{B3}}</td>
+                <td class="number_cell number_cell_i number_slot_I3">{{I3}}</td>
+                <td class="number_cell number_cell_n number_slot_N3">{{N3}}</td>
+                <td class="number_cell number_cell_g number_slot_G3">{{G3}}</td>
+                <td class="number_cell number_cell_o number_slot_O3">{{O3}}</td>
+            </tr>
+            <tr class="bingo_row">
+                <td class="number_cell number_cell_b number_slot_B4">{{B4}}</td>
+                <td class="number_cell number_cell_i number_slot_I4">{{I4}}</td>
+                <td class="number_cell number_cell_n number_slot_N4">{{N4}}</td>
+                <td class="number_cell number_cell_g number_slot_G4">{{G4}}</td>
+                <td class="number_cell number_cell_o number_slot_O4">{{O4}}</td>
+            </tr>
+            <tr class="bingo_row">
+                <td class="number_cell number_cell_b number_slot_B5">{{B5}}</td>
+                <td class="number_cell number_cell_i number_slot_I5">{{I5}}</td>
+                <td class="number_cell number_cell_n number_slot_N5">{{N5}}</td>
+                <td class="number_cell number_cell_g number_slot_G5">{{G5}}</td>
+                <td class="number_cell number_cell_o number_slot_O5">{{O5}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>

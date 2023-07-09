@@ -1,0 +1,10 @@
+.cardLoadBlock { width: 60%; border:5px solid gray; padding:1%; margin:auto; margin-bottom:7%; } 
+.cardLoadBlock.selected { background-color: limegreen; color:black;}
+.cardLoadBlock .gameCode { color:orange; }
+.cardLoadBlock.selected .gameCode { color:blue !important; }
+
+@media only screen and (min-device-width:1200px)
+{
+    .cardLoadBlock { width: 25%; float:left; margin:2%; }
+    .cardBlockSeparator{ display:none; }
+}

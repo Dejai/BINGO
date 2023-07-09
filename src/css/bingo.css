@@ -3,10 +3,6 @@
 
 /********** CARD  ****************/ 
 
-.cardLoadBlock { float:left; width: 40%; border:2px solid gray; padding:1%; height:150px; margin:3%; } 
-.cardLoadBlock.selected { background-color: limegreen; color:black;}
-.cardLoadBlock .gameCode { color:orange; }
-.cardLoadBlock.selected .gameCode { color:blue !important; }
 
 /**************************************************** 
 	GENERAL: Applies to all pages;
@@ -20,12 +16,10 @@
 .searchBar.searchPlaceholder { color:gray; }
 .searchBar.searchText { color: black; }
 
-
-
 .matchingCard { margin-left:0px; margin-right:0px; cursor:pointer; }
 .selectedMatchingCard { color:limegreen; font-weight:bolder; }
 
-.bingo_card_table { border-bottom:2px dashed white; margin-bottom:5%; }
+.bingo_card_table { border-bottom:2px dashed white; margin-bottom:3%; }
 
 .navBackTitle { text-decoration:none !important; color:inherit; cursor:pointer; }
 
@@ -109,46 +103,10 @@
 	button:focus { outline: none; box-shadow: none; }
 	.dlf_button_round_corners { border-radius:77px; }
 
-	/*Button Sizes*/
-	.dlf_button_small { font-size: 50%; }
-	.dlf_button_large { font-size: 140%; }
-	.dlf_button_xlarge { font-size: 190%; }
-	.dlf_button_xxlarge { font-size: 200%; }
-	.dlf_button_xxxlarge { font-size: 250%; }
-	.button_mash { font-size:140%; cursor:pointer;  }
-
-	/* Button Colors */
-	.dlf_button_blue { background-color:blue !important; color:white !important;}
-	.dlf_button_red { background-color:red !important; color:white !important;}
-	.dlf_button_orange { background-color:orange !important; color:black !important;}
-	.dlf_button_limegreen { background-color:limegreen !important; color:black !important;}
-	.dlf_button_green { background-color:green !important; color:white !important;}
-	.dlf_button_purple { background-color:purple !important; color:white !important;}
-	.dlf_button_violet { background-color:violet !important; color:black !important;}
-	.dlf_button_gold { background-color:goldenrod !important; color:black !important;}
-	.dlf_button_yellow { background-color:yellow !important; color:black !important;}
-	.dlf_button_gray { background-color:gray !important; color:lightgray !important;}
-
-/* Select Inputs */
-	.dlf_select { padding:3%; border:none; }
-	.dlf_select:focus { outline:none; }
-	.dlf_select_round_corners { border-radius:77px; }
-
-	
-	.dlf_select_small { font-size: 50%; width:50%; }
-	.dlf_select_large { font-size: 140%; width:100%;}
-	.dlf_select_xlarge { font-size: 190%; width:100%;}
-	.dlf_select_xxlarge { font-size: 200%; width:100%;}
-	.dlf_select_xxxlarge { font-size: 250%; width:100%;}
-
-	.dlf_select_red { background-color:red; color:white; }
-	.dlf_select_blue { background-color:blue; color:white; }
-
-
 	#check_bingo_card { width:90%; }
-/* Colors */
-	.notify_red { color:red !important; }
 
+	/* Colors */
+	.notify_red { color:red !important; }
 
 /*******************************************************************************************
 	THEME: Black Background
@@ -163,8 +121,6 @@
 	.cell_seen { background-color:limegreen; color:red; }
 
 	/* Game Settings */
-	#game_settings_section.theme_black_bg { background-color:gray; color:black; }
-	#game_settings_section.theme_black_bg #close_game_settings { color:white; background-color:red;}
 	#reset_game_button.theme_black_bg { background-color:red; color:white; }
 
 	/* Game Example */
@@ -196,16 +152,13 @@
 
 
 	/* New Game Card */
-	.bingo_card_table { margin-top:5%; }
+	.bingo_card_table { margin-top:3%; }
 	.bingo_card_table tbody tr td { padding:3% !important;}
 	/* #bingo_card_section { width:60%; } */
 	.bingo_card_table .card_table_header { font-size:initial; }
 	.bingo_card_table td.number_cell { font-size:initial }
 	.bingo_card_table td.example { font-size:initial  }
 	.bingo_card_table td.number_selected { background-color:limegreen; color:white; border:none;}
-
-
-
 
 	/* Build Card*/
 	select.build_card_select{ width:100%; font-size:20px; }
@@ -221,7 +174,6 @@
 	.card_header_n { background-color: navy; color:white;}
 	.card_header_g { background-color: green; color:white;}
 	.card_header_o { background-color: orange; color:white;}
-
 
 
 /**************************************************** 
@@ -240,25 +192,14 @@
 /* Game Table*/
 	.table { width:100%; text-align: center; border-spacing: 0; border:1px solid black; }
 	.header th { font-size:120%; }
-	.inelligible { visibility:hidden; }
-
-/* Game Settings */
-	#game_settings_section { position:absolute; border:1px solid red; z-index:1000; 
-							width:50%; margin-left:25%; margin-top:2%; text-align:center; }
-
-	#game_settings_section #close_game_settings { float:right; clear:both; padding-right:1%; }
-	#game_settings_table { width:60%; margin:auto; text-align: left; }
-	#game_settings_table td:nth-child(1) { text-align:right; }
-	#game_settings_table td:nth-child(2) { padding-left:5%; }
-	#game_settings_table select { width:100%; }
-
+	.inelligible { visibility:hidden !important; }
 
 /**************************************************** 
 	GAME EXAMPLES: The example page
 *****************************************************/
 /* Game Example */
 	.example { padding-top:8%; padding-bottom:8%;}
-	.example_filled { background-color:limegreen; color:red;  }
+	.example_filled, .exampleX, .exampleFREERequired { background-color:limegreen; color:red;  }
 	.example_empty { background-color:inherit; color:inerit;  }
 
 	#game_example_block { position:absolute; border:1px solid red; z-index:1000; 
@@ -278,10 +219,6 @@
 {
 
 	#searchBarSection { width:40%;}
-
-
-	.cardLoadBlock { width: 25%; } 
-
 
 	/* Headings */
 	.dlf_title { font-size:2em;}

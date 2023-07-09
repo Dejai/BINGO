@@ -3,10 +3,10 @@
 <head>
 	<title>BINGO - Create Card</title>
     <base href="../../">
-	<link rel="stylesheet" type="text/css" href="/src/bingo.css">
+	<link rel="stylesheet" type="text/css" href="https://dejai.github.io/scripts/css/dlf_styles.css">
+	<link rel="stylesheet" type="text/css" href="/src/css/bingo.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
 </head>
 <body class="theme_black_bg">
 
@@ -17,28 +17,18 @@
         </h2>
         <hr>
         <p>Get random numbers or set them yourself. </p>
-		<div class="dlf_center_block_medium">
-            <table stlye="width:100%;">
-                <colgroup>
-                    <col style="width:45%;">
-                    <col style="width:45%;">
-                </colgroup>
-                <tr>
-                    <td>
-                        <button onclick="setRandomNumbers()"class="dlf_button_medium dlf_button_round_corners dlf_button_orange">
-                            RANDOM NUMBERS
-                        </button>
-                    </td>
-                    <td>
-                        <button onclick="onUseCard()" class="dlf_button_medium dlf_button_round_corners dlf_button_limegreen">
-                            USE THIS CARD
-                        </button>
-                    </td>
-                </tr>
-            </table>            
+		<div class="dlf_centered" style="text-align:center; ">
+            <button onclick="setRandomCard()"class="dlf_button_medium dlf_button_round_corners dlf_button_orange">
+                RANDOM NUMBERS
+            </button>
+            <button onclick="onCreateNewCard()" class="dlf_button_medium dlf_button_round_corners dlf_button_limegreen">
+                USE THIS CARD
+            </button>
         </div>
         <hr style="display:block; margin-bottom:5%;"/>
+        <img id="createCardLoading" src="https://dejai.github.io/scripts/assets/img/loading1.gif" style="width:7%;height:7%;" class="hidden">
         <span id="createCardMessage" style="color:red;"></span>
+        <h2 id="create-card-name">Card: <span id="newCardName"></span></h2>
         <table id="bingo_card_table" class="table">
             <colgroup>
                 <col style="width:19%;">
@@ -59,18 +49,13 @@
             <tbody id="bingo_card_body"></tbody>
         </table>
     </div>
-
-    <div class="centered">
-        
-    </div>
-
 </body>
 <!-- Common Code -->
 <script src="https://dejai.github.io/scripts/js/common.js"></script>
 <!-- My Trello code -->
 <script src="https://dejai.github.io/scripts/js/trellowrapper.js"></script>
-
-<script type="text/javascript" src="/src/bingo_objects.js"></script>
-<script type="text/javascript" src="/src/cardPromises.js"></script>
-<script type="text/javascript" src="/src/cardCreate.js"></script>
+<script type="text/javascript" src="/src/js/shared/bingoModels.js"></script>
+<script type="text/javascript" src="/src/js/card/cardPromises.js"></script>
+<script type="text/javascript" src="/src/js/card/cardManager.js"></script>
+<script type="text/javascript" src="/src/js/card/cardCreate.js"></script>
 </html>
