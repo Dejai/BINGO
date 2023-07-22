@@ -3,6 +3,9 @@
 
 
 //************ VARIABLE: BINGO GAMES ************************************************************************************************************
+// The "one true" Trello Wrapper
+const BingoTrelloWrapper = new TrelloWrapper("bingo");
+
 // A set of Games
 const BingoGames = [
     {

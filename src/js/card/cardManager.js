@@ -6,7 +6,7 @@ const CardManager = {
 
     getListID: (listName) => {
         return new Promise( resolve =>{
-            MyTrello.get_list_by_name(listName, (data)=>{
+            BingoTrelloWrapper.GetListByName(listName, (data)=>{
                 let response = JSON.parse(data.responseText);
                 let listID = response?.[0]?.["id"] ?? undefined;
                 resolve(listID);
@@ -15,11 +15,8 @@ const CardManager = {
     },
 
     getCard: (cardID) => {
-
         return new Promise( resolve =>{
-
-            MyTrello.get_single_card(cardID, (cardData)=>{
-
+            BingoTrelloWrapper.GetCard(cardID, (cardData)=>{
                 let card = myajax.GetJSON(cardData.responseText);
                 resolve(card);                
             });
@@ -29,7 +26,7 @@ const CardManager = {
     createCard: (listID, cardName)=>{
 
         return new Promise( resolve => {
-            MyTrello.create_card(listID, cardName,(data)=>{
+            BingoTrelloWrapper.CreateCard(listID, cardName,(data)=>{
                 let response = JSON.parse(data.responseText);
                 resolve(response);
             });
@@ -38,7 +35,7 @@ const CardManager = {
 
     updateCardDescription: (cardID, cardDesc)=>{
         return new Promise( resolve => {
-            MyTrello.update_card_description(cardID, cardDesc, (data)=>{
+            BingoTrelloWrapper.UpdateCardDescription(cardID, cardDesc, (data)=>{
                 let response = JSON.parse(data.responseText);
                 resolve(response);
             });
@@ -48,15 +45,12 @@ const CardManager = {
     // Async function to get cards based on list name
     getCardsByList: (listName) =>{
         return new Promise ( resolve =>{
-            MyTrello.get_cards_by_list_name(listName, (data)=>{
-                
+            BingoTrelloWrapper.GetCardsByListName(listName, (data)=>{
                 let response = JSON.parse(data.responseText);
-
                 // Sort the cards by name
                 response = response.sort( (a,b) =>{
                     return a["name"].localeCompare(b["name"]);
                 });
-
                 resolve(response);
             }, Logger.errorMessage)
         });
@@ -74,36 +68,28 @@ const CardManager = {
 
     updateCardName: (cardID, cardName) => {
         return new Promise( (resolve) =>{
-            MyTrello.update_card_name(cardID, cardName, (data)=>{
+            BingoTrelloWrapper.UpdateCardName(cardID, cardName, (data)=>{
                 resolve("Name updaed");
             });
         });
     },
 
     moveCard: (cardID, destination) =>{
-
         return new Promise( resolve => {
-            MyTrello.get_list_by_name(destination, (data)=>{
-                
+            BingoTrelloWrapper.GetListByName(destination, (data)=>{
                 let response = JSON.parse(data.responseText);
                 let listID = response[0]?.id;
-
-                MyTrello.update_card_list(cardID, listID, (data2) =>{
-
+                BingoTrelloWrapper.UpdateCardList(cardID, listID, (data2) =>{
                     resolve("Card moved");
-
                 }, (err)=>{ resolve(err); });
-
             },(err)=>{ resolve(err);})
         });
     },
 
     // Save a card by updating it's name & moving it
     saveCard: async (cardID, cardName) =>{
-
         // Set new name
         await CardManager.updateCardName(cardID, cardName);
-
         // Then move card
         await CardManager.moveCard(cardID, "NAMED_CARDS");
     },

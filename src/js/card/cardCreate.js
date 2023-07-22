@@ -2,6 +2,9 @@
 /************************ GLOBAL VARIABLES ****************************************/
 var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
 
+// The Trello Wrapper
+const trelloWrapper = new TrelloWrapper("bingo");
+
 var TYPE_OF_CARD = "";
 
 // List IDs for Trello
@@ -12,10 +15,6 @@ var LIST_IDS = {};
 
     // Once doc is ready
     mydoc.ready(()=>{
-
-        // Set Trello board name
-    	MyTrello.SetBoardName("bingo");
-
         // Set the random card
         setRandomCard();
 
@@ -50,8 +49,7 @@ var LIST_IDS = {};
     {
         let typeName = type.toUpperCase();
         let listName = `${typeName}_CARDS`;
-
-        MyTrello.get_list_by_name(listName, (listData)=>{
+        BingoTrelloWrapper.GetListByName(listName, (listData)=>{
             let list = myajax.GetJSON(listData.responseText);
             if(list.length == 1)
             {

@@ -13,9 +13,6 @@ const bingoBoard = new BingoBoard();
     // Once doc is ready
     mydoc.ready( async ()=>{
 
-        // Set Trello board name
-    	MyTrello.SetBoardName("bingo");
-
         // Set the board with the game options
         bingoBoard.setCards(BingoGames, true);
 

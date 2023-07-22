@@ -12,8 +12,6 @@ const bingoBoard = new BingoBoard();
 // Once doc is ready
 mydoc.ready( async() => {
 
-	MyTrello.SetBoardName("bingo");
-
 	let isExamplePage = location.pathname.includes("/examples")
 	if(isExamplePage) { IS_BOARD_PAGE = false; }
 

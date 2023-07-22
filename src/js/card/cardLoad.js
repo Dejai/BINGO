@@ -2,6 +2,9 @@
 /************************ GLOBAL VARIABLES ****************************************/
 var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
 
+// The Trello Wrapper
+const trelloWrapper = new TrelloWrapper("bingo");
+
 class CardPicker  {
     constructor(){
         this.Cards = {}
@@ -27,9 +30,6 @@ var TEST = undefined;
 
     // Once doc is ready
     mydoc.ready( async ()=>{
-
-        // Set Trello board name
-    	MyTrello.SetBoardName("bingo");
 
         // Get the list of cards
         var cards = await CardManager.getCardsByList("NAMED_CARDS");
