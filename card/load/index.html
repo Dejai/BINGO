@@ -13,11 +13,10 @@
 	<div class="theme_black_bg">
 		<div class="centered">
 			<h1><a href="../" class="navBackTitle">BINGO</a></h1>
-			<h2>Select up to 3 Cards</h2>
 			<hr/>
 		</div>
-		<div class="centered">
-			
+		<div class="centered" style="position:sticky; top:0; z-index:100; opacity:100; background-color: black;">
+			<h2>Select up to 3 Cards</h2>
 			<div id="searchBarSection" class="hidden showOnLoaded">
 				<div id="searchBar" class="searchBar searchPlaceholder" data-jpd-placeholder="Search cards ..." contenteditable="true" onkeyup="onFilterCards()" onfocus="onSearchFocus()" onblur="onSearchBlur()"></div>
 				<i id="searchClearIcon" class="fa fa-times-circle pointer hidden" aria-hidden="true" style="color:red;" onclick="onClearSearch()"></i>
@@ -28,28 +27,27 @@
 					USE SELECTED CARDS
 				</button>
 				<h3 id="useCardWarning" style="color:red;" class="hidden">You must select at least one card.</h3>
-				<div style="margin-top:2%">
+				<div style="margin-top:2%" class="hidden showOnUseSelectedClickable hideOnUseSelectedNotClickable">
 					<input type="checkbox" value="1" id="showSelectedCards" onchange="onShowSelectedCards(event)">
 					<label for="showSelectedCards">Show Selected Cards Only</label>
 				</div>
 			</div>
 			<hr class="hidden showOnLoaded"/>
-			<div id="listOfCards" style="width:95%; margin:auto;">
-				<p style="text-align:center;">
-					<img id="loading_gif" src="https://dejai.github.io/scripts/assets/img/loading1.gif" style="width:10%;height:10%;">
-				</p>
-			</div>
+		</div>
+		<div id="listOfCards" style="width:95%; margin:auto; overflow-y:scroll;">
+			<p style="text-align:center;">
+				<img id="loading_gif" src="https://dejai.github.io/scripts/assets/img/loading1.gif" style="width:10%;height:10%;">
+			</p>
 		</div>
 	</div>
 </body>
 <!-- Common Code -->
 <script src="https://dejai.github.io/scripts/js/common.js"></script>
 <!-- My Trello code -->
-<script src="https://dejai.github.io/scripts/js/trellowrapper.js"></script>
+<script src="https://dejai.github.io/scripts/js/trello/trellowrapper.js"></script>
 
 <script type="text/javascript" src="/src/js/shared/searchBar.js"></script>
-<script type="text/javascript" src="/src/js/card/cardManager.js"></script>
 <script type="text/javascript" src="/src/js/shared/bingoModels.js"></script>
+<script type="text/javascript" src="/src/js/card/cardManager.js"></script>
 <script type="text/javascript" src="/src/js/card/cardLoad.js"></script>
-
 </html>

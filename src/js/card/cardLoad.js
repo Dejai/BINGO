@@ -140,11 +140,13 @@ var TEST = undefined;
             mydoc.setContent("#useCardButton", {"innerHTML": `USE ${amountSelected} SELECTED CARD${s}`});
             mydoc.addClass("#useCardButton", "dlf_button_limegreen");
             mydoc.removeClass("#useCardButton", "dlf_button_gray");
+            mydoc.showContent(".showOnUseSelectedClickable");
             return;
         }
         mydoc.setContent("#useCardButton", {"innerHTML": `USE 0 SELECTED CARDS`});
         mydoc.addClass("#useCardButton", "dlf_button_gray");
         mydoc.removeClass("#useCardButton", "dlf_button_limegreen");
+        mydoc.hideContent(".hideOnUseSelectedNotClickable");
     }
 
     // Use the selected cards
