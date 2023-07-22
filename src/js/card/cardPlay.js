@@ -3,7 +3,6 @@
 
 // Variables related to the "touch" event
 var touchEvent = "ontouchstart" in window ? "touchstart" : "click";
-var touchtime = 0; // Used to keep track of times between clicks (to hack a double click);
 
 // The BINGO Board that will be used for managing key parts of this page
 const bingoBoard = new BingoBoard();
@@ -74,21 +73,6 @@ const bingoBoard = new BingoBoard();
 
 /*********************** EVENT LISTENERS *****************************/
 
-    // Check if a click is a "double click"
-    function isDoubleClick(){
-        // Assume it is a double click by default
-        var isDblClick = true; 
-
-        // Check the time between clicks
-        var thisTime = (new Date().getTime() );
-        if(touchtime == 0 || (thisTime - touchtime) > 800){
-            isDblClick = false;
-            touchtime = new Date().getTime();
-            // touchattempts++;    
-        }
-        return isDblClick; 
-    }
-
     // Indicate which ones are needed
     function onSelectGame()
     {
@@ -130,13 +114,6 @@ const bingoBoard = new BingoBoard();
     // Select a value
     function onSelectNumber(event)
     {
-        // Clear touch attempts if successfully double clicked;
-        // Check if this is a double clieck
-        if( !isDoubleClick()) {
-            return;
-        }
-        console.log("Double click!");
-
         // Check for game before moving on.
         if(bingoBoard.getGameName() == "") {
             mydoc.hideContent(".hideOnGameWarning");
