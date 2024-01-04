@@ -20,27 +20,27 @@
 	<hr/>
 	<div style="background-color: black;" class="centered dtk-menu-sticky">
 		<h2 class="hidden showOnLoaded">
-			Select your Card(s) <br/>
-			<span style="font-size:70%;font-style: italic; color:orange;">(you can select up to 3)</span>
+			Select your Card
 		</h2>
 		<div id="searchBarSection" class="hidden showOnLoaded"></div>
-		<br/>
-		<div id="useCardSection" class="hidden showOnLoaded">
-			<button id="useCardButton" class="dtk-button dtk-button-round-corners" onclick="onUseSelectedCards()" disabled>
-				USE 0 CARDS
-			</button>
-			<h3 id="useCardWarning" style="color:red;" class="hidden">You must select at least one card.</h3>
-			<div style="margin-top:2%" class="hidden showOnUseSelectedClickable hideOnUseSelectedNotClickable">
-				<input type="checkbox" value="1" id="showSelectedCards" onchange="onShowSelectedCards(event)">
-				<label for="showSelectedCards">Show Selected Cards Only</label>
-			</div>
+		<div style="margin-top:2%" class="hidden showOnAdjustSelectedCards hideOnSelectCard">
+			<input id="showSelectedCards" type="checkbox" value="1"  onchange="onToggleSelectedCardsView(this)">
+			<label for="showSelectedCards">Show Selected Cards Only</label>
 		</div>
 		<hr class="hidden showOnLoaded"/>
 	</div>
-	<div id="listOfCards" class="dtk-after-sticky cardPreviewContainer">
+	<div id="listOfCards" class="dtk-after-sticky cardPreviewContainer showOnAdjustSelectedCards hideOnSelectCard">
 		<p style="text-align:center; font-size:120%;">
 			<span style="font-size:35px;"><i class="fa-solid fa-spinner dtk-spinning dtk-spinning-1000"></i></span>
 		</p>
+	</div>
+	<div id="useCardSection" class="hidden centered dtk-after-sticky hideOnAdjustSelectedCards showOnSelectCard">
+		<h2>Ready to Play?</h2>
+		<h3 id="numberOfSelectedCards"></h3>
+		<button id="playBingoButton" class="confirmButtons dtk-button dtk-button-round-corners" onclick="onUseSelectedCards()">Yes, Play BINGO!</button>			
+		<button id="adjustCardsButton" class="confirmButtons dtk-button dtk-button-round-corners" onclick="onAdjustSelectedCards()">Adjust Selected Cards</button>
+		<p style="margin:0px; padding-top:0.5%; font-style:italic;">(you can select up to 3 cards)</p>
+
 	</div>
 </body>
 <!-- Common Code -->
