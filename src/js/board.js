@@ -253,21 +253,25 @@ async function onCheckForBingo(){
         var cards = await MyCloudflare.KeyValues("GET", `bingo/cards`);
         var bingoCards = cards.map( details => new BingoCard(details))?.filter( card => card.Details.Key != "EXAMPLE");
         var hasBingo = bingoCards
-                            ?.map( card => { card.setSlotsFilled(MyBingoBalls.Called); return card } )
+                            ?.map( card => { card.setSlotsFilled(MyBingoBalls.Called, game.hasFreeSlotRequired()); return card } )
                             ?.filter( card => card.hasBingo(game) )
        
         // Load the list of available cards
         var options = await MyTemplates.getTemplateAsync("templates/board/checkBingoOption.html", bingoCards);
-        MyDom.setContent("#listOfCards", {"innerHTML": options});
-        MyDom.getContent("#checkCardKey", {"value": ""});
+        MyDom.setContent("#listOfCardOptions", {"innerHTML": options});
+        MyDom.setContent("#checkCardKey", {"value": ""});
 
         // Set results
         MyDom.setContent("#matchingCards", {"innerHTML": ""}); 
-        console.log(hasBingo);
-        console.log(hasBingo.length);
         var cardPlurality = (hasBingo.lengh == 1) ? "card" : "cards";
-        console.log(cardPlurality);
         MyDom.setContent("#totalMatchingCards", {"innerHTML": `${hasBingo.length} matching ${cardPlurality}`});
+
+        // Update text of any matching options
+        var matchingSet = new Set( hasBingo.map(x => x.Details.Key) );
+        var options = Array.from(document.querySelectorAll(".checkBingoOption"))?.filter(x => matchingSet.has(x.value));
+        for(var opt of options){
+            opt.innerText += " <span style='font-size:1px;'>(matching)</span>";
+        }
 
         MyDom.hideContent(".hideOnCheckBingoResults");
         MyDom.showContent(".showOnCheckBingoResults");

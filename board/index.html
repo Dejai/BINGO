@@ -15,7 +15,7 @@
 			<select id="gameOptions" class="game_options_select" onchange="onSelectGame(this)" style="width:25%;">
 				<option value=''>SELECT GAME...</option>
 			</select>
-			<span style="color:white;cursor:pointer;" class="hidden showOnGameSelect fa fa-volume-up" onclick="onShowGameExample(true)"></span>
+			<span style="color:white;cursor:pointer;" class="hidden showOnGameSelect hideOnReset fa fa-volume-up" onclick="onShowGameExample(true)"></span>
 		</div>
 		<div>
 			<button id="startGameButton" class="pointer enableOnSelectGame disableOnGameStart disableOnReset hideOnGameStart showOnReset mainGameButtons limegreen dtk-button-round-corners" onclick="onStartGame()" disabled>
@@ -51,9 +51,9 @@
 			</h2>
 			<h3 id="totalMatchingCards" class="hidden showOnCheckBingoResults hideOnSelectNumber clearOnSelectNumber clearOnCheckBingo clearOnReset"></h3>
 			<div class="hidden showOnCheckBingoResults hideOnSelectNumber hideOnExample hideOnReset">
-				<input id="checkCardKey" class="clearOnReset clearOnCheckForBingo" type="text" placeholder="Type to select a card" name="checkCardKey" list="listOfCards"/>
+				<input id="checkCardKey" class="clearOnReset clearOnCheckForBingo" type="text" placeholder="Type to select a card" name="checkCardKey" list="listOfCardOptions"/>
 				<button onclick="openCardWithBalls()" class="dtk-button dtk-button-round-corners">Check</button>
-				<datalist id="listOfCards"></datalist>
+				<datalist id="listOfCardOptions"></datalist>
 			</div>
 			<div id="matchingCards" style="margin-top:2%;" class="clearOnCheckBingo" style="width:60%; margin:auto;"></div>
 		</div>

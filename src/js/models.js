@@ -43,7 +43,7 @@ class BingoCard {
     // Set slots based on balls seen
     setSlotsFilled(balls, setFreeSlot=false){
       // Setting the free slot if it is marked to be set
-      if(setFreeSlot && this.SlotsFilled.has("N3")) {         this.SlotsFilled.add("N3");     } 
+      if(setFreeSlot && !this.SlotsFilled.has("N3")) {         this.SlotsFilled.add("N3");     } 
       else if (!setFreeSlot && this.SlotsFilled.has("N3")) {  this.SlotsFilled.delete("N3");  }
 
       for(var ball of Array.from(balls)){
@@ -208,32 +208,6 @@ class BingoGame {
     // Return if this game requires the Free slot
     hasFreeSlotRequired(){
       return this.RequiredSlots.includes("N3");
-    }
-
-    // Check against the allowed slots & see if the selected cells matches ALL in the list (i.e. no false);
-    hasValuesInSet(list, set){
-      return (list.length > 0) && (list.map(x => set.has(x))?.filter(y => y == false)?.length == 0);
-    }
-
-    checkCardForBingo(card){
-      var results = false;
-      try {
-        var cellSet = new Set(Array.from(card?.querySelectorAll(".number_selected"))?.map(x => x.getAttribute("data-slot-id")) ?? []);
-        if(this.StraightLines.length > 0){
-          for(var line of this.StraightLines){
-            results = this.hasValuesInSet(line, cellSet);
-            if(results){
-              break;
-            }
-          }
-        } else { 
-          results = this.hasValuesInSet(this.RequiredSlots, cellSet);
-        }
-      } catch(err){
-        MyLogger.LogError(err);
-      } finally {
-        return results;
-      }
     }
 }
 
