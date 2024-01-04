@@ -1,0 +1,36 @@
+
+/* Sections of the game board */
+.gameBoardSection { font-size: 200%; }
+.gameBoardSection th.game_table_header { background-color:white !important; color:black !important; }
+.gameBoardSection th.card_table_header { background-color:white !important; color:black !important; }
+.gameBoardSection .cardNameSection { display: none; }
+/* The Game Board menu */
+#bingoBoardMenuSection { display:flex; align-items: center; }
+#bingoBoardMenuSection .flexGrow { flex: 1; }
+/* #bingoBoardMenuSection.center { margin:0 3px; } */
+#bingoBoardMenuSection .left, #bingoBoardMenuSection .right { flex: 1; padding:5px; }
+
+/* The main buttons */
+.mainGameButtons { font-size:120%;  }
+.mainGameButtons.limegreen { background-color: limegreen; color:black ; }
+.mainGameButtons.orange { background-color: orange; color:black; }
+.mainGameButtons.red { background-color: red; color:black; }
+.mainGameButtons:disabled { background-color: gray !important; color:darkgray; }
+
+/* Cells on the Game Board */
+.cell_unseen { color:gray; }
+.cell_seen { background-color:limegreen; color:red; }
+
+/* The BINGO Balls */
+.bingo_ball_circle { height:100px; width:100px; line-height: 100px; background-color: gray; border-radius: 50%; display: inline-block; }
+.bingo_ball_letter_b { background-color:blue; color:white; }
+.bingo_ball_letter_i { background-color:red; color:white; }
+.bingo_ball_letter_n { background-color:purple; color:white; }
+.bingo_ball_letter_g { background-color:green; color:white; }
+.bingo_ball_letter_o { background-color:yellow; color:black; }
+
+.game_options_select { font-size: 120%; width:95%; }
+#selected_cell { margin-bottom:1%; margin-top:2%; font-size:44px; }
+
+/* Checking for BINGO */
+#checkForBingoSection { width:20%; margin:auto; }

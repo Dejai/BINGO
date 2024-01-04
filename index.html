@@ -1,34 +1,53 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>BINGO</title>
+	<title>BINGO!</title>
 	<base href="./">
-	<link rel="stylesheet" type="text/css" href="https://dejai.github.io/scripts/css/dlf_styles.css">
-	<link rel="stylesheet" type="text/css" href="/src/css/bingo.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" type="text/css" href="https://dejai.github.io/scripts/css/dtk-styles.css?v=3.0.0">
+	<link rel="stylesheet" type="text/css" href="src/css/bingo.css?v=3.0.0">
+	<link rel="stylesheet" type="text/css" href="src/css/card.css?v=3.0.0">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-
 </head>
 <body class="theme_black_bg">
-	<div class="theme_black_bg">
-		<div class="centered">
-			<h1>BINGO</h1>
-			<h2>Identify yourself</h2>
-			<hr/>
-		</div>
-		<div class="centered dlf_center_block_medium">
 
-			<a href="/identify/player/" class="identify_yourself dlf_button_large dlf_button_round_corners dlf_button_limegreen dlf_href_notextdec">
-				I AM A PLAYER
-			</a>
-			<a href="/identify/admin/" class="identify_yourself dlf_button_large dlf_button_round_corners dlf_button_blue dlf_href_notextdec">
-				I AM AN ADMIN
-			</a>
+	<div id="selectCardMenu" class="cardMenuSection">
+		<h2 style="margin:0px;padding-right:0.5%;"><a href="../" class="navBackTitle">BINGO!</a></h2>
+		<div class="bingoBoardIcon">
+			<i class="fa-solid fa-table-cells pointer" style="color:white !important;" onclick="MyUrls.navigateTo('/board')"></i>
 		</div>
 	</div>
+	<hr/>
+	<div style="background-color: black;" class="centered dtk-menu-sticky">
+		<h2 class="hidden showOnLoaded">
+			Select your Card(s) <br/>
+			<span style="font-size:70%;font-style: italic; color:orange;">(you can select up to 3)</span>
+		</h2>
+		<div id="searchBarSection" class="hidden showOnLoaded"></div>
+		<br/>
+		<div id="useCardSection" class="hidden showOnLoaded">
+			<button id="useCardButton" class="dtk-button dtk-button-round-corners" onclick="onUseSelectedCards()" disabled>
+				USE 0 CARDS
+			</button>
+			<h3 id="useCardWarning" style="color:red;" class="hidden">You must select at least one card.</h3>
+			<div style="margin-top:2%" class="hidden showOnUseSelectedClickable hideOnUseSelectedNotClickable">
+				<input type="checkbox" value="1" id="showSelectedCards" onchange="onShowSelectedCards(event)">
+				<label for="showSelectedCards">Show Selected Cards Only</label>
+			</div>
+		</div>
+		<hr class="hidden showOnLoaded"/>
+	</div>
+	<div id="listOfCards" class="dtk-after-sticky cardPreviewContainer">
+		<p style="text-align:center; font-size:120%;">
+			<span style="font-size:35px;"><i class="fa-solid fa-spinner dtk-spinning dtk-spinning-1000"></i></span>
+		</p>
+	</div>
 </body>
-<script src="https://dejai.github.io/scripts/js/common.js"></script>
-<!-- My Trello code -->
-<script src="https://dejai.github.io/scripts/js/trellowrapper.js"></script>
-<!-- My Bingo code -->
+<!-- Common Code -->
+<script src="https://dejai.github.io/scripts/js/v2/my.js?v=3.0.0"></script>
+<script src="https://dejai.github.io/scripts/js/v3/cloudflarewrapper.js?v=3.0.0"></script>
+<!-- Bingo scripts -->
+<script src="src/js/models.js?v=3.0.0"></script>
+<script src="src/js/cardsSelect.js?v=3.0.0"></script>
+
 </html>

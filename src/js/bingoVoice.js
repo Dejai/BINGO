@@ -2,13 +2,10 @@
 class BingoVoice {
 
     constructor(){
-
         console.log("New voice");
-
         this.Voices = {} 
         this.CurrentVoice = undefined;
         this.IsSpeaking = false;
-
     }
 
     // Add a voice to the set of voices
@@ -20,7 +17,7 @@ class BingoVoice {
         let selectedFlag = (isFirstVoice) ? "selected" : "";
 
         let option = `<option data-name="${name}" data-lang="${lang}" ${selectedFlag}>${name}</option>`
-        mydoc.setContent("#voiceSelect", {"innerHTML":option}, true);
+        MyDom.setContent("#voiceSelect", {"innerHTML":option}, true);
 
         if(isFirstVoice){
             this.setCurrentVoice(name);
@@ -77,10 +74,8 @@ class BingoVoice {
 }
 
 // The constant BINGO voice object
-const theBingoVoice = new BingoVoice();
-
+const MyBingoVoice = new BingoVoice();
 var speechSynth = window.speechSynthesis;
-
 const getVoices = () => {
     var results = [];
     var voices = speechSynth.getVoices();
@@ -88,12 +83,11 @@ const getVoices = () => {
         var isEnglighGoogle = (voice.lang.includes("en") && !voice.name.includes("Google"));
         if(isEnglighGoogle){
             let name = voice.name;
-            theBingoVoice.addVoice(name, voice);
+            MyBingoVoice.addVoice(name, voice);
         }
     });
     return results;
 }
-
 // Load the voices; With a listener for changes
 var loadVoices = () =>{
     getVoices();
@@ -101,7 +95,6 @@ var loadVoices = () =>{
         speechSynthesis.onvoiceschanged = getVoices;
     }
 }
-
 // Load the voices
 loadVoices();
 
@@ -111,14 +104,14 @@ loadVoices();
 function onChangeVoice(event){
     let target = event.target;
     let value = target?.value ?? "";
-    theBingoVoice.setCurrentVoice(value);
+    MyBingoVoice.setCurrentVoice(value);
     console.log(value);
-    console.log(theBingoVoice.Voices[value]);
-    console.log(theBingoVoice.CurrentVoice);
+    console.log(MyBingoVoice.Voices[value]);
+    console.log(MyBingoVoice.CurrentVoice);
 }
 
 // On Speak
 async function onTestSpeaker(){
-    await theBingoVoice.demo();
+    await MyBingoVoice.demo();
     console.log("Testing await on speech");
 }
