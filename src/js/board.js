@@ -15,34 +15,8 @@ MyDom.ready ( async () => {
 
     // Set example card template
     setCardOnBoard();
-
-    // 
-    // addCardsToCloudflare();
 });
 
-
-async function addCardsToCloudflare(){
-    var MyTrello = new TrelloWrapper("bingo");
-    console.log(MyTrello);
-    var cards = await MyTrello.GetCardsByListName("NAMED_CARDS");
-    cards  = cards.filter(x => x.name.includes("#0") || x.name.includes("# "));
-    console.log(cards);
-    for(var card of cards){
-        var bingoDetails = {}
-        var nameDetails = card?.name?.split(" - ");
-        bingoDetails["cardName"] = nameDetails[0]?.replace("#0", "#").replace("# ", "#");
-        bingoDetails["key"] = nameDetails[1];
-        var numberDetails = card?.desc?.split("\n");
-        for(var col of numberDetails) {
-            var letter = col[0];
-            col = col.substring(2).replaceAll(",,", ",FS,");
-            bingoDetails[letter] = col;
-        }
-        var bingoCard = new BingoCardDetails(bingoDetails);
-        var res = await MyCloudflare.KeyValues("POST", "bingo/card", { body: JSON.stringify(bingoCard) });
-        console.log(res);
-    }
-}
 
 // Get the selected game
 function getSelectedGame(){
