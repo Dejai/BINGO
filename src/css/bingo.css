@@ -1,20 +1,22 @@
 /*********GENERAL (applies to all themes)**********************/
 
 
-/********** CARD  ****************/ 
+.bingoMenuSection { display:flex; justify-content: space-between; flex-wrap:nowrap; align-items: center; }
 
+
+
+/********** CARD  ****************/ 
 
 /**************************************************** 
 	GENERAL: Applies to all pages;
 *****************************************************/
 
-#searchBarSection { text-align:left; border-radius:77px; border:1px solid gray; background-color:white; padding:1%; width:90%; margin:auto; font-size:20px; }
-.searchBar { text-align:left; width:85%; display:inline-block; }
-.searchBar:focus { border: none; outline: none; }
-#searchClearIcon { float:right; color: red !important; }
-
-.searchBar.searchPlaceholder { color:gray; }
-.searchBar.searchText { color: black; }
+#searchBarSection { text-align:left; border-radius:77px; border:1px solid gray; background-color:white; padding:0.5%; width:90%; margin:auto; font-size:20px; }
+.searchBarInput { text-align:left; width:85%; display:inline-block; border:none; padding:2%; }
+.searchBarInput:focus { border: none; outline: none; }
+.searchClearIcon { float:right; color: red !important; }
+.searchBarInput.searchPlaceholder { color:gray; }
+.searchBarInput.searchText { color: black; }
 
 /* Sticky Menu */
 .stickyMenu { position:sticky; top:0; z-index:100; opacity:100; background-color: black; }
@@ -22,7 +24,7 @@
 .matchingCard { margin-left:0px; margin-right:0px; cursor:pointer; }
 .selectedMatchingCard { color:limegreen; font-weight:bolder; }
 
-.bingo_card_table { border-bottom:2px dashed white; margin-bottom:3%; }
+.bingo_card_table { border-bottom:2px dashed white; margin-bottom:1%; }
 
 .navBackTitle { text-decoration:none !important; color:inherit; cursor:pointer; }
 
@@ -31,7 +33,7 @@
 	.centered { text-align: center; }
 	.bingo_cell{ cursor: pointer; }
 	.pointer { cursor:pointer; }
-	#game_table { font-size:200%; }
+	/* #gameBoardTable { font-size:200%; } */
 	.noselect {
 		-webkit-touch-callout: none; /* iOS Safari */
 		-webkit-user-select: none; /* Safari */
@@ -101,15 +103,17 @@
 
 /* Buttons */
 	/*Button Shape & hover*/
-	button { cursor: pointer; padding:2% 1%; border:none; }
-	[class*="dlf_button"] { font-weight:bolder; }
+	button { cursor: pointer; border:none; }
 	button:focus { outline: none; box-shadow: none; }
-	.dlf_button_round_corners { border-radius:77px; }
-
 	#check_bingo_card { width:90%; }
+
+	.noBorders { border: none; }
+	.noBorders:focus { outline: none; box-shadow:none; }
 
 	/* Colors */
 	.notify_red { color:red !important; }
+
+
 
 /*******************************************************************************************
 	THEME: Black Background
@@ -119,7 +123,8 @@
 	body.theme_black_bg { background-color:black; color:white; }
 
 	/* Game Table*/
-	.game_table_header { background-color:white !important; color:black !important; }
+	.IS-BINGO .game_table_header { animation: bingo_blink 1s step-start infinite; }
+	
 	.cell_unseen { color:gray; }
 	.cell_seen { background-color:limegreen; color:red; }
 
@@ -143,25 +148,23 @@
 	#bingo_card_table tbody tr td { padding:3% !important;}
 
 	/* Game Card Size*/
-	#bingo_card_table .card_table_header { font-size:150%; }
 	#bingo_card_table td.number_cell { font-size:150%; font-weight: bolder; }
 	#bingo_card_table td.example { font-size:150%; font-weight: bolder; }
 	.freeSpace { font-size:150% !important; }
 
-	#bingo_card_table td.number_selected { background-color:limegreen; color:white; border:none;}
 	.game_card_input { font-size: 30px; }
 	.number_cell_needed { color: red } 
+	.number_cell_optional { color: orange !important; } 
+	.number_cell_required { color: red !important; } 
+	.number_selected { background-color:limegreen; color:white !important; border:none;}
+
 	#card_created_timestamp { color:red; font-size:inherit; font-style:italic; }
 
-
 	/* New Game Card */
-	.bingo_card_table { margin-top:3%; }
+	.bingo_card_table { margin-top:1%; }
 	.bingo_card_table tbody tr td { padding:3% !important;}
-	/* #bingo_card_section { width:60%; } */
-	.bingo_card_table .card_table_header { font-size:initial; }
 	.bingo_card_table td.number_cell { font-size:initial }
 	.bingo_card_table td.example { font-size:initial  }
-	.bingo_card_table td.number_selected { background-color:limegreen; color:white; border:none;}
 
 	/* Build Card*/
 	select.build_card_select{ width:100%; font-size:20px; }
@@ -170,13 +173,6 @@
 	select.build_card_n { background-color: navy; color:white;}
 	select.build_card_g { background-color: green; color:white;}
 	select.build_card_o { background-color: orange; color:white;}
-
-	/* Card Headers */
-	.card_header_b { background-color: blue; color:white;}
-	.card_header_i { background-color: indigo; color:white;}
-	.card_header_n { background-color: navy; color:white;}
-	.card_header_g { background-color: green; color:white;}
-	.card_header_o { background-color: orange; color:white;}
 
 
 /**************************************************** 
@@ -194,7 +190,7 @@
 
 /* Game Table*/
 	.table { width:100%; text-align: center; border-spacing: 0; border:1px solid black; }
-	.header th { font-size:120%; }
+	/* .header th { font-size:120%; } */
 	.inelligible { visibility:hidden !important; }
 
 /**************************************************** 
@@ -221,7 +217,7 @@
 @media only screen and (min-device-width:1200px)
 {
 
-	#searchBarSection { width:40%;}
+	#searchBarSection { width:20%;}
 
 	/* Headings */
 	.dlf_title { font-size:2em;}
@@ -260,15 +256,12 @@
 	.example { padding-top:2%; padding-bottom:2%; }	
 
 	/* Game Card*/
-	/* #bingo_card_section { width:60%; } */
-	#bingo_card_table .card_table_header { font-size:initial; }
 	#bingo_card_table td.number_cell { font-size:initial }
 	#bingo_card_table td.example { font-size:initial  }
 	.freeSpace { font-size:initial; }
 
 	/* New Game Card */
 	#bingo_card_section { width:70%; }
-	.bingo_card_table .card_table_header { font-size:initial; }
 	.bingo_card_table td.number_cell { font-size:initial }
 	.bingo_card_table td.example { font-size:initial  }
 

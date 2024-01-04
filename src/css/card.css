@@ -1,10 +1,33 @@
-.cardLoadBlock { width: 60%; border:5px solid gray; padding:1%; margin:auto; margin-bottom:7%; } 
-.cardLoadBlock.selected { background-color: limegreen; color:black;}
-.cardLoadBlock .gameCode { color:orange; }
-.cardLoadBlock.selected .gameCode { color:blue !important; }
+/* Card Menu & select */
+.bingoBoardIcon { display:none; }
+#useCardButton { padding:1%; background-color: limegreen; color:black; }
+#useCardButton:disabled { background-color: gray; color:lightgray; }
+
+/* Card Previews */
+.cardPreviewContainer { display:flex; flex-wrap:wrap; justify-content: center; width:95%; margin:auto; overflow-y:scroll; }
+.cardPreviewHeaderSection { display:flex; align-items:start; justify-content:space-between; }
+.cardPreview { min-width:60%; border:3px solid gray; padding:2%; margin-bottom:7%; } 
+.cardPreview .gameCode { color:orange; }
+.cardPreview .selectCardButton { padding: 5%; background-color: blue !important; color: white !important; }
+.cardPreview.selected { background-color: blue; color:white;}
+/* .cardPreview.selected .gameCode { color:limegreen !important; } */
+.cardPreview.selected .selectCardButton { background-color: red !important; color: white !important; }
+
+
+
+/* Card Play */
+.cardMenuSection { display:flex; justify-content: space-between; flex-wrap:nowrap; align-items: center; }
+th.card_table_header { background-color:white !important; color:black !important; }
+
+#resetButton { background-color:red !important; color:white; }
+#resetButton:disabled { background-color:gray !important; color:lightgray !important; }
 
 @media only screen and (min-device-width:1200px)
 {
-    .cardLoadBlock { width: 25%; float:left; margin:2%; }
+    .bingoBoardIcon{ display:block; }
+
+    /* .cardMenuSection { width: 50%; margin:auto; } */
+    #selectCardMenu { width: 10%; margin:auto; justify-content: center; gap:10px; }
+    .cardPreview { min-width: 25%; float:left; margin:2%; }
     .cardBlockSeparator{ display:none; }
 }

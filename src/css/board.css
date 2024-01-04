@@ -1,0 +1,22 @@
+
+/* Sections of the game board */
+.gameBoardSection { font-size: 200%; }
+.gameBoardSection th.game_table_header { background-color:white !important; color:black !important; }
+.gameBoardSection th.card_table_header { background-color:white !important; color:black !important; }
+.gameBoardSection .cardNameSection { display: none; }
+/* The Game Board menu */
+#bingoMenuSection2 { display:flex; align-items: center; }
+#bingoMenuSection2 .flexGrow { flex: 1; }
+/* #bingoMenuSection2.center { margin:0 3px; } */
+#bingoMenuSection2 .left, #bingoMenuSection2 .right { flex: 1; padding:5px; }
+
+/* The main buttons */
+.mainGameButtons { font-size:120%;  }
+.mainGameButtons.limegreen { background-color: limegreen; color:black ; }
+.mainGameButtons.orange { background-color: orange; color:black; }
+.mainGameButtons.red { background-color: red; color:black; }
+.mainGameButtons:disabled { background-color: gray !important; color:darkgray; }
+
+
+/* Checking for BINGO */
+#checkForBingoSection { width:20%; margin:auto; }
