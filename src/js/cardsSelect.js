@@ -28,64 +28,46 @@ function onSetPreselectedCards(){
 
 function onToggleCardSelect(button) {
 
-    // Get the selected bloc
+    // Get the selected block
     let block = button.closest(".cardPreview");
     let cardID = block.getAttribute("data-card-id") ?? "";
     let isSelected = block.classList.contains("selected");
+    var isSelectAction = false;
 
     // Show/hide things based on the content
     if(!isSelected) {
-        MyDom.replaceClass(`[data-card-id='${cardID}']`, "unselected", "selected");
-        MyDom.replaceClass(`[data-card-id='${cardID}'] .selectCardButton`, "unselected", "dlf_button_red");
+        MyDom.addClass(`[data-card-id='${cardID}']`,"selected");
+        MyDom.addClass(`[data-card-id='${cardID}'] .selectCardButton`, "selected");
         MyDom.setContent(`[data-card-id='${cardID}'] .selectCardButton`, {"innerText": "UNSELECT"});
+        isSelectAction = true;
     } else {
-        MyDom.replaceClass(`[data-card-id='${cardID}']`, "selected",  "unselected");
-        MyDom.replaceClass(`[data-card-id='${cardID}'] .selectCardButton`, "dlf_button_red", "unselected");
+        MyDom.removeClass(`[data-card-id='${cardID}']`, "selected");
+        MyDom.removeClass(`[data-card-id='${cardID}'] .selectCardButton`, "selected");
         MyDom.setContent(`[data-card-id='${cardID}'] .selectCardButton`, {"innerText": "SELECT"});
     }
 
-    // Hide warning
-    MyDom.hideContent("#useCardWarning");
-
-    // Clear the search bar (if anything in it)
-    // onClearSearch();
-
     // Get the amount selected
     let amountSelected = document.querySelectorAll(".cardPreview.selected")?.length ?? 0;
+    let s = (amountSelected == 0 || amountSelected > 1) ? 's' : '' ;
+    let message = `You have <strong class='orangeText'>${amountSelected} card${s}</strong> selected.`;
+    MyDom.setContent("#numberOfSelectedCards", {"innerHTML": message });
+    var _hideSelect = (amountSelected == 3) ?  MyDom.hideContent(".selectCardButton:not(.selected)") : MyDom.showContent(".selectCardButton");
 
-    // Toggle the hiding of buttons & cards
-    onHideSelectButton( (amountSelected == 3) );
-    onHideUnselected( (amountSelected == 3) );
-    onUseCardClickable(amountSelected);
+    if(isSelectAction && amountSelected > 0){
+        MyDom.hideContent(".hideOnSelectCard");
+        MyDom.showContent(".showOnSelectCard");
+    }
 }
 
-// Toggle showing the selected cards only
-function onShowSelectedCards(event){
-    // Clear the search (as that hides cards too);
-    var target = event.target;
-    var selected = document.querySelectorAll(".cardPreview.selected")?.length;
-    onHideUnselected( (target.checked && selected > 0));
+// Toggle back to select another card
+function onAdjustSelectedCards(){
+    MyDom.hideContent(".hideOnAdjustSelectedCards");
+    MyDom.showContent(".showOnAdjustSelectedCards");
 }
 
-// Hide the select button
-function onHideSelectButton(hideAll=false) {
-    var _action = (hideAll) ?  MyDom.hideContent(".selectCardButton.unselected") : MyDom.showContent(".selectCardButton.unselected");
-}
-
-// Show only selected cards
-function onHideUnselected(hideAll=false){
-    var _action = (hideAll) ? MyDom.hideContent(".cardPreview.unselected") : MyDom.showContent(".cardPreview.unselected") ;
-    // Set the state of the select button
-    MyDom.setContent("#showSelectedCards", {"checked":hideAll } );
-}
-
-// Toggle the state of the "Use Card" button
-function onUseCardClickable(amountSelected=0) {
-    let s = (amountSelected == 0 || amountSelected > 1) ? 'S' : '' ;
-    let message = `USE ${amountSelected} CARD${s}`;
-    var disabled = (amountSelected > 0) ? "" : "true";
-    MyDom.setContent("#useCardButton", {"innerHTML": message, "disabled": disabled});
-    var _clickable = (disabled == "") ? MyDom.showContent(".showOnUseSelectedClickable") : MyDom.hideContent(".hideOnUseSelectedNotClickable");
+// Show only the selected cards
+function onToggleSelectedCardsView(checkbox){
+    var _toggle = (checkbox.checked) ? MyDom.hideContent(".cardPreview:not(.selected)") : MyDom.showContent(".cardPreview");
 }
 
 // Use the selected cards
@@ -93,6 +75,7 @@ function onUseSelectedCards()
 {
     let cardIDs = [];
     let selectedCards = document.querySelectorAll(".cardPreview.selected");
+    if(selectedCards.length > 0)
     if( (selectedCards?.length ?? 0) == 0) {
         MyDom.showContent("#useCardWarning");
         return;

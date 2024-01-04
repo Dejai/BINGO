@@ -18,6 +18,7 @@ body.theme_black_bg { background-color:black; color:white; }
 .bingo_card_table { border-bottom:2px dashed white; margin-bottom:1%; }
 
 .navBackTitle { text-decoration:none !important; color:inherit; cursor:pointer; }
+.orangeText { color:orange !important; }
 
 /* Buttons */
 button { cursor: pointer; border:none; }
@@ -67,14 +68,11 @@ button:focus { outline: none; box-shadow: none; }
 	GAME BOARD: Styling specific to the game board
 *****************************************************/
 
-/* Menu*/
-	
-	/* #pickNumberButton { margin-bottom:1%; margin-top:2%; font-size:44px; } */
-
 /* Game Table*/
-	.table { width:100%; text-align: center; border-spacing: 0; border:1px solid black; }
-	/* .header th { font-size:120%; } */
-	.inelligible { visibility:hidden !important; }
+.table { width:100%; text-align: center; border-spacing: 0; border:1px solid black; }
+.confirmButtons  { display:block; width: 70%; padding:1%; margin:auto; margin-top:7%; font-size:110%; }
+#playBingoButton { background-color: limegreen; color:white; }
+#adjustCardsButton { background-color: orange; color:black; }
 
 /**************************************************** 
 	MEDIA SCREENS
@@ -82,7 +80,7 @@ button:focus { outline: none; box-shadow: none; }
 
 @media only screen and (min-device-width:1200px)
 {
-
+	.confirmButtons  { width:15%; margin-top:2%; padding:0.5%; }
 	#searchBarSection { width:20%;}
 
 	/* Game Card*/
