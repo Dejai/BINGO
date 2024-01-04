@@ -1,15 +1,12 @@
-/*********GENERAL (applies to all themes)**********************/
-
-
-.bingoMenuSection { display:flex; justify-content: space-between; flex-wrap:nowrap; align-items: center; }
-
-
-
-/********** CARD  ****************/ 
-
 /**************************************************** 
 	GENERAL: Applies to all pages;
 *****************************************************/
+
+/*BODY*/
+body.theme_black_bg { background-color:black; color:white; }
+#game_example_block.theme_black_bg { background-color:black; color:white; }
+#game_example_block.theme_black_bg #close_example { background-color:red; color:white; }
+
 
 #searchBarSection { text-align:left; border-radius:77px; border:1px solid gray; background-color:white; padding:0.5%; width:90%; margin:auto; font-size:20px; }
 .searchBarInput { text-align:left; width:85%; display:inline-block; border:none; padding:2%; }
@@ -18,130 +15,21 @@
 .searchBarInput.searchPlaceholder { color:gray; }
 .searchBarInput.searchText { color: black; }
 
-/* Sticky Menu */
-.stickyMenu { position:sticky; top:0; z-index:100; opacity:100; background-color: black; }
-
-.matchingCard { margin-left:0px; margin-right:0px; cursor:pointer; }
-.selectedMatchingCard { color:limegreen; font-weight:bolder; }
-
 .bingo_card_table { border-bottom:2px dashed white; margin-bottom:1%; }
 
 .navBackTitle { text-decoration:none !important; color:inherit; cursor:pointer; }
 
-/* General purpose */
-	.hidden { display:none; }
-	.centered { text-align: center; }
-	.bingo_cell{ cursor: pointer; }
-	.pointer { cursor:pointer; }
-	/* #gameBoardTable { font-size:200%; } */
-	.noselect {
-		-webkit-touch-callout: none; /* iOS Safari */
-		-webkit-user-select: none; /* Safari */
-		-khtml-user-select: none; /* Konqueror HTML */
-			-moz-user-select: none; /* Old versions of Firefox */
-			-ms-user-select: none; /* Internet Explorer/Edge */
-				user-select: none; /* Non-prefixed version, currently
-										supported by Chrome, Edge, Opera and Firefox */
-	}
-
-	.bingo_ball_circle {
-		height:100px;
-		width:100px;
-		line-height: 100px; 
-		background-color: gray;
-		border-radius: 50%;
-		display: inline-block;
-
-		/* background-color: black;
-		color:white; */
-	}
-	.bingo_ball_letter_b { background-color:blue; color:white; }
-	.bingo_ball_letter_i { background-color:red; color:white; }
-	.bingo_ball_letter_n { background-color:purple; color:white; }
-	.bingo_ball_letter_g { background-color:green; color:white; }
-	.bingo_ball_letter_o { background-color:yellow; color:black; }
-	
-	#bingo_version { position:fixed; bottom:1px; right:1px; color:red; font-style:italic;}
-
-	@keyframes bingo_blink {
-		25% { color: red; }
-		50% { color: red;}
-		75% { color: yellow; }
-		100% { color: yellow; }
-	}
-	.bingo_blink { animation: bingo_blink 1s step-start infinite; }
-
-
-/* Identify Yourself*/
-	.identify_yourself { display:block; text-align:center; padding:10%; width:70%; margin:auto; cursor:pointer; margin-top:10%; }
-
-/* Headings */
-	.dlf_title { font-size:80px; }
-
-/* Alignment */
-	.dlf_center_block_small { margin:auto; width:40%;}
-	.dlf_center_block_medium { margin:auto; width:60%;}
-	.dlf_center_block_large { margin:auto; width:80%;}
-	.dlf_center_block_xlarge { margin:auto; width:90%;}
-	.dlf_center_block_xxlarge { margin:auto; width:99%;}
-
-/* Tables */
-	.dlf_table { border-spacing: 0; }
-	.dlf_table_small { width:25%; }
-	.dlf_table_medium { width:50%; }
-	.dlf_table_large { width:100%; }
-	
-/* Hyperlinks */
-	.dlf_href_notextdec { text-decoration:none !important; }
-
-/* Paragraphs */
-	.dlf_paragraph_medium { font-size:80%; }
-	.dlf_paragraph_large { font-size: 150%; }
-	.dlf_paragraph_xlarge { font-size: 190%; }
-	.dlf_paragraph_xxlarge { font-size: 220%; }
-	.dlf_paragraph_xxxlarge { font-size: 250%; }
-
 /* Buttons */
-	/*Button Shape & hover*/
-	button { cursor: pointer; border:none; }
-	button:focus { outline: none; box-shadow: none; }
-	#check_bingo_card { width:90%; }
+button { cursor: pointer; border:none; }
+button:focus { outline: none; box-shadow: none; }
+.noBorders { border: none; }
+.noBorders:focus { outline: none; box-shadow:none; }
 
-	.noBorders { border: none; }
-	.noBorders:focus { outline: none; box-shadow:none; }
-
-	/* Colors */
-	.notify_red { color:red !important; }
-
-
-
-/*******************************************************************************************
-	THEME: Black Background
-********************************************************************************************/
-
-	/*BODY*/
-	body.theme_black_bg { background-color:black; color:white; }
-
-	/* Game Table*/
-	.IS-BINGO .game_table_header { animation: bingo_blink 1s step-start infinite; }
-	
-	.cell_unseen { color:gray; }
-	.cell_seen { background-color:limegreen; color:red; }
-
-	/* Game Settings */
-	#reset_game_button.theme_black_bg { background-color:red; color:white; }
-
-	/* Game Example */
-	#game_example_block.theme_black_bg { background-color:black; color:white; }
-	#game_example_block.theme_black_bg #close_example { background-color:red; color:white; }
-
-	.build_card_batch_example { font-size: 90%; background-color: lightgray; color:black; margin-left:5%; padding-left:1%;  }
 
 /**************************************************** 
 	GAME CARD: Styling specific to the game card
 *****************************************************/
 
-	#game_cost { color:red; font-weight:bolder; }
 	/* Game Card */
 	#bingo_card_section { width:95%;margin:auto; text-align:center; }
 	#bingo_card_table { margin-top:5%; }
@@ -180,35 +68,13 @@
 *****************************************************/
 
 /* Menu*/
-	#game_selector{ width:40%; float:left; }
-	/* #gameOptions { font-size:180%; } */
-	.game_options_select { font-size: 150%; width:100%; }
-	#pickNumberButton {cursor:pointer;}
-	#selected_ball_section { width:40%; float:left; }
-	#selected_cell { margin-bottom:1%; margin-top:2%; font-size:44px; }
+	
 	/* #pickNumberButton { margin-bottom:1%; margin-top:2%; font-size:44px; } */
 
 /* Game Table*/
 	.table { width:100%; text-align: center; border-spacing: 0; border:1px solid black; }
 	/* .header th { font-size:120%; } */
 	.inelligible { visibility:hidden !important; }
-
-/**************************************************** 
-	GAME EXAMPLES: The example page
-*****************************************************/
-/* Game Example */
-	.example { padding-top:8%; padding-bottom:8%;}
-	.example_filled, .exampleX, .exampleFREERequired { background-color:limegreen; color:red;  }
-	.example_empty { background-color:inherit; color:inerit;  }
-
-	#game_example_block { position:absolute; border:1px solid red; z-index:1000; 
-						width:90%; margin-left:5%; margin-top:5%; text-align:center; }
-
-	#game_example_block table { width:100%; }
-	#game_example_block .header { font-size:120%; }
-	#game_example_block table td { width:20%; padding:3%; font-size:120%; }
-	#game_example_block #close_example { float:right; clear:both; padding-right:1%; }
-
 
 /**************************************************** 
 	MEDIA SCREENS
@@ -218,42 +84,6 @@
 {
 
 	#searchBarSection { width:20%;}
-
-	/* Headings */
-	.dlf_title { font-size:2em;}
-
-	/* Alignment */
-	.dlf_center_block_small { margin:auto; width:30%;}
-	.dlf_center_block_medium { margin:auto; width:50%;}
-	.dlf_center_block_large { margin:auto; width:70%;}
-	.dlf_center_block_xlarge { margin:auto; width:80%;}
-	.dlf_center_block_xxlarge { margin:auto; width:90%;}
-
-	/*Button Sizes*/
-	.dlf_button_large { font-size: initial; }
-	.dlf_button_xlarge { font-size: initial; }
-	.dlf_button_xxlarge { font-size: initial; }
-	.dlf_button_xxxlarge { font-size: initial; }
-
-	/* Select Input Sizes*/
-	.dlf_select_small { font-size: initial; }
-	.dlf_select_large { font-size: initial; }
-	.dlf_select_xlarge { font-size: initial; }
-	.dlf_select_xxlarge { font-size: initial; }
-	.dlf_select_xxxlarge { font-size: initial; }
-
-	/* Paragraph sizes */
-	.dlf_paragraph_medium { font-size: initial; }
-	.dlf_paragraph_large { font-size: initial; }
-	.dlf_paragraph_xlarge { font-size: initial; }
-	.dlf_paragraph_xxlarge { font-size: initial; }
-	.dlf_paragraph_xxxlarge { font-size: initial; }
-
-	/* Identify Yourself*/
-	.identify_yourself { padding:2%; margin-top:7%; }
-
-	/* Game Example*/
-	.example { padding-top:2%; padding-bottom:2%; }	
 
 	/* Game Card*/
 	#bingo_card_table td.number_cell { font-size:initial }

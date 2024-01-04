@@ -13,14 +13,24 @@
 /* .cardPreview.selected .gameCode { color:limegreen !important; } */
 .cardPreview.selected .selectCardButton { background-color: red !important; color: white !important; }
 
-
-
 /* Card Play */
 .cardMenuSection { display:flex; justify-content: space-between; flex-wrap:nowrap; align-items: center; }
-th.card_table_header { background-color:white !important; color:black !important; }
-
+th.card_table_header { background-color:white !important; color:black; }
 #resetButton { background-color:red !important; color:white; }
 #resetButton:disabled { background-color:gray !important; color:lightgray !important; }
+
+/* Card with Bingo */
+@keyframes bingo_blink {
+    25% { color: red; }
+    50% { color: red;}
+    75% { color: yellow; }
+    100% { color: yellow; }
+}
+.IS-BINGO .card_header_b { background-color: blue !important; color:white; animation: bingo_blink 1s step-start infinite;}
+.IS-BINGO .card_header_i { background-color: indigo !important; color:white; animation: bingo_blink 1s step-start infinite;}
+.IS-BINGO .card_header_n { background-color: navy !important; color:white; animation: bingo_blink 1s step-start infinite;}
+.IS-BINGO .card_header_g { background-color: green !important; color:white; animation: bingo_blink 1s step-start infinite;}
+.IS-BINGO .card_header_o { background-color: orange !important; color:white; animation: bingo_blink 1s step-start infinite;}
 
 @media only screen and (min-device-width:1200px)
 {
