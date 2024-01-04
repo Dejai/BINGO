@@ -244,7 +244,7 @@ async function onCheckForBingo(){
         var matchingSet = new Set( hasBingo.map(x => x.Details.Key) );
         var options = Array.from(document.querySelectorAll(".checkBingoOption"))?.filter(x => matchingSet.has(x.value));
         for(var opt of options){
-            opt.innerText += " <span style='font-size:1px;'>(matching)</span>";
+            opt.innerHTML += " <span style='font-size:1px;'>(matching)</span>";
         }
 
         MyDom.hideContent(".hideOnCheckBingoResults");
