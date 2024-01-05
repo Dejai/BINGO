@@ -58,9 +58,6 @@ class BingoCard {
     hasBingo(bingoGame){
       var results = false;
       try {
-        console.log("Checking this card for bingo");
-        console.log(this.SlotsFilled);
-        console.log(bingoGame.RequiredSlots);
         // If this game has straightlines, check those
         if(bingoGame.StraightLines.length > 0){
           for(var line of bingoGame.StraightLines) {

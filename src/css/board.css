@@ -1,5 +1,6 @@
 
 /* Sections of the game board */
+#gameBoardTable { margin-top:1%; }
 .gameBoardSection { font-size: 200%; }
 .gameBoardSection th.game_table_header { background-color:white !important; color:black !important; }
 .gameBoardSection th.card_table_header { background-color:white !important; color:black !important; }
@@ -30,7 +31,9 @@
 .bingo_ball_letter_o { background-color:yellow; color:black; }
 
 .game_options_select { font-size: 120%; width:95%; }
-#selected_cell { margin-bottom:1%; margin-top:2%; font-size:44px; }
+#selected_cell { margin-bottom:1%; margin-top:1%; font-size:44px; }
 
 /* Checking for BINGO */
 #checkForBingoSection { width:20%; margin:auto; }
+
+#checkBingoResults { height:1000px; width:60%; margin:auto; }

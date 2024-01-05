@@ -3,15 +3,15 @@
 <head>
 	<title>BINGO! ~ Card</title>
     <base href="../">
-	<link rel="stylesheet" type="text/css" href="https://dejai.github.io/scripts/css/dtk-styles.css?v=3.0.2">
-	<link rel="stylesheet" type="text/css" href="src/css/bingo.css?v=3.0.2">
-	<link rel="stylesheet" type="text/css" href="src/css/card.css?v=3.0.2">
+	<link rel="stylesheet" type="text/css" href="https://dejai.github.io/scripts/css/dtk-styles.css?v=3.0.3">
+	<link rel="stylesheet" type="text/css" href="src/css/bingo.css?v=3.0.3">
+	<link rel="stylesheet" type="text/css" href="src/css/card.css?v=3.0.3">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body class="theme_black_bg">
 
-    <div style="background-color: black;" class="dtk-menu-sticky">
+    <div id="cardPlayMenu" style="background-color: black;" class="dtk-menu-sticky invisibleOnValidate">
         <div class="cardMenuSection">
             <h2 style="padding: 0px; margin: 0px; text-align: left;"><a href="/" class="navBackTitle">BINGO!</a></h2>
             <div class="" style="text-align:center;">
@@ -32,16 +32,16 @@
     <!-- List of cards that are being played -->
     <div id="bingo_card_section" class="dtk-after-sticky">
         <div id="cardBlockSection"></div>
-        <p style="margin-top:5%;font-size:60%; color:red; ">
+        <p style="margin-top:5%;font-size:60%; color:red; " class="invisibleOnValidate">
             <span id="cardSelectedTimeStamp"></span>
         </p>
     </div>
 </body>
 
-<script src="https://dejai.github.io/scripts/js/v2/my.js?v=3.0.2"></script>
-<script src="https://dejai.github.io/scripts/js/v3/cloudflarewrapper.js?v=3.0.2"></script>
+<script src="https://dejai.github.io/scripts/js/v2/my.js?v=3.0.3"></script>
+<script src="https://dejai.github.io/scripts/js/v3/cloudflarewrapper.js?v=3.0.3"></script>
 <!-- Bingo scripts -->
-<script src="src/js/models.js?v=3.0.2"></script>
-<script src="src/js/cardPlay.js?v=3.0.2"></script>
+<script src="src/js/models.js?v=3.0.3"></script>
+<script src="src/js/cardPlay.js?v=3.0.3"></script>
 
 </html>

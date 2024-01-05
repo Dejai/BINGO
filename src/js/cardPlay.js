@@ -13,6 +13,10 @@ MyDom.ready ( async () => {
     var cardsList = (MyUrls.getSearchParam("cards") ?? "").split(",");
     var balls = MyUrls.getSearchParam("balls")?.split(",") ?? [];
 
+    // If game given in the params, then make the section invisible
+    if(game != undefined){
+        MyDom.addClass(".invisibleOnValidate", "invisible");
+    }
 
     // Setup any cards found in the list
     for(var card of cardsList){
@@ -25,8 +29,6 @@ MyDom.ready ( async () => {
         // If given a game, stop after the first card
         if(game != undefined){ break; }        
     }
-    console.log(MyBingoCards);
-    console.log(Object.values(MyBingoCards.Cards));
 
     // Set listener for all cells
     for(var cell of document.querySelectorAll(".number_cell")){
@@ -48,6 +50,8 @@ MyDom.ready ( async () => {
             }
         }
     }
+
+    
 
     // Set time stamp for game card being selected
     let time = MyHelper.getDate("H:m:s K");
@@ -105,7 +109,7 @@ function onSelectNumber(event) {
         var isReq = numberCell.classList.contains("number_cell_required");
         var isOpt = numberCell.classList.contains("number_cell_optional");
         if(!isReq && !isOpt){
-            console.log("Returning");
+            MyLogger.LogInfo("Returning (can't click this number)");
             return;
         }
 
