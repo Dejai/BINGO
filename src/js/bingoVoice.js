@@ -2,7 +2,6 @@
 class BingoVoice {
 
     constructor(){
-        console.log("New voice");
         this.Voices = {} 
         this.CurrentVoice = undefined;
         this.IsSpeaking = false;
@@ -26,7 +25,6 @@ class BingoVoice {
 
     // Set current voice
     setCurrentVoice(name="Alex"){
-        console.log("setting current voice :" + name);
         let voice = this.Voices[name] ?? undefined;
         this.CurrentVoice = voice;
     }
@@ -50,7 +48,7 @@ class BingoVoice {
                 this.IsSpeaking = synth.speaking; 
 
                 if(synth.speaking){
-                    console.log("Still speaking");
+                    MyLogger.LogInfo("Still speaking");
                 } else {
                     setTimeout( ()=> {
                         clearInterval(stillSpeaking);
@@ -68,7 +66,6 @@ class BingoVoice {
             await this.speakText(text);
 	    	var subtext = "I 20";
 		    await this.speakText(subtext, 0.6);
-            console.log("Done Demo");
         }
     }
 }
@@ -105,13 +102,9 @@ function onChangeVoice(event){
     let target = event.target;
     let value = target?.value ?? "";
     MyBingoVoice.setCurrentVoice(value);
-    console.log(value);
-    console.log(MyBingoVoice.Voices[value]);
-    console.log(MyBingoVoice.CurrentVoice);
 }
 
 // On Speak
 async function onTestSpeaker(){
     await MyBingoVoice.demo();
-    console.log("Testing await on speech");
 }

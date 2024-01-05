@@ -3,8 +3,6 @@ const MyCloudflare = new CloudflareWrapper();
 MyDom.ready ( async () => { 
     var cards = await MyCloudflare.KeyValues("GET", "/bingo/cards");
     var bingoCards = cards.map(details => new BingoCard(details) )?.filter( card => card.Details.Key != "EXAMPLE");
-    console.log(bingoCards);
-
     var cardTemplate = await MyTemplates.getTemplateAsync("templates/cards/cardPreview.html", bingoCards);
     MyDom.setContent("#listOfCards", {"innerHTML": cardTemplate});
 
@@ -19,7 +17,6 @@ MyDom.ready ( async () => {
 
 // Set pre-selected cards
 function onSetPreselectedCards(){ 
-    console.log("Setting preselected cards"); 
     var cardIds = MyUrls.getSearchParam("cards")?.split(",");
     cardIds?.forEach( (x) => {
         let _action = document.querySelector(`[data-card-id="${x}"] button`)?.click();

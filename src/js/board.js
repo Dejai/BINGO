@@ -15,6 +15,12 @@ MyDom.ready ( async () => {
 
     // Set example card template
     setCardOnBoard();
+
+    // Set iFrame height
+    var pageHeight = document.documentElement.scrollHeight;
+    var halfHeight = Math.floor(pageHeight / 2);
+    var iFrame = document.querySelector("#checkBingoIframe");
+    iFrame.style.height = halfHeight + 'px';
 });
 
 
@@ -262,7 +268,10 @@ function openCardWithBalls(){
     var gameName = getSelectedGame()?.Name ?? ""
     if(cardKey == "" || gameName == ""){ return; }
     var balls = Array.from(MyBingoBalls.Called.keys()).join(",");
-    MyUrls.navigateTo(`/play/?cards=${cardKey}&game=${gameName}&balls=${balls}`, "_blank");
+    var path = `/play/?cards=${cardKey}&game=${gameName}&balls=${balls}`;
+    MyDom.setContent("#checkBingoIframe", {"src": path});
+    MyDom.hideContent(".hideOnCheckCard");
+    MyDom.showContent(".showOnCheckCard");
 }
 
 
@@ -274,7 +283,7 @@ function onResetGame(){
         MyDom.hideContent(".hideOnReset");
 
         // Clear things
-        MyDom.setContent(".disableOnReset", {"disabled": ""});
+        MyDom.setContent(".disableOnReset", {"disabled": "true"});
         MyDom.setContent(".clearOnReset", {"innerHTML":"", "value": ""});
         setBoardColumnVisibility([]);
         MyDom.replaceClass(`[data-bingo-ball]`, "cell_seen", "cell_unseen");

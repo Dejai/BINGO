@@ -33,12 +33,12 @@ button:focus { outline: none; box-shadow: none; }
 
 	/* Game Card */
 	#bingo_card_section { width:95%;margin:auto; text-align:center; }
-	#bingo_card_table { margin-top:5%; }
-	#bingo_card_table tbody tr td { padding:3% !important;}
+	/* #bingo_card_table { margin-top:5%; } */
+	/* #bingo_card_table tbody tr td { padding:3% !important;} */
 
 	/* Game Card Size*/
-	#bingo_card_table td.number_cell { font-size:150%; font-weight: bolder; }
-	#bingo_card_table td.example { font-size:150%; font-weight: bolder; }
+	/* #bingo_card_table td.number_cell { font-size:150%; font-weight: bolder; } */
+	/* #bingo_card_table td.example { font-size:150%; font-weight: bolder; } */
 	.freeSpace { font-size:150% !important; }
 
 	.game_card_input { font-size: 30px; }
@@ -84,8 +84,8 @@ button:focus { outline: none; box-shadow: none; }
 	#searchBarSection { width:20%;}
 
 	/* Game Card*/
-	#bingo_card_table td.number_cell { font-size:initial }
-	#bingo_card_table td.example { font-size:initial  }
+	/* #bingo_card_table td.number_cell { font-size:initial } */
+	/* #bingo_card_table td.example { font-size:initial  } */
 	.freeSpace { font-size:initial; }
 
 	/* New Game Card */
