@@ -195,5 +195,8 @@ function onReset() {
 
         // Disable the reset button;
         MyDom.setContent("#resetButton", {"disabled": "true"});
+
+        // Show the warning for reset again
+        MyDom.showContent(".showOnReset");
     }
 }
