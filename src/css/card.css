@@ -2,6 +2,7 @@
 .bingoBoardIcon { display:none; }
 #useCardButton { padding:1%; background-color: limegreen; color:black; }
 #useCardButton:disabled { background-color: gray; color:lightgray; }
+#gameOptionsOnCard { text-align:center; background-color: blue; color:white; border:none; }
 
 /* Card Previews */
 .cardPreviewContainer { display:flex; flex-wrap:wrap; justify-content: center; width:95%; margin:auto; overflow-y:scroll; }

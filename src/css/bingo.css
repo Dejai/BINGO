@@ -74,6 +74,10 @@ button:focus { outline: none; box-shadow: none; }
 #playBingoButton { background-color: limegreen; color:white; }
 #adjustCardsButton { background-color: orange; color:black; }
 
+
+#searchBarSection .searchBarInput { font-size: 16px; }
+.mobileInput { font-size: 16px; }
+
 /**************************************************** 
 	MEDIA SCREENS
 *****************************************************/
